@@ -14,7 +14,7 @@
 	}
 
 	// getter
-	Meta * &Meta::getInstance(void) {
+	Meta * &Meta::getInstance(char * configName = NULL) {
 		if (! single) {
 
 			single = new Meta;
@@ -22,11 +22,11 @@
 			if (single == NULL) {
 				throw (-1);
 				}
-
 			// on initialise l'ecran
 			single->initFuite();
 			// récupere les données
-			single->ReadFConfigElem();
+                        std::cout << "chargement du fichier :" << (configName == NULL  ? "Defaut"  : configName) << std::endl;
+			single->ReadFConfigElem(configName);
 			}
 		return single;
 	}

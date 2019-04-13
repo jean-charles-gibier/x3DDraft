@@ -28,8 +28,14 @@ Meta *meta = NULL;
 sigset_t new_set;
 
 try {
+        char * configName = NULL;
+
+        if (argc > 1) {
+                configName = argv[1];
+        std::cout << "DBG  " << configName << __LINE__ << std::endl;
+        }
         std::cout << "DBG Meta " << __FILE__ << " " << __LINE__ << std::endl;
-	meta = Meta::getInstance();
+	meta = Meta::getInstance( configName );
         std::cout << "DBG Meta " << __FILE__ << " " << __LINE__ << std::endl;
         }
  	catch (int err) {

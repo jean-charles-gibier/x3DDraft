@@ -34,7 +34,7 @@ public:
 	Meta (const Meta& m);
 
 	//==== Methodes publiques =====
-	static Meta * &getInstance(void);
+	static Meta * &getInstance(char * configName);
 	static Display* getDisplay();
 
 	// initialiser la progression des parallèles en Z
@@ -477,7 +477,7 @@ retourne le nombre d'éléments a afficher
 lecture du fichier texte de configuration des éléments.
 ******************************************************************************/
 
-	Element *ReadFConfigElem (int no = 0)
+	Element *ReadFConfigElem (const char * configName = "x3DDraft.cfg")
 	{
 
 		char buf_cfg[0x100];
@@ -490,7 +490,7 @@ lecture du fichier texte de configuration des éléments.
 		Point3D pt3ddx, pt3ddy, pt3ddz;
 
 		// ouverture du fichier config
-		FILE *fconfig = fopen ("x3DDraft.cfg", "r+b");
+		FILE *fconfig = fopen ( (configName == NULL ? "x3DDraft.cfg" : configName), "r+b");
 
 		/******************************** éléments de base ***************************/
 		// fichier à lire ligne à ligne
