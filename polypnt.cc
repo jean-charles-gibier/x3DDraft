@@ -18,7 +18,7 @@ action (short int &Action, int IsFocus = 0)
 	Rotate ((const Point3D) 0, 0.0, 0.0, 0.05 * M_PI);
       else			// l'élément ayant le focus ne bouge pas
 
-	Rotate (pt_ref, 0.0, 0.0, 0.005 * M_PI);
+	Rotate (pt_ref, 0.0, 0.0, 0.05 * M_PI);
       break;
 
     case COTE_HORA:
@@ -27,7 +27,7 @@ action (short int &Action, int IsFocus = 0)
 	Rotate ((const Point3D) 0, 0.0, 0.0, 1.95 * M_PI);
       else			// l'élément ayant le focus ne bouge pas
 
-	Rotate (pt_ref, 0.0, 0.0, 1.995 * M_PI);
+	Rotate (pt_ref, 0.0, 0.0, 1.95 * M_PI);
       break;
 
     case ORDONEE_TRIGO:
@@ -36,7 +36,7 @@ action (short int &Action, int IsFocus = 0)
 	Rotate ((const Point3D) 0, 0.0, 0.05 * M_PI, 0.0);
       else			// l'élément ayant le focus ne bouge pas
 
-	Rotate (pt_ref, 0.0, 0.005 * M_PI, 0.0);
+	Rotate (pt_ref, 0.0, 0.05 * M_PI, 0.0);
       break;
 
     case ORDONEE_HORA:
@@ -45,7 +45,7 @@ action (short int &Action, int IsFocus = 0)
 	Rotate ((const Point3D) 0, 0.0, 1.95 * M_PI, 0.0);
       else			// l'élément ayant le focus ne bouge pas
 
-	Rotate (pt_ref, 0.0, 1.995 * M_PI, 0.0);
+	Rotate (pt_ref, 0.0, 1.95 * M_PI, 0.0);
       break;
 
     case ABSCISSE_TRIGO:
@@ -54,7 +54,7 @@ action (short int &Action, int IsFocus = 0)
 	Rotate ((const Point3D) 0, 0.05 * M_PI, 0.0, 0.0);
       else			// l'élément ayant le focus ne bouge pas
 
-	Rotate (pt_ref, 0.005 * M_PI, 0.0, 0.0);
+	Rotate (pt_ref, 0.05 * M_PI, 0.0, 0.0);
       break;
 
     case ABSCISSE_HORA:
@@ -63,55 +63,55 @@ action (short int &Action, int IsFocus = 0)
 	Rotate ((const Point3D) 0, 1.95 * M_PI, 0.0, 0.0);
       else			// l'élément ayant le focus ne bouge pas
 
-	Rotate (pt_ref, 1.995 * M_PI, 0.0, 0.0);
+	Rotate (pt_ref, 1.95 * M_PI, 0.0, 0.0);
       break;
 
     case COTE_PLUS:
       if (!IsFocus)		// l'élément ayant le focus ne bouge pas
 
-	MoveZ ((/*long*/ double) 25.0);
+	MoveZ ((/*long*/ double) 35.0);
       break;
 
     case COTE_MOINS:
       if (!IsFocus)		// l'élément ayant le focus ne bouge pas
 
-	MoveZ ((/*long*/ double) -25.0);
+	MoveZ ((/*long*/ double) -35.0);
       break;
 
     case ORDONEE_PLUS:
       if (!IsFocus)		// l'élément ayant le focus ne bouge pas
 
-	MoveY ((/*long*/ double) 25.0);
+	MoveY ((/*long*/ double) 35.0);
       break;
 
     case ORDONEE_MOINS:
       if (!IsFocus)		// l'élément ayant le focus ne bouge pas
 
-	MoveY ((/*long*/ double) -25.0);
+	MoveY ((/*long*/ double) -35.0);
       break;
 
     case ABSCISSE_PLUS:
       if (!IsFocus)		// l'élément ayant le focus ne bouge pas
 
-	MoveX ((/*long*/ double) 25.0);
+	MoveX ((/*long*/ double) 35.0);
       break;
 
     case ABSCISSE_MOINS:
       if (!IsFocus)		// l'élément ayant le focus ne bouge pas
 
-	MoveX ((/*long*/ double) -25.0);
+	MoveX ((/*long*/ double) -35.0);
       break;
 
     case AVANCE:
       if (IsFocus)		// seul l'élément ayant le focus bouge
 
-	MoveP (4, 5.0);
+	MoveP (4, 35.0);
       break;
 
     case RECULE:
       if (IsFocus)		// seul l'élément ayant le focus bouge
 
-	MoveP (4, -5.0);
+	MoveP (4, -35.0);
       break;
 
     case ESPACE:

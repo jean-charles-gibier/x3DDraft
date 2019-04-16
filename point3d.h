@@ -53,7 +53,10 @@ class Point3D {
 	double Get3dz(void) const { return z3d; };
 	/*-------------------------------------------------------*/
 	unsigned int & IsCut(void) { return cut; };
-
+	/*-------------------------------------------------------*/
+	double GetPtFuiteY(void) { return PtFuiteY; };
+	/*-------------------------------------------------------*/
+	double GetPtFuiteX(void) { return PtFuiteX; };
 	/*-------------------------------------------------------*/
 
 	int SetGXScreen (GXScreen * ptGxscr = NULL);
@@ -111,7 +114,7 @@ class Point3D {
 //			double hxyz =  sqrt(pow(hxy, 2.0) + pow(z3d, 2.0));
 			double hxyz = z3d;
 
-//cout << "dZ " << z3d << "dXYZ  " << hxyz << std::endl;
+// std::cout << "T x3d :" << x3d << " y3d  :" << y3d << " z3d :" << z3d << std::endl;
 			double delta_y = dy / dx ; // coeff directeur
 			double delta_x = dx / dy ; // coeff directeur inv
 
@@ -127,15 +130,20 @@ class Point3D {
 			x2d = ROUND(x3d + (aEffetFuite[ROUND((double)z3d)] * cos(TheBorne) * cx ));
 			y2d = ROUND(y3d + (aEffetFuite[ROUND((double)z3d)] * sin(TheBorne) * cy ));
 */
-/**/			x2d = ROUND(x3d + (aEffetFuite[ROUND((double)hxyz)] * cos(TheBorne) * cx ));
+
+                        x2d =   ROUND(x3d + (pow(log(0.5 * (hxyz+1.0)),3.0)  * cos(TheBorne) * cx)) ;
+                        y2d =   ROUND(y3d + (pow(log(0.5 * (hxyz+1.0)),3.0)  * sin(TheBorne) * cy));
+
+/*			x2d = ROUND(x3d + (aEffetFuite[ROUND((double)hxyz)] * cos(TheBorne) * cx ));
 			y2d = ROUND(y3d + (aEffetFuite[ROUND((double)hxyz)] * sin(TheBorne) * cy ));
-/**/
+*/
 			if ((PtFuiteX > x3d && PtFuiteX < x2d) ||
-				(PtFuiteX < x3d && PtFuiteX > x2d) ||
-				(PtFuiteY > y3d && PtFuiteY < y2d) ||
+				(PtFuiteX < x3d && PtFuiteX > x2d)) {
+				x2d = PtFuiteX;
+                                }
+			if ((PtFuiteY > y3d && PtFuiteY < y2d) ||
 				(PtFuiteY < y3d && PtFuiteY > y2d)) {
-				x2d = INVIS_POINT;
-				y2d = INVIS_POINT;
+				y2d = PtFuiteY;
 				}
 		}
 //		cout << *this << std::endl;

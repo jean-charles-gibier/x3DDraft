@@ -73,20 +73,20 @@ try {
 
  	mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);
 
-// cout << __LINE__ << endl;
+// std::cout << __LINE__ << std::endl;
 
  	meta->InstallWorld ();
 
-// cout << __LINE__ << endl;
+// std::cout << __LINE__ << std::endl;
 
  	// boucle principale du programme
  	try
  	{
-         	for (;;)
+       	for (;;)
  		{
-//cout << __LINE__ << endl;
- 		meta->DisplayWorld ();
-//cout << __LINE__ << endl;
+// std::cout << __LINE__ << std::endl;
+		meta->DisplayWorld ();
+// std::cout << __LINE__ << std::endl;
  		}
  	mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);
  	}

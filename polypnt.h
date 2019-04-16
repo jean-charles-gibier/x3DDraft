@@ -24,7 +24,14 @@ Il y a 2 types d'unions possibles et combinables :
 
 ***************************************************************/
 
+static Window windowText ;
+static XFontStruct* myFont = NULL;
+static unsigned startText = 0;
+static GC myGC;
+
 class PolyPoints {
+
+        private :
 
       public :
 /*--------------------------------------------------
@@ -335,7 +342,7 @@ sur un longueur speed.
   avance dans l'axe des Z
  --------------------------------------------------*/
 
-      void MoveZ(double speed = .07)
+      void MoveZ(double speed = .17)
       {
          Move(Point3D(  ) , 0.0 , 0.0 , speed );
       }
@@ -344,7 +351,7 @@ sur un longueur speed.
   avance dans l'axe des Y
  --------------------------------------------------*/
 
-      void MoveY(double speed = .07)
+      void MoveY(double speed = .17)
       {
          Move(Point3D(  ) , 0.0 , speed , 0.0 );
       }
@@ -353,7 +360,7 @@ sur un longueur speed.
   avance dans l'axe des X
  --------------------------------------------------*/
 
-      void MoveX(double speed = .07)
+      void MoveX(double speed = .17)
       {
          Move(Point3D(  ) , speed , 0.0 , 0.0 );
       }
@@ -481,6 +488,8 @@ Affiche les segments du polypt sous X
             XDrawSegments (d, ptBuffer, gcView, xsegs, nbSeg);
          }
 
+char bigbuf[8192] ={0};
+
          if (nbPoints && (DisplayType == 0) || (DisplayType & 2))
          {
             int offset_deb , offset_fin, index;
@@ -489,37 +498,66 @@ Affiche les segments du polypt sous X
 
             for (index = 0, offset_deb = 0, offset_fin = 0; index < (nbPoints - 1);  index ++)
             {
+XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX() - 4 , (int)anchor[index].GetPtFuiteY(), (int)anchor[index].GetPtFuiteX() + 4, (int)anchor[index].GetPtFuiteY() );
+XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() -4 , (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() + 4);
+//std::cout << " =>" << __LINE__ << std::endl;
 
 			if (anchor[index].IsCut() == 0 && index < (nbPoints - 1))
-				{
+			{
 				xsegs[offset_fin] = PointToXsegment( anchor[index], anchor[index+1]);
-//std::cout << " =>" << __LINE__ << " x1 :" << xsegs[offset_fin].x1 << "y1 : " << xsegs[offset_fin].y1  << " x2 :" << xsegs[offset_fin].x2 << "y2 : " << xsegs[offset_fin].y2 << std::endl;
-//std::cout << " =>" << __LINE__ << " x1 :" << anchor[index] .Get2DX() << " y1 : " << anchor[index] .Get2DY()   << " x2 :" << anchor[index+1] .Get2DX()  << " y2 : " << anchor[index+1] .Get2DY()  << std::endl;
+if ( strlen(bigbuf) < 8000)
+sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", index, xsegs[offset_fin].x1, xsegs[offset_fin].y1, xsegs[offset_fin].x2, xsegs[offset_fin].y2);
 				offset_fin ++;
-				}
+			}
 			else if (offset_fin > offset_deb)
-				{
-//std::cout << " =>" << __LINE__ << " nb seg :" << offset_fin - offset_deb << std::endl;
+			{
 				XDrawSegments (d, ptBuffer, gcView, &(xsegs[ offset_deb ]), offset_fin - offset_deb);
 				offset_deb = offset_fin;
-				}
+			}
             }
 /* tracer le segement de fin */
 			if (anchor[index].IsCut() == 0)
 			{
 				xsegs[offset_fin] = PointToXsegment( anchor[0], anchor[index]);
+if ( strlen(bigbuf) < 8000)
+sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", index, xsegs[offset_fin].x1, xsegs[offset_fin].y1, xsegs[offset_fin].x2, xsegs[offset_fin].y2);
 				offset_fin ++;
 			}
 
 			if (offset_fin > offset_deb)
 			{
-//std::cout << " =>" << __LINE__ << " nb seg :" << offset_fin - offset_deb << std::endl;
 			XDrawSegments (d, ptBuffer, gcView, &(xsegs[ offset_deb ]), offset_fin - offset_deb);
 			}
-
          }
-         // TODO toredo chgt XSetForeground (d, gcView, white);
-		 XSetForeground (d, gcView, WhitePixel (d, DefaultScreen (d)));
+
+if (startText == 0) {
+        startText = 1;
+windowText =
+        XCreateSimpleWindow (d,
+                                RootWindow  (d,  DefaultScreen (d)),
+                             100,
+                             100,
+                             500,
+                             80,
+                             1,
+                             0x00FFFF00L,
+                             0x20202000L);
+
+myFont = XLoadQueryFont (d, "-misc-fixed-medium-r-semicondensed--0-0-75-75-c-0-iso8859-1");
+myGC = XCreateGC(d, windowText, 0, 0);
+XSetFont(d, myGC, myFont->fid);
+XSetForeground(d, myGC, 0xFFFFFF00);
+XMapWindow (d, windowText);
+XSelectInput (d, windowText, ExposureMask | KeyPressMask);
+
+} else {
+ XClearWindow (d, windowText);
+
+XDrawString ( d, windowText, myGC,
+                 10, 10, bigbuf, strlen(bigbuf));
+// std::cout << " =>" << __LINE__ << " nb seg :" << bigbuf << std::endl;
+XSync(d, False);
+}
       }
 
 /*--------------------------------------------------

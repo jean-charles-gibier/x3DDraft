@@ -5,7 +5,6 @@
 #include "x3DDraft.h"
 #include <X11/Xlib.h>
 #include <math.h>
-// #include <iostream.h>
 
 class GXScreen {
 

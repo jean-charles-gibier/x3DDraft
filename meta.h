@@ -215,12 +215,12 @@ Traite les commandes reçues du clavier.
 				ActionKey = COTE_TRIGO;
 				else if (toupper (*ch) == 'L')
 				ActionKey = COTE_HORA;
+				else if (toupper (*ch) == 'A')
+				ActionKey = AVANCE;
+				else if (toupper (*ch) == 'R')
+				ActionKey = RECULE;
 				else if (*ch == ' ')
 				{ActionKey = ESPACE;}
-				else if (*ch == 'a')
-				ActionKey = AVANCE;
-				else if (*ch == 'r')
-				ActionKey = RECULE;
 				else if (*ch == '5')
 				ActionKey = NONE;
 				else if (*ch == '@')
@@ -498,8 +498,10 @@ lecture du fichier texte de configuration des éléments.
 		{
 			while (fgets (buf_cfg, sizeof (buf_cfg), fconfig) != NULL)
 			{
-//							printf ("%d\n %0x\n", __LINE__, next_state);
-				if (next_state & (ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN))
+                                if (!strncmp (buf_cfg, "#", 1) || !buf_cfg[0]) {
+                                        printf ("%d\n %0x\n", __LINE__, next_state);
+                                }
+                                else if (next_state & (ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN))
 				{
 					next_state = (strncmp (buf_cfg, "ELEMENT", 7) == 0) ? ELEMENT :
 					(strncmp (buf_cfg, "POLYPOINT", 9) == 0) ? POLYPOINT :
@@ -523,9 +525,9 @@ lecture du fichier texte de configuration des éléments.
 				}
 				else if (next_state & FIN)
 				{
-					break;
+                                        if (strncmp (buf_cfg, "FIN", 3))
+				        	break;
 				}
-//							printf ("%d\n %0x\n", __LINE__, next_state);
 
 				switch (next_state)
 				{
