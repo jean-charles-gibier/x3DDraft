@@ -112,7 +112,6 @@ class Point3D {
 
 //			double hxy = sqrt(pow(fixmaxy, 2.0) + pow(fixmaxx, 2.0));
 //			double hxyz =  sqrt(pow(hxy, 2.0) + pow(z3d, 2.0));
-			double hxyz = z3d;
 
 // std::cout << "T x3d :" << x3d << " y3d  :" << y3d << " z3d :" << z3d << std::endl;
 			double delta_y = dy / dx ; // coeff directeur
@@ -129,10 +128,12 @@ class Point3D {
 /*
 			x2d = ROUND(x3d + (aEffetFuite[ROUND((double)z3d)] * cos(TheBorne) * cx ));
 			y2d = ROUND(y3d + (aEffetFuite[ROUND((double)z3d)] * sin(TheBorne) * cy ));
+                        x2d =   ROUND(x3d + (pow(log(0.5 * (z3d+1.0)),3.0)  * cos(TheBorne) * cx)) ;
+                        y2d =   ROUND(y3d + (pow(log(0.5 * (z3d+1.0)),3.0)  * sin(TheBorne) * cy));
 */
 
-                        x2d =   ROUND(x3d + (pow(log(0.5 * (hxyz+1.0)),3.0)  * cos(TheBorne) * cx)) ;
-                        y2d =   ROUND(y3d + (pow(log(0.5 * (hxyz+1.0)),3.0)  * sin(TheBorne) * cy));
+                        x2d =   ROUND(x3d + (pow(log(0.5 * z3d),3)  * cos(TheBorne) * cx)) ;
+                        y2d =   ROUND(y3d + (pow(log(0.5 * z3d),3)  * sin(TheBorne) * cy));
 
 /*			x2d = ROUND(x3d + (aEffetFuite[ROUND((double)hxyz)] * cos(TheBorne) * cx ));
 			y2d = ROUND(y3d + (aEffetFuite[ROUND((double)hxyz)] * sin(TheBorne) * cy ));
