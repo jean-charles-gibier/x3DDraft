@@ -806,8 +806,8 @@ Plan(void) : PolyPoints() {  };
    Plan(const Point3D pa,  // Point de passage a 0 deg.
 		const Point3D pb,  // Point de passage a 0 deg.
 		const Point3D pc,  // Point de passage a 0 deg.
-		double lgPlan = 5000., // longueur du plan
-		double lgTrame = 200. // largeur du quadrillage
+		double lgPlan = 2000., // longueur du plan
+		double lgTrame = 100. // largeur du quadrillage
 			) : PolyPoints ()
 	{
 /**/
@@ -820,40 +820,53 @@ Plan(void) : PolyPoints() {  };
 	double pxpz = px/pz;
 	double pzpy = pz/py;
 
-	//std::cout << "pa " << pa << "pb " << pb << "pc " << pc << std::endl;
+//	std::cout << "pa " << pa << "pb " << pb << "pc " << pc << std::endl;
 //	std::cout << "pxpy " << pxpy << "pxpz " << pxpz << "pzpy " << pzpy << std::endl;
 //	std::cout << "atan(pxpy) " << tan(pxpy) << " atan(pxpz) " << tan(pxpz) << " atan(pxpy) " <<tan(pzpy) << std::endl;
 	/**/
 
-    nbPoints = (unsigned int) ((ceil (lgPlan / lgTrame) + 1) * 4);
+    unsigned int nbDalles = (unsigned int) (ceil (lgPlan / lgTrame));
+    nbPoints = (nbDalles * nbDalles * 5);
     anchor = (Point3D *)new Point3D [nbPoints] ;
     assert (anchor != NULL);
 
-	for (int i = 0; i < nbPoints; i +=4) {
-//std::cout << " =>" << __LINE__ << std::endl;
-		anchor[i].Get3DX() = pa.Get3dx();
-		anchor[i].Get3DY() = pa.Get3dy();
-		anchor[i].Get3DZ() = pa.Get3dz() + (lgTrame * (double)i)/ 4.0;
-		anchor[i].IsCut() = 0;
-		anchor[i].transpose();
+	for (unsigned int i = 0; i <  nbDalles; i ++) {
+                for (unsigned int j = 0; j <  nbDalles; j ++) {
+                        anchor[(((i*nbDalles)+j)*5)].Get3DX() = pa.Get3dx() + (lgTrame * (double)i);
+                        anchor[(((i*nbDalles)+j)*5)].Get3DY() = pa.Get3dy();
+                        anchor[(((i*nbDalles)+j)*5)].Get3DZ() = pa.Get3dz() + (lgTrame * (double)j);
+                        anchor[(((i*nbDalles)+j)*5)].IsCut() = 0;
+                        anchor[(((i*nbDalles)+j)*5)].transpose();
+//        std::cout << " => "<<  (((i*nbDalles)+j)*5)  << " X :" << anchor[(((i*nbDalles)+j)*5)].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)].Get3DZ() << " "  << std::endl;
 
-		anchor[i+1].Get3DX() = pa.Get3dx() + lgPlan;
-		anchor[i+1].Get3DY() = pa.Get3dy();
-		anchor[i+1].Get3DZ() = pa.Get3dz() + (lgTrame * (double)i)/ 4.0;
-		anchor[i+1].transpose();
-		anchor[i+1].IsCut() = 1;
+                        anchor[(((i*nbDalles)+j)*5)+1].Get3DX() = pa.Get3dx() + (lgTrame * (double)i);
+                        anchor[(((i*nbDalles)+j)*5)+1].Get3DY() = pa.Get3dy();
+                        anchor[(((i*nbDalles)+j)*5)+1].Get3DZ() = pa.Get3dz() + (lgTrame * (double)(j+1));
+                        anchor[(((i*nbDalles)+j)*5)+1].IsCut() = 0;
+                        anchor[(((i*nbDalles)+j)*5)+1].transpose();
+//        std::cout << " =>"<<   (((i*nbDalles)+j)*5)+1  << " X :" << anchor[(((i*nbDalles)+j)*5)+1].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)+1].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)+1].Get3DZ() << " " <<  std::endl;
 
-		anchor[i+2].Get3DX() = pa.Get3dx() + (lgTrame * (double)i)/ 4.0;
-		anchor[i+2].Get3DY() = pa.Get3dy();
-		anchor[i+2].Get3DZ() = pa.Get3dz();
-		anchor[i+2].IsCut() = 0;
-		anchor[i+2].transpose();
+                        anchor[(((i*nbDalles)+j)*5)+2].Get3DX() = pa.Get3dx() + (lgTrame * (double)(i + 1));
+                        anchor[(((i*nbDalles)+j)*5)+2].Get3DY() = pa.Get3dy();
+                        anchor[(((i*nbDalles)+j)*5)+2].Get3DZ() = pa.Get3dz() + (lgTrame * (double)(j + 1));
+                        anchor[(((i*nbDalles)+j)*5)+2].IsCut() = 0;
+                        anchor[(((i*nbDalles)+j)*5)+2].transpose();
+//        std::cout << " =>"<<   (((i*nbDalles)+j)*5)+2 << " X :" << anchor[(((i*nbDalles)+j)*5)+2].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)+2].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)+2].Get3DZ() << " " <<  std::endl;
 
-		anchor[i+3].Get3DX() = pa.Get3dx() + (lgTrame * (double)i)/ 4.0;
-		anchor[i+3].Get3DY() = pa.Get3dy();
-		anchor[i+3].Get3DZ() = pa.Get3dz() + lgPlan;
-		anchor[i+3].transpose();
-		anchor[i+3].IsCut() = 1;
+                        anchor[(((i*nbDalles)+j)*5)+3].Get3DX() = pa.Get3dx() + (lgTrame * (double)(i+1));
+                        anchor[(((i*nbDalles)+j)*5)+3].Get3DY() = pa.Get3dy();
+                        anchor[(((i*nbDalles)+j)*5)+3].Get3DZ() = pa.Get3dz() + (lgTrame * (double)j) ;
+                        anchor[(((i*nbDalles)+j)*5)+3].IsCut() = 0;
+                        anchor[(((i*nbDalles)+j)*5)+3].transpose();
+//        std::cout << " =>"<<   (((i*nbDalles)+j)*5)+3 << " X :" << anchor[(((i*nbDalles)+j)*5)+3].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)+3].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)+3].Get3DZ() << " "<<  std::endl;
+
+                        anchor[(((i*nbDalles)+j)*5)+4].Get3DX() = pa.Get3dx() + (lgTrame * (double)i);
+                        anchor[(((i*nbDalles)+j)*5)+4].Get3DY() = pa.Get3dy();
+                        anchor[(((i*nbDalles)+j)*5)+4].Get3DZ() = pa.Get3dz() + (lgTrame * (double)j);
+                        anchor[(((i*nbDalles)+j)*5)+4].IsCut() = 1 ; // (j+1 == nbDalles && i+1 == nbDalles);
+                        anchor[(((i*nbDalles)+j)*5)+4].transpose();
+//        std::cout << " =>"<<   (((i*nbDalles)+j)*5)+4 << " X :" << anchor[(((i*nbDalles)+j)*5)+4].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)+4].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)+4].Get3DZ() << " "  << std::endl;
+                        }
 		}
 
 	// déplacer l'objet

@@ -483,6 +483,8 @@ lecture du fichier texte de configuration des éléments.
 		char buf_cfg[0x100];
 		int next_state = DEBUT;
 		int is_started = 0;
+                int lg_trame = 100;
+                int lg_plan = 1000;
 		PolyPoints *cur_polypoint = NULL;
 		Element *cur_elem = NULL;
 		Point3D *cur_point = NULL;
@@ -641,17 +643,40 @@ lecture du fichier texte de configuration des éléments.
 
 						cur_polypoint = cur_elem->SetPolyPoints ();
 
-						if (pstr)
+						while (pstr)
 						{
 							if (sscanf (pstr + 1, "%s %s", buf_option, buf_rep) == 2)
 							{
+std::cout << "scan options : " << *pstr << std::endl;
 								if (strncmp (buf_option, "COLOR", 5) == 0)
 								{
 
 									cur_polypoint->SetColor (buf_rep);
 
 								}
-							}
+								if (strncmp (buf_option, "LGPLAN", 6) == 0)
+								{
+
+									lg_plan = atoi(buf_rep);
+
+								}
+								if (strncmp (buf_option, "LGTRAME", 7) == 0)
+								{
+
+									lg_trame = atoi(buf_rep);
+
+								}
+
+                                                                pstr = strstr (pstr + 1, buf_rep);
+
+                                                                if (pstr) {
+                                                                        pstr += strlen(buf_rep);
+                                                                } else {
+                                                                        break;
+                                                                }
+							} else {
+                                                                break;
+                                                        }
 						}
 
 						next_state = POINT_PLAN_1;
@@ -721,7 +746,7 @@ lecture du fichier texte de configuration des éléments.
 						if (next_state == POINT_SPHERE_1)
 						{
 //							printf ("%d\n", __LINE__);
-						pt3dCent = pt3d;
+						        pt3dCent = pt3d;
 							next_state = POINT_SPHERE_2;
 						}
 						else if(next_state == POINT_PLAN_1)
@@ -749,8 +774,8 @@ lecture du fichier texte de configuration des éléments.
 							else if(next_state == POINT_PLAN_3)
 							{
 								pt3ddz = pt3d;
-								Plan p (pt3ddx, pt3ddy, pt3ddz);
-//cout << "cur_polypoint : " <<pt3ddx.Get3DX () << " " << pt3ddy.Get3DY () << " " <<  pt3ddz.Get3DZ () << endl;
+// std::cout << "cur_polypoint : " <<pt3ddx.Get3DX () << " " << pt3ddy.Get3DY () << " " <<  pt3ddz.Get3DZ () <<  " lg_plan :" << lg_plan << " lg_trame :" << lg_trame << std::endl;
+								Plan p (pt3ddx, pt3ddy, pt3ddz, lg_plan, lg_trame);
 								cur_polypoint = cur_elem->SetPolyPoints (&p);
 							}
 							next_state = ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN;
