@@ -9,6 +9,7 @@ To test it :
 - make clean
 - make
 - start your X server if needed
-Launch the prg with one of the config avilable<br>
-(Or with the new one you have created)<<br>
-- ./x3DDraft x3DDraft.cfg
+- Launch the prg with one of the config avilable (Or with the new one you have created)<br>
+```
+./x3DDraft x3DDraft.cfg
+```
