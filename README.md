@@ -4,7 +4,7 @@ With simple motion functions : translation, rotation focused on one object<br>
 or on the entire "universe" (that is described in config file).
 
 To test it :
-- instal gcc X11 SDK librairies and set your environement.
+- install gcc X11 SDK librairies and set your environement.
 - Clone this repo
 - make clean
 - make
