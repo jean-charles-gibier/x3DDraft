@@ -31,7 +31,7 @@ static GC myGC;
 
 class PolyPoints {
 
-        private :
+      private :
 
       public :
 /*--------------------------------------------------
@@ -162,6 +162,7 @@ contructeur par défaut
          {
 		 for (unsigned int cpt = 0; cpt < (nbPoints - 1); cpt ++) {
 			another[cpt] = anchor[cpt];
+// std::cout << "AddPoint => x = "<< another[cpt].Get3DX() << " y =" << another[cpt].Get3DY() << " z =" << another[cpt].Get3DZ() << " " << __LINE__ << std::endl;
 			}
        //     memcpy(another, anchor, sizeof(Point3D) * (nbPoints - 1));
          }
@@ -173,12 +174,13 @@ contructeur par défaut
 
          anchor = another;
          anchor[(nbPoints - 1)] = p;
- // std::cout << " =>" << __LINE__ << std::endl;
 
-		anchor[(nbPoints - 1)].transpose();
+//         std::cout << "  AddPoint anchor => x = " << anchor[(nbPoints - 1)].Get3DX() << " y =" << anchor[(nbPoints - 1)].Get3DY() << " z =" << anchor[(nbPoints - 1)].Get3DZ() << " " << __LINE__ << std::endl;
+         anchor[(nbPoints - 1)].transpose();
 
        	 CalculeCentre();
 
+        // std::cout << " => midx = "<< midx << " midy =" << midy << " midz =" << midz << " " << __LINE__ << std::endl;
          return anchor;
       }
 
@@ -318,7 +320,7 @@ contructeur par défaut
          {
             for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
             {
-  //std::cout << " =>" << __LINE__ << std::endl;
+//  std::cout << " =>" << __LINE__ << std::endl;
              anchor[cpt].transpose();
             }
          }
@@ -326,15 +328,21 @@ contructeur par défaut
 
 /*--------------------------------------------------
 bouger un polypt dans le sens du vecteur (point central, point N° np)
-sur un longueur speed.
+ur un longueur speed.
 -------------------------------------------------- */
-      void MoveP(const short int np ,double speed = .07)
+      void MoveP(const unsigned int np ,double speed = .07)
       {
-         Point3D n = anchor[np];
+         Point3D n = anchor[min(np, nbPoints -1)];
+         CalculeCentre();
          double dx = n.Get3DX() - midx,
             dz = n.Get3DZ() - midz,
             dy = n.Get3DY() - midy,
 			maxd = max(max(max( fabs(dx), fabs(dz)), fabs(dy)), (double)FLT_MIN)/speed;
+/*
+std::cout << " => dx : " << dx << " dy : "  << dy << " dz : " << dz
+<< " => pdx : " << n.Get3DX() << " pdy : "  << n.Get3DY() << " pdz : " << n.Get3DZ()
+<< " midx : " << midx << " midy : "  << midy << " midz : " << midz << " maxd : " << maxd <<__LINE__ << std::endl;
+*/
          Move(n, dx/maxd , dy/maxd , dz/maxd );
       }
 
@@ -378,37 +386,34 @@ bouger un polypt dans l 'un des 3 axes X Y Z
             {
                double tempz = anchor[cpt].Get3DZ() + mz;
                anchor[cpt].Get3DZ() = tempz;
-            }
             midz += mz;
-         }
+            }
 
-         if(my != 0.0)
-         {
-            toproced = 1;
-            for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
+            if(my != 0.0)
             {
+               toproced = 1;
+               for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
+               {
                double tempy = anchor[cpt].Get3DY() + my;
                anchor[cpt].Get3DY() = tempy;
-            }
+               }
             midy += my;
-         }
+            }
 
-         if(mx != 0.0)
-         {
-            toproced = 1;
-            for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
+            if(mx != 0.0)
             {
+               toproced = 1;
+               for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
+               {
                double tempx = anchor[cpt].Get3DX() + mx;
                anchor[cpt].Get3DX() = tempx;
-            }
+               }
             midx += mx;
-         }
+            }
 
-         if( toproced )
-         {
-            for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
+            if( toproced )
             {
-  //std::cout << " =>" << __LINE__ << std::endl;
+            for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
                anchor[cpt].transpose();
             }
          }
@@ -500,13 +505,13 @@ char bigbuf[8192] ={0};
             {
 XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX() - 4 , (int)anchor[index].GetPtFuiteY(), (int)anchor[index].GetPtFuiteX() + 4, (int)anchor[index].GetPtFuiteY() );
 XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() -4 , (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() + 4);
-//std::cout << " =>" << __LINE__ << std::endl;
 
 			if (anchor[index].IsCut() == 0 && index < (nbPoints - 1))
 			{
 				xsegs[offset_fin] = PointToXsegment( anchor[index], anchor[index+1]);
 if ( strlen(bigbuf) < 8000)
-sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", index, xsegs[offset_fin].x1, xsegs[offset_fin].y1, xsegs[offset_fin].x2, xsegs[offset_fin].y2);
+//sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", index, xsegs[offset_fin].x1, xsegs[offset_fin].y1, xsegs[offset_fin].x2, xsegs[offset_fin].y2);
+sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
 				offset_fin ++;
 			}
 			else if (offset_fin > offset_deb)
@@ -520,7 +525,8 @@ sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", inde
 			{
 				xsegs[offset_fin] = PointToXsegment( anchor[0], anchor[index]);
 if ( strlen(bigbuf) < 8000)
-sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", index, xsegs[offset_fin].x1, xsegs[offset_fin].y1, xsegs[offset_fin].x2, xsegs[offset_fin].y2);
+//sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", index, xsegs[offset_fin].x1, xsegs[offset_fin].y1, xsegs[offset_fin].x2, xsegs[offset_fin].y2);
+sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
 				offset_fin ++;
 			}
 
@@ -528,6 +534,7 @@ sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", inde
 			{
 			XDrawSegments (d, ptBuffer, gcView, &(xsegs[ offset_deb ]), offset_fin - offset_deb);
 			}
+// printf ( "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]\n", index, xsegs[0].x1, xsegs[0].y1, xsegs[0].x2, xsegs[0].y2);
          }
 
 if (startText == 0) {
@@ -688,7 +695,7 @@ class Cercle : public PolyPoints
 		anchor [cpt_seq].Get3DX() = (sin(rad) * lg_arc) + ((Point3D) pCentre).Get3DX();
 		anchor [cpt_seq].Get3DY() = (cos(rad) * lg_arc) + ((Point3D) pCentre).Get3DY();
 		anchor [cpt_seq].Get3DZ() = ((Point3D) pCentre).Get3DZ();
- //std::cout << " =>" << __LINE__ << std::endl;
+// std::cout << " =>" << __LINE__ << std::endl;
  		anchor[cpt_seq].transpose();
 		}
        	CalculeCentre();

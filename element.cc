@@ -113,9 +113,9 @@ Parcours (void)
     {
 
 //cout << endl << " <==> "<< navette->GetNo() << " : " << cpt_elem << " <==> " << ((green.pixel == navette->GetEPolyPoints()->GetColor ()) ? "GREEN" : "   ")<< endl;
-#ifdef NOTATALL
+//#ifdef NOTATALL
 	(navette -> GetEPolyPoints())->print();
-#endif // NOTATALL
+//#endif // NOTATALL
         cpt_elem ++;
         navette = navette->GetPrev ();
     }

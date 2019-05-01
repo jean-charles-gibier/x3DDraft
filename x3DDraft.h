@@ -33,8 +33,8 @@
 #define BORNE_SUP  LG_ARRAY_FLOAT
 #define BORNE_INF 0
 
-#define viewWidth 800
-#define viewHeight 600
+#define viewWidth 1500
+#define viewHeight 800
 
 #define DEBUT 		0x0001
 #define ELEMENT		0x0002

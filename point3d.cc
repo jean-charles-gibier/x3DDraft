@@ -23,7 +23,6 @@ Point3D::Point3D ( double _x_, double _y_, double _z_, GXScreen* ptGxscr)
 	PtFuiteY = ptGxscr->PtFuiteY;
 	PtFuiteX = ptGxscr->PtFuiteX;
 	medianne = ptGxscr->medianne;
-	// cout << "----> y " << y3d << " x :" << x3d << " z :" << z3d << endl;
         if (x3d > 0 || y3d > 0 || z3d > 0) {
 	        transpose ();
                 }

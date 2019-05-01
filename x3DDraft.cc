@@ -34,15 +34,15 @@ try {
                 configName = argv[1];
         std::cout << "DBG  " << configName << __LINE__ << std::endl;
         }
-        std::cout << "DBG Meta " << __FILE__ << " " << __LINE__ << std::endl;
+//        std::cout << "DBG Meta " << __FILE__ << " " << __LINE__ << std::endl;
 	meta = Meta::getInstance( configName );
-        std::cout << "DBG Meta " << __FILE__ << " " << __LINE__ << std::endl;
+//        std::cout << "DBG Meta " << __FILE__ << " " << __LINE__ << std::endl;
         }
  	catch (int err) {
                 std::cout << "erreur init programme :" << err << std::endl;
  		exit (-1);
  		}
-        std::cout << "DBG " << __FILE__ << " " << __LINE__ << std::endl;
+//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
 
  	/* Ouvrir la connexion avec le serveur local. */
  	meta->OpenDisplay("127.0.0.1:0.0");
@@ -53,6 +53,7 @@ try {
 // on initialise l'environnement X
  	meta->Xinitialize ();
 //cout << "DBG Meta ! " << __FILE__ << " " << __LINE__ << endl;
+//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
 
  	sigemptyset( &new_set );
  	sigaddset( &new_set, SIGINT );
@@ -77,6 +78,7 @@ try {
 
  	meta->InstallWorld ();
 
+//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
 // std::cout << __LINE__ << std::endl;
 
  	// boucle principale du programme
@@ -85,7 +87,9 @@ try {
        	for (;;)
  		{
 // std::cout << __LINE__ << std::endl;
+//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
 		meta->DisplayWorld ();
+//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
 // std::cout << __LINE__ << std::endl;
  		}
  	mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);

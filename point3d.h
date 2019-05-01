@@ -7,7 +7,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <iostream>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -31,7 +30,6 @@ class Point3D {
 	double _y_ = .0,
 	double _z_ = .0,
 	class GXScreen *ptGscr = (GXScreen *)NULL);
-//	class Meta *ptMeta = (Meta *)NULL);
 
 	/*-------------------------------------------------------*/
 	/* donne la dimension x en 2D (transformée) */
@@ -60,14 +58,13 @@ class Point3D {
 	/*-------------------------------------------------------*/
 
 	int SetGXScreen (GXScreen * ptGxscr = NULL);
-//	int SetMeta(Meta* ptMeta = NULL);
 
 	/*-------------------------------------------------------*/
 	/* transorme 2 points en segment Xlib */
 	friend XSegment PointToXsegment(Point3D point1, Point3D point2)
 	{
 		XSegment xseg;
-		if ((point1.x2d == INVIS_POINT) || (point2.y2d == INVIS_POINT) || (point1.z3d < 1.0) || (point2.z3d < 1.0))
+		if ((point1.x2d == INVIS_POINT) || (point2.y2d == INVIS_POINT)  || (point1.z3d < 1.0) || (point2.z3d < 1.0))
 		{
 			xseg.x1 = -1;
 			xseg.y1 = -1;
@@ -75,6 +72,7 @@ class Point3D {
 			xseg.y2 = -1;
 		}
 		else // l'élément est "derriere" la camera -> on supprime le segment
+
 		{
 			xseg.x1 = point1.x2d;
 			xseg.y1 = viewHeight - point1.y2d;
@@ -97,56 +95,45 @@ class Point3D {
 	/* lorsque les coordonées 3D sont définies les coordonées 2D sont déterminées  par 'transpose' */
 	void transpose(void)
 	{
-	// restore y way
-	//y3d = viewHeight - y3d;
 
-		if(ROUND(z3d) >= BORNE_INF && ROUND(z3d) < BORNE_SUP)
-		{
-			double fixmaxx = (PtFuiteX - x3d);
-			double fixmaxy = (PtFuiteY - y3d);
-			//double max_lg = max(PtFuiteX, PtFuiteY); // taille de référence
+		double fixmaxx = (PtFuiteX - x3d);
+		double fixmaxy = (PtFuiteY - y3d);
 
-			// annuler les 0 pour eviter les "exceptions float"
-			double dx =  (fixmaxx == .0) ? FLT_QZERO : (double)fixmaxx; // distance au pt fuite en x
-			double dy =  (fixmaxy == .0) ? FLT_QZERO : (double)fixmaxy; // distance au pt fuite en y
+		// annuler les 0 pour eviter les "exceptions float"
+		double dx =  (fixmaxx == .0) ? FLT_QZERO : (double)fixmaxx; // distance au pt fuite en x
+		double dy =  (fixmaxy == .0) ? FLT_QZERO : (double)fixmaxy; // distance au pt fuite en y
 
-//			double hxy = sqrt(pow(fixmaxy, 2.0) + pow(fixmaxx, 2.0));
-//			double hxyz =  sqrt(pow(hxy, 2.0) + pow(z3d, 2.0));
+		double delta_y = dy / dx ; // coeff directeur
+		double delta_x = dx / dy ; // coeff directeur inv
 
-// std::cout << "T x3d :" << x3d << " y3d  :" << y3d << " z3d :" << z3d << std::endl;
-			double delta_y = dy / dx ; // coeff directeur
-			double delta_x = dx / dy ; // coeff directeur inv
+		// calcul du coefficient de réduction de la longueur du segment projetté
+		//égal au rapport lg segment / lg diagonale de l'écran.
 
-			// calcul du coefficient de réduction de la longueur du segment projetté
-			//égal au rapport lg segment / lg diagonale de l'écran.
+		double cx = fabs( (dx * sqrt(1.0 + pow(delta_y, 2.0))) / (M_SQRT2 * medianne));
+		double cy = fabs( (dy * sqrt(1.0 + pow(delta_x, 2.0))) / (M_SQRT2 * medianne));
 
-			double cx = fabs( (dx * sqrt(1.0 + pow(delta_y, 2.0)))/ (M_SQRT2 * medianne));
-			double cy = fabs( (dy * sqrt(1.0 + pow(delta_x, 2.0)))/ (M_SQRT2 * medianne));
+		// orientation trigonométrique de la ligne de fuite
+		double TheBorne = atan2(dy, dx);
 
-			// orientation trigonométrique de la ligne de fuite
-			double TheBorne = atan2(dy, dx);
-/*
-			x2d = ROUND(x3d + (aEffetFuite[ROUND((double)z3d)] * cos(TheBorne) * cx ));
-			y2d = ROUND(y3d + (aEffetFuite[ROUND((double)z3d)] * sin(TheBorne) * cy ));
-                        x2d =   ROUND(x3d + (pow(log(0.5 * (z3d+1.0)),3.0)  * cos(TheBorne) * cx)) ;
-                        y2d =   ROUND(y3d + (pow(log(0.5 * (z3d+1.0)),3.0)  * sin(TheBorne) * cy));
-*/
+                if (z3d > 0.0) {
+                        double zDiff = pow(log(z3d+10),3.0);
+                        x2d =   ROUND(x3d + (zDiff * cos(TheBorne) * cx));
+                        y2d =   ROUND(y3d + (zDiff * sin(TheBorne) * cy));
+                        }
+//                        else if (z3d < 0.0) {
+//                        x2d =   min(max(ROUND(x3d + (z3d * cos(TheBorne) * cx)),0), viewWidth );
+//                        y2d =   min(max(ROUND(y3d + (z3d * sin(TheBorne) * cy)),0), viewHeight );
+//                        }
+// std::cout << "--- x2d :" << x2d << " y2d  :" << y2d <<  " z3d :"<<  z3d <<std::endl;
 
-                        x2d =   ROUND(x3d + (pow(log(0.5 * z3d),3)  * cos(TheBorne) * cx)) ;
-                        y2d =   ROUND(y3d + (pow(log(0.5 * z3d),3)  * sin(TheBorne) * cy));
-
-/*			x2d = ROUND(x3d + (aEffetFuite[ROUND((double)hxyz)] * cos(TheBorne) * cx ));
-			y2d = ROUND(y3d + (aEffetFuite[ROUND((double)hxyz)] * sin(TheBorne) * cy ));
-*/
-			if ((PtFuiteX > x3d && PtFuiteX < x2d) ||
-				(PtFuiteX < x3d && PtFuiteX > x2d)) {
-				x2d = PtFuiteX;
-                                }
-			if ((PtFuiteY > y3d && PtFuiteY < y2d) ||
-				(PtFuiteY < y3d && PtFuiteY > y2d)) {
-				y2d = PtFuiteY;
-				}
-		}
+		if ((PtFuiteX > x3d && PtFuiteX < x2d) ||
+			(PtFuiteX < x3d && PtFuiteX > x2d)) {
+			x2d = PtFuiteX;
+                        }
+		if ((PtFuiteY > y3d && PtFuiteY < y2d) ||
+			(PtFuiteY < y3d && PtFuiteY > y2d)) {
+			y2d = PtFuiteY;
+                        }
 //		cout << *this << std::endl;
 	};
 
