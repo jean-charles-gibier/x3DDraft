@@ -27,6 +27,7 @@ public:
 	sigset_t new_set;
 	int s;
 	XColor red, green, blue;
+        Colormap color_map;
 	Element * last; //dernier element enregistré
 	unsigned long black, white;
 	// Meta constructor
@@ -64,6 +65,10 @@ Destructeur de GXScreen
 		if (single) {
 			delete (single);
 		}
+
+                if(color_map){
+                        XFreeColormap(d, color_map);
+                }
 	}
 
 	// Affichage
@@ -328,7 +333,9 @@ Afficheur de l'objet Meta
 	{
 		//Window win;
 		XSizeHints size_hints;
+                XVisualInfo vinfo;
 		XColor xcold;
+                XWindowAttributes xwa;
 
 		d = getDisplay();
 		black = BlackPixel (d, DefaultScreen (d));
@@ -386,7 +393,45 @@ Affectation directe des size hints
 		size_hints.min_width = size_hints.max_width = viewWidth;
 		size_hints.min_height = size_hints.max_height = viewHeight;
 		XSetNormalHints (d, win, &size_hints);
+/*
+ *
+ *
+ */
+                int screen = XDefaultScreen(d);
+            //    XGetWindowAttributes(d, win, &xwa);
+            //    vinfo.depth = xwa.depth;
+            //    vinfo.visual = xwa.visual;
 
+  if (XMatchVisualInfo(d, screen, 24, TrueColor, &vinfo)) {
+    printf(" found 24bit TrueColor\n");
+  } else
+    if (XMatchVisualInfo(d, screen, 16, TrueColor, &vinfo)) {
+      printf(" found 16bit TrueColor\n");
+    } else
+      if (XMatchVisualInfo(d, screen, 15, TrueColor, &vinfo)) {
+	printf(" found 15bit TrueColor\n");
+      } else
+  	if (XMatchVisualInfo(d, screen, 8, PseudoColor, &vinfo)) {
+	  printf(" found 8bit PseudoColor\n");
+  	} else
+	  if (XMatchVisualInfo(d, screen, 8, GrayScale, &vinfo)) {
+	    printf(" found 8bit GrayScale\n");
+	  } else
+	    if (XMatchVisualInfo(d, screen, 8, StaticGray, &vinfo)) {
+	      printf(" found 8bit StaticGray\n");
+	    } else
+	      if (XMatchVisualInfo(d, screen, 1, StaticGray, &vinfo)) {
+  		printf(" found 1bit StaticGray\n");
+	      } else {
+  		printf("requires 16 bit display\n");
+  		exit (-1);
+	      }
+XMapRaised(d, DefaultRootWindow(d));
+         //       color_map = XCreateColormap(d, DefaultRootWindow(d), vinfo.visual, AllocAll);
+/*
+ *  XStoreColors(dis,cmap,tmp,255);
+ *      XSetWindowColormap(dis,win,cmap);
+ */
 		/*
 Mapping de la fenêtre principale
 */

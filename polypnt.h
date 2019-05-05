@@ -242,6 +242,11 @@ contructeur par défaut
 		{
 			SetColor (0x00FFFF00L);
 		}
+		else if (strncmp (buf_rep, "0x", 2) == 0 and strlen(buf_rep) >= 10)
+		{
+         std::cout << " X color =>  "<< buf_rep << " gets :" << strtoul(buf_rep, NULL, 0) << std::endl;
+			SetColor (strtol(buf_rep, NULL, 0));
+		}
 	  }
 /*-------------------------------------------------- */
       const unsigned long GetColor(void)
