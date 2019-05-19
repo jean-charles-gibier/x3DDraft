@@ -1,5 +1,4 @@
 /******************************************************************************
-
 Essai de modelisation 3D sous fenêtre X inspiré (pour la comréhension de
 l'affichage) de Xlander.
 	La 3D Empirique mais pratique :-)
@@ -10,7 +9,6 @@ l'affichage) de Xlander.
 #include <X11/Xos.h>
 #include <X11/Xresource.h>
 #include <X11/keysym.h>
-// #include <iostream>
 #include <signal.h>
 /* Définitions et prototypages */
 #include "meta.h"
@@ -32,7 +30,7 @@ try {
 
         if (argc > 1) {
                 configName = argv[1];
-        std::cout << "DBG  " << configName << __LINE__ << std::endl;
+        std::cout << "DBG  " << configName << " " <<__LINE__ << std::endl;
         }
 //        std::cout << "DBG Meta " << __FILE__ << " " << __LINE__ << std::endl;
 	meta = Meta::getInstance( configName );
@@ -74,8 +72,6 @@ try {
 
  	mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);
 
-// std::cout << __LINE__ << std::endl;
-
  	meta->InstallWorld ();
 
 //        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
@@ -86,7 +82,6 @@ try {
  	{
        	for (;;)
  		{
-// std::cout << __LINE__ << std::endl;
 //        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
 		meta->DisplayWorld ();
 //        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;

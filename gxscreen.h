@@ -2,9 +2,9 @@
 #ifndef __GSCREEN_INCLUDE__
 #define __GSCREEN_INCLUDE__
 
-#include "x3DDraft.h"
 #include <X11/Xlib.h>
 #include <math.h>
+#include "x3DDraft.h"
 
 class GXScreen {
 

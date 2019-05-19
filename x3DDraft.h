@@ -27,7 +27,13 @@
 #define 	NONE			10
 #define		AVANCE			13
 #define		RECULE			-13
-#define 	ESPACE			15
+#define 	ELT_ABSCISSE_TRIGO		14
+#define 	ELT_ABSCISSE_HORA		-14
+#define 	ELT_ORDONEE_TRIGO		15
+#define 	ELT_ORDONEE_HORA		-15
+#define 	ELT_COTE_TRIGO		16
+#define 	ELT_COTE_HORA		-16
+#define 	ESPACE			150
 
 #define LG_ARRAY_FLOAT 32768
 #define BORNE_SUP  LG_ARRAY_FLOAT
@@ -49,9 +55,6 @@
 #define POINT_PLAN_3	0x0400
 #define PLAN		0x0800
 #define FIN		0x0000
-// A supprimer
-//#define FLT_MAX  (numeric_limits<double>::max( )) //3.40282347e+38F         /* IEEE float */
-//#define FLT_MIN  (numeric_limits<double>::min( )) //-3.40282347e+37F         /* IEEE float */
 #define FLT_MAX  1.79769e+308F         /* IEEE float */
 #define FLT_MIN  -3.40282347e+37F         /* IEEE float */
 #define FLT_QZERO  1.e-37F         /* Quite zero*/

@@ -23,22 +23,27 @@ class Element
       int  GetNo (void);
       char *  GetName (void);
 // methodes d'affectation
-      PolyPoints * SetPolyPoints (const PolyPoints * pp = NULL,
+// TODO rendre multiple et itérable
+      PolyPoints * AddPolyPoints (const PolyPoints * pp = NULL,
 					const unsigned long col = 0L,
 					const char * name = NULL);
       Element * GetPrev (void);
 // methodes d'acquisition
       PolyPoints * GetEPolyPoints (void);
+      const Point3D GetBarycenter (void);
+      void  CalculeCentre (void);
 /*-------------------------------------------------- */
       Element() {
-		PtInfo = (PolyPoints *)NULL;
+		PPList = (PolyPoints *)NULL;
 		Suivant = (Element *) NULL;
 		Precedant = (Element *) NULL;
 		focus = 0;
+                nbPolyPoints = 0;
 		}
 /*-------------------------------------------------- */
       ~Element() {
-	  if (PtInfo) delete PtInfo;
+// TODO
+	  if (PPList) delete [] PPList;
 	  }
 /*--------------------------------------------------
 Le focus est interprété comme un booléen pour le moment
@@ -56,26 +61,36 @@ de déplacement/ transfert  issues du clavier.
          return focus;
       }
 
+/*-------------------------------------------------- */
+      const unsigned short GetNbPolyPoints(void)
+      {
+         return nbPolyPoints;
+      }
 /*--------------------------------------------------
 	sortie des infos sur stdout
 -------------------------------------------------- */
-      friend std::ostream & operator << ( std::ostream &s, const Element pp)
+      friend std::ostream & operator << ( std::ostream &s, const Element &pp)
       {
 		s << " Nom :" << pp.Name << " numéro d'index :" << pp.no << std::endl;
         return s;
       }
 
       protected :
-	// pointeur de type polypoint
-        PolyPoints * PtInfo;
+	// la liste de polypoints de l'element
+        PolyPoints *PPList ;
 	// flag désignant le porteur du focus
-		unsigned short focus;
+	unsigned short focus;
 
       private :
-        Element  *Suivant, *Precedant;
+        Element *Suivant, *Precedant;
 	// membres habituels d'une liste chainée
-		char Name [0xFF]; // identifaint chaine de car.
-		int no, // numéro d'index
-		bDisplay; // Booléen : autoriser l'affichage ou non
+	char Name [0xFF]; // identifaint chaine de car.
+	int no, // numéro d'index
+        nbPolyPoints, // nombre de polypnt
+	bDisplay; // Booléen : autoriser l'affichage ou non
+	// coordonées du milieu (ou du pt d'équilibre) du polypt
+        double midx, midy, midz;
+        // destiné à remplacer mid_ ...
+        PolyPoints midPP;
 };
 #endif //__ELEMENT_INCLUDE__

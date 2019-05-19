@@ -2,8 +2,6 @@
 #define __POINT3D_INCLUDE__
 
 #include "x3DDraft.h"
-// #include "gxscreen.h"
-//#include "meta.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +29,10 @@ class Point3D {
 	double _z_ = .0,
 	class GXScreen *ptGscr = (GXScreen *)NULL);
 
+//        ~Point3D (void) {
+//        std::cout << "destroy pt3D" << std::endl;
+//        };
+//	Point3D ();
 	/*-------------------------------------------------------*/
 	/* donne la dimension x en 2D (transformée) */
 	int Get2DX(void) { return x2d; };
@@ -85,7 +87,7 @@ class Point3D {
 /*--------------------------------------------------
 	sortie des infos sur stdout
 -------------------------------------------------- */
-      friend std::ostream & operator << ( std::ostream &s, const Point3D pt)
+      friend std::ostream & operator << ( std::ostream &s, const Point3D &pt)
       {
 		s << " x3:" << pt.x3d << " y3 :" << pt.y3d << " z3 :" << pt.z3d << " x2 :" << pt.x2d << " y2 :" << pt.y2d << std::endl;
         return s;

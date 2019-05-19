@@ -155,58 +155,98 @@ GetNo (void)
 }
 
 /******************************************************************************
-L' élement a afficher est un polypoint, on fait une copie de celui passé en paramètre
+ A jout d'un un polypoint dans la liste de l'element,
+ on fait une copie du PP passé en paramètre
 avec éventuellement une nouvelle couleur et un nouveau nom.
    ******************************************************************************/
-
+// TODO set multiple et itérable (ajouter compteur de polypoint)
+// se calquer sur AddPoint
 PolyPoints *Element::
-SetPolyPoints (const PolyPoints * pp/* = NULL*/,
+AddPolyPoints (const PolyPoints * pp/* = NULL*/,
 	       const unsigned long col/* = 0L*/,
-	       const char *name/* = NULL*/
-)
+	       const char *name/* = NULL*/)
 {
+  // variables de recalcul du centre
+  double l_midx = .0, l_midy = .0, l_midz = .0;
+  // pour tous les pp de la pplist do ...
+  PolyPoints * oldPPList = PPList;
+  PPList = (PolyPoints *)new PolyPoints [nbPolyPoints +1];
+  assert (PPList);
 
-  if (PtInfo)
-    {
-	// la place était occupée on la libère
-      PtInfo->FreePolyPnt ();
-//cout << "DBG" << __FILE__ << " " << __LINE__ << endl;
-    }
-  else
-    {
-	// allocation du nouveau pp
-      PtInfo = new PolyPoints;
-      assert (PtInfo);
-    }
+  // std::cout << "nb :" << nbPolyPoints + 1 << "."<< std::endl;
 
-  if (pp)
-    {				// il y a un pp à copier
-
-      PtInfo->Copy (*pp);
+  for (int cpt = 0; cpt < nbPolyPoints; cpt++) {
+    (PPList + cpt)->Copy (*(oldPPList + cpt) );
+    (oldPPList +cpt)->FreePolyPnt ();
+    Point3D pmid = (oldPPList +cpt)->GetCentre();
+    l_midx += pmid.Get3DX();
+    l_midy += pmid.Get3DY();
+    l_midz += pmid.Get3DZ();
     }
 
-  if (name)
-    {				// il y a un nom à copier
+  if( nbPolyPoints )
+    delete [] oldPPList;
 
-      strncpy (Name, name, sizeof (Name));
+  if (pp) {				// il y a un pp à copier
+    (PPList + nbPolyPoints)->Copy (*pp);
+    Point3D pmid = (PPList + nbPolyPoints)->GetCentre();
+    l_midx += pmid.Get3DX();
+    l_midy += pmid.Get3DY();
+    l_midz += pmid.Get3DZ();
+    }
+  (PPList + nbPolyPoints)->SetPtEltParent(this);
+  (PPList + nbPolyPoints)->setOrder(nbPolyPoints);
+
+  if (col) {				//il y a une couleur à copier
+    std::cout << "set color "<< col << " " << std::endl;
+    (PPList + nbPolyPoints)->SetColor (col);
     }
 
-  if (col)
-    {				//il y a une couleur à copier
+  // std::cout << "DBG " << __FILE__ << " " << __LINE__ <<  " "  << *(PPList + nbPolyPoints) << std::endl;
+  nbPolyPoints ++;
+  midx = l_midx / (double)nbPolyPoints;
+  midy = l_midy / (double)nbPolyPoints;
+  midz = l_midz / (double)nbPolyPoints;
+  std::cout << "DBG " << __FILE__ << " " << __LINE__ <<  " "  << midx <<  " "  << midy <<  " "  << midz << std::endl;
 
-      PtInfo->SetColor (col);
-    }
-  else
-    {				// pas de couleur :on prend celle du pp
-
-      if (!PtInfo->GetColor ())	// ou blanc
-		{
-		//cout << "(no color detected)" << endl;
-		PtInfo->SetColor (0xFFFFFFFFL);
-		}
+  if (name) {				// il y a un nom à copier
+    strncpy (Name, name, sizeof (Name));
     }
 
-  return PtInfo;
+  return (nbPolyPoints ? (PPList + (nbPolyPoints-1)) : NULL);
+}
+
+/******************************************************************************
+CalculeCentre => recalcule le barycentre
+   ******************************************************************************/
+void Element::
+CalculeCentre (void)
+{
+  // variables de recalcul du centre
+  double l_midx = .0, l_midy = .0, l_midz = .0;
+
+  // std::cout << "nb :" << nbPolyPoints + 1 << "."<< std::endl;
+  for (int cpt = 0; cpt < nbPolyPoints; cpt++) {
+    Point3D pmid = (PPList +cpt)->GetCentre();
+    l_midx += pmid.Get3DX();
+    l_midy += pmid.Get3DY();
+    l_midz += pmid.Get3DZ();
+    }
+
+  midx = l_midx / (double)nbPolyPoints;
+  midy = l_midy / (double)nbPolyPoints;
+  midz = l_midz / (double)nbPolyPoints;
+//  std::cout << "DBG " << __FILE__ << " " << __LINE__ <<  " "  << midx <<  " "  << midy <<  " "  << midz << std::endl;
+
+}
+
+/******************************************************************************
+retourne un pp correspondant au barycentre de l'element
+   ******************************************************************************/
+const Point3D Element::
+GetBarycenter (void)
+{
+  return Point3D(midx, midy, midz);
 }
 
 /******************************************************************************
@@ -215,7 +255,7 @@ retourne les infos du pp
 PolyPoints *Element::
 GetEPolyPoints (void)
 {
-  return PtInfo;
+  return PPList;
 }
 
 /******************************************************************************

@@ -3,12 +3,12 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 #include <X11/Xlib.h>
-#include "ctype.h"
 #include "x3DDraft.h"
 #include "element.h"
-#include "string.h"
 #include "gxscreen.h"
 
 /******************************************************************************
@@ -41,7 +41,7 @@ public:
 	// initialiser la progression des parallèles en Z
 	void initFuite(void)
 	{
-/* récupere les valeurs ecran */
+        /* récupere les valeurs ecran */
 		PtFuiteY = GXScreen::PtFuiteY;
 		PtFuiteX = GXScreen::PtFuiteX;
 		medianne =  GXScreen::medianne;
@@ -155,22 +155,33 @@ boucle principale d'affichage
 		static int flag = 0;
 		d = getDisplay();
 
+                const Point3D centre_world = ((double) (viewWidth / 2), (double) (viewHeight / 2), (double) 2.0);
+                // const Point3D pt_ref = centre_world;
+
 		Element *navette = last;
 		// tant que l'élément existe
 		if (navette)
 		{
+                        const Point3D centre_element = navette->GetBarycenter();
+                        const Point3D pt_ref = centre_element;
+//				std::cout << "pt_ref :  (" << centre_element << ")  " << std::endl;
+
 			do
 			{
 				// prendre le polypoint associé à l'élément
 				PolyPoints *poly_point = navette->GetEPolyPoints ();
 				assert (poly_point);
+                                // on a plusieurs polypoints pour cet element
+                                unsigned int nbPolyPoints = navette->GetNbPolyPoints();
 
-				// l'element à le focus -> c'est celui sur lequel on agit
-				// c'est le 1er element de la liste x3DDraft.cfg
-				poly_point->action (ActionKey, navette->GetFocus ());
+                                for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++) {
 
-				// afficher l'element
-				poly_point->DisplayPolyPoints (d, gcView, buffer);
+				        // l'element à le focus -> c'est celui sur lequel on agit
+				        (poly_point + cptp)->action (ActionKey, navette->GetFocus(), pt_ref);
+				        // afficher l'element
+				        (poly_point + cptp)->DisplayPolyPoints (d, gcView, buffer);
+                                        }
+
 				// on prend l'élément précédent
 				navette = navette->GetPrev ();
 			}
@@ -224,6 +235,20 @@ Traite les commandes reçues du clavier.
 				ActionKey = AVANCE;
 				else if (toupper (*ch) == 'R')
 				ActionKey = RECULE;
+
+				else if (toupper (*ch) == 'A')
+				ActionKey = ELT_ABSCISSE_TRIGO;
+				else if (toupper (*ch) == 'Z')
+				ActionKey = ELT_ABSCISSE_HORA;
+				else if (toupper (*ch) == 'E')
+				ActionKey = ELT_ORDONEE_TRIGO;
+				else if (toupper (*ch) == 'R')
+				ActionKey = ELT_ORDONEE_HORA;
+				else if (toupper (*ch) == 'T')
+				ActionKey = ELT_COTE_TRIGO;
+				else if (toupper (*ch) == 'Y')
+				ActionKey = ELT_COTE_HORA;
+
 				else if (*ch == ' ')
 				{ActionKey = ESPACE;}
 				else if (*ch == '5')
@@ -492,9 +517,11 @@ ajoute un élément de type polypoint dans GXScreen
 
 		if (elem)
 		{
-			if (pp)
-			// copie du polypoint avant insertion
-			elem->SetPolyPoints (pp);
+			if (pp) {
+        			// copie du polypoint avant insertion
+	        		elem->AddPolyPoints (pp);
+                                pp->SetPtEltParent(elem);
+                        }
 
 			// s'il n'a pas de numéro on lui affecte celui de son arrivée
 			last = elem->InsertAfter (last, no ? no : nbElem);
@@ -550,6 +577,7 @@ lecture du fichier texte de configuration des éléments.
                                 }
                                 else if (next_state & (ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN))
 				{
+//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 					next_state = (strncmp (buf_cfg, "ELEMENT", 7) == 0) ? ELEMENT :
 					(strncmp (buf_cfg, "POLYPOINT", 9) == 0) ? POLYPOINT :
 					(strncmp (buf_cfg, "POINT", 5) == 0) ? POINT :
@@ -559,6 +587,7 @@ lecture du fichier texte de configuration des éléments.
 				}
 				else if (next_state & (POINT | JOIN))
 				{
+//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 					next_state = (strncmp (buf_cfg, "POINT", 5) == 0) ? POINT :
 					(strncmp (buf_cfg, "JOIN", 4) == 0) ? JOIN : FIN;
 				}
@@ -566,6 +595,7 @@ lecture du fichier texte de configuration des éléments.
 				else if (next_state & (POLYPOINT | SPHERE | PLAN))	// a ajouter : CUBE, PYRAMIDE, TUBE ETC ...
 
 				{
+//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 					next_state = (strncmp (buf_cfg, "POLYPOINT", 9) == 0) ? POLYPOINT :
 					(strncmp (buf_cfg, "PLAN", 4) == 0) ? PLAN :
 					(strncmp (buf_cfg, "SPHERE", 6) == 0) ? SPHERE : FIN;
@@ -576,6 +606,7 @@ lecture du fichier texte de configuration des éléments.
 				        	break;
 				}
 
+//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 				switch (next_state)
 				{
 
@@ -608,7 +639,7 @@ lecture du fichier texte de configuration des éléments.
 						char buf_option[0x20], buf_rep[0x20];
 						char *pstr = strchr (buf_cfg + 9, ':');
 
-						cur_polypoint = cur_elem->SetPolyPoints ();
+						cur_polypoint = cur_elem->AddPolyPoints ();
 
 						if (pstr)
 						{
@@ -654,13 +685,13 @@ lecture du fichier texte de configuration des éléments.
 					break;
 
 				case SPHERE:
-					//printf ("SPHERE\n");
+					/**/printf ("SPHERE !\n");
 					if (strncmp (buf_cfg, "SPHERE", 6) == 0)
 					{
 						char buf_option[0x20], buf_rep[0x20];
 						char *pstr = strchr (buf_cfg + 6, ':');
 
-						cur_polypoint = cur_elem->SetPolyPoints ();
+						cur_polypoint = cur_elem->AddPolyPoints ();
 
 						if (pstr)
 						{
@@ -676,6 +707,7 @@ lecture du fichier texte de configuration des éléments.
 						}
 
 						next_state = POINT_SPHERE_1;
+//							printf ("---> %d  next_state POINT_SPHERE_1 :  %x \n", __LINE__, next_state);
 					}
 					break;
 
@@ -686,7 +718,7 @@ lecture du fichier texte de configuration des éléments.
 						char buf_option[0x20], buf_rep[0x20];
 						char *pstr = strchr (buf_cfg + 4, ':');
 
-						cur_polypoint = cur_elem->SetPolyPoints ();
+						cur_polypoint = cur_elem->AddPolyPoints ();
 
 						while (pstr)
 						{
@@ -734,7 +766,8 @@ std::cout << "scan options : " << *pstr << std::endl;
 				case POINT_PLAN_1:
 				case POINT_PLAN_2:
 				case POINT_PLAN_3:
-					//printf ("%s\n", buf_cfg);
+//							printf ("---> %d  next_state POINT_SPHERE_1 :  %x \n", __LINE__, next_state);
+//					printf ("-> sphere 1 / 2 %s\n", buf_cfg);
 					if (strncmp (buf_cfg, "POINT", 5) == 0)
 					{
 //						printf ("%d\n", __LINE__);
@@ -751,7 +784,10 @@ std::cout << "scan options : " << *pstr << std::endl;
 							&(pt3d.Get3DX ()),
 							&(pt3d.Get3DY ()),
 							&(pt3d.Get3DZ ()), buf_cfg);
-//cout << "So : " <<pt3d.Get3DX () << " " << pt3d.Get3DY () << " " <<  pt3d.Get3DZ () << endl;
+// std::cout << "So : " <<pt3d.Get3DX () << " " << pt3d.Get3DY () << " " <<  pt3d.Get3DZ () << std::endl;
+// std::cout << "----------------------------- "  << std::endl;
+// std::cout << " cur pp >> " << *cur_polypoint << std::endl;
+// std::cout << "----------------------------- "  << std::endl;
 //cout << "So2 : " << (pstr + 1) << endl;
 
 							if (nbi >= 3)
@@ -779,28 +815,38 @@ std::cout << "scan options : " << *pstr << std::endl;
 									next_state != POINT_PLAN_1 && next_state != POINT_PLAN_2 &&
 									next_state != POINT_PLAN_3)
 								{
-//									printf ("%d\n", __LINE__);
+// std::cout << "----------------------------- "  << std::endl;
+// std::cout << "pp before added : " << cur_polypoint << std::endl;
+// std::cout << "----------------------------- "  << std::endl;
 									cur_point = cur_polypoint->AddPoint (pt3d);
 									assert (cur_point);
+// std::cout << "----------------------------- "  << std::endl;
+// std::cout << "pp afte added : " << *cur_polypoint << std::endl;
+// std::cout << "----------------------------- "  << std::endl;
 								}
+                                                        next_state = next_state | POLYPOINT;
+//							printf ("next state ?  %d\n", next_state);
+//							printf ("---> %d  next_state POINT_SPHERE_1 :  %x \n", __LINE__, next_state);
 							}
 						}
 
 //							printf ("%d\n %0x\n", __LINE__, next_state);
 
-						if (next_state == POINT_SPHERE_1)
+						if (next_state & POINT_SPHERE_1)
 						{
-//							printf ("%d\n", __LINE__);
+//							printf ("---> %d centre :  %x \n", __LINE__, next_state);
+//							printf ("centre %d\n", __LINE__);
 						        pt3dCent = pt3d;
 							next_state = POINT_SPHERE_2;
+//              					printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 						}
-						else if(next_state == POINT_PLAN_1)
+						else if(next_state & POINT_PLAN_1)
 						{
 //							printf ("%d\n", __LINE__);
 							pt3ddx = pt3d;
 							next_state = POINT_PLAN_2;
 						}
-						else if(next_state == POINT_PLAN_2)
+						else if(next_state & POINT_PLAN_2)
 						{
 //							printf ("%d\n", __LINE__);
 							pt3ddy = pt3d;
@@ -808,23 +854,24 @@ std::cout << "scan options : " << *pstr << std::endl;
 						}
 						else
 						{
-//							printf ("%d\n", __LINE__);
-							if (next_state == POINT_SPHERE_2)
+//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+							if (next_state & POINT_SPHERE_2)
 							{
-//								printf ("%d\n", __LINE__);
+//								printf ("rayon %d\n", __LINE__);
 								pt3dCirc = pt3d;
 								Sphere c (pt3dCent, pt3dCirc, 20);
-								cur_polypoint = cur_elem->SetPolyPoints (&c);
+								cur_polypoint = cur_elem->AddPolyPoints (&c);
 							}
-							else if(next_state == POINT_PLAN_3)
+							else if(next_state & POINT_PLAN_3)
 							{
 								pt3ddz = pt3d;
 // std::cout << "cur_polypoint : " <<pt3ddx.Get3DX () << " " << pt3ddy.Get3DY () << " " <<  pt3ddz.Get3DZ () <<  " lg_plan :" << lg_plan << " lg_trame :" << lg_trame << std::endl;
 								Plan p (pt3ddx, pt3ddy, pt3ddz, lg_plan, lg_trame);
-								cur_polypoint = cur_elem->SetPolyPoints (&p);
+								cur_polypoint = cur_elem->AddPolyPoints (&p);
 							}
 							next_state = ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN;
-						}
+//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+                                                }
 //							printf ("%d\n %0x\n", __LINE__, next_state);
 //cout << "So2 : " <<pt3d.Get3DX () << " " << pt3d.Get3DY () << " " <<  pt3d.Get3DZ () << endl;
 					}
@@ -833,6 +880,7 @@ std::cout << "scan options : " << *pstr << std::endl;
 //						printf ("%d\n", __LINE__);
 						next_state = FIN;
 					}
+//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 					break;
 
 				case DEBUT:
@@ -850,6 +898,7 @@ std::cout << "scan options : " << *pstr << std::endl;
 				case FIN:
 					break;
 
+//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 				}
 //							printf ("%d\n", __LINE__);
 			}

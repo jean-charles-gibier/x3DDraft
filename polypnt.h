@@ -7,9 +7,7 @@
 #include <math.h>
 #include <float.h>
 #include <assert.h>
-// #include <cfloat>
 #include <X11/Xlib.h>
-//#include <istd::ostream.h>
 /***************************************************************
 La classe polypoint definit un ensemble de points de la classe Point3D.
 Ces points sont réunis pour former une figure 3D. Leur union est représentée par
@@ -28,18 +26,24 @@ static Window windowText ;
 static XFontStruct* myFont = NULL;
 static unsigned startText = 0;
 static GC myGC;
+class Element;
 
 class PolyPoints {
 
       private :
+        unsigned int order;
 
       public :
 /*--------------------------------------------------
-	short int action(short int & Action, int IsFocus = 0);
-	definit l'action (déplacement ou déformation) qui affectera le polypoint.
+        getter / setter
 -------------------------------------------------- */
+        unsigned int getOrder(void) {
+                return order;
+        }
 
-	short int action(short int & Action, int IsFocus/* = 0*/);
+        void setOrder(unsigned int o) {
+                order = o;
+        }
 // #ifdef __UNDER_CONSTRUCTION__
 
 /*--------------------------------------------------
@@ -54,15 +58,17 @@ class PolyPoints {
 /*--------------------------------------------------
 	sortie des infos sur stdout
 -------------------------------------------------- */
-      friend  std::ostream & operator << ( std::ostream &s, const PolyPoints  pp)
+      friend  std::ostream & operator << ( std::ostream &s, const PolyPoints &pp)
       {
          s << "--print PolyPoint :" << std::endl;
          s << "nb points " << pp.nbPoints << std::endl;
          s << "nb Seg " << pp.nbSeg << std::endl;
+         s << "Color " << pp.color << std::endl;
+         s << "Order " << pp.order << std::endl;
 
          for (int cpt = 0 ; cpt < pp.nbPoints ; cpt ++)
          {
-            s << " segment " << cpt << ": 3dx " << pp.anchor[cpt].Get3DX() << " 3dy "
+            s << "segment " << cpt << ": 3dx " << pp.anchor[cpt].Get3DX() << " 3dy "
                << pp.anchor[cpt].Get3DY() << " 3dz " << pp.anchor[cpt].Get3DZ()
                << " transpo 2D -> 2dx :" << pp.anchor[cpt].Get2DX()
                << " 2dy : "<< pp.anchor[cpt].Get2DY() << std::endl;
@@ -74,6 +80,7 @@ class PolyPoints {
          }
 
          s << std::endl;
+
          return s;
       }
 
@@ -130,22 +137,30 @@ contructeur par défaut
 -------------------------------------------------- */
       PolyPoints (void)
       {
+         std::cout << "Create PolyPoint (void) ..." << std::endl ;
          midx =  midy = midz = 0;
          aSeg = (unsigned int *)NULL;
          nbPoints = 0;
          nbSeg = 0;
+         order = 0;
          color = 0L;
+         ptEltParent = (Element *)NULL;
          anchor = (Point3D *)NULL;
       }
 
 /*--------------------------------------------------
-	contructeur avec poit initial
+	contructeur avec point initial
 -------------------------------------------------- */
       PolyPoints (const Point3D  p)
       {
+         std::cout << "Create PolyPoint pt3D (p)..." << std::endl ;
+         midx =  midy = midz = 0;
          aSeg = (unsigned int *)NULL;
          nbPoints = 0;
          nbSeg = 0;
+         order = 0;
+         color = 0L;
+         ptEltParent = (Element *)NULL;
          AddPoint(p);
       }
 
@@ -162,7 +177,6 @@ contructeur par défaut
          {
 		 for (unsigned int cpt = 0; cpt < (nbPoints - 1); cpt ++) {
 			another[cpt] = anchor[cpt];
-// std::cout << "AddPoint => x = "<< another[cpt].Get3DX() << " y =" << another[cpt].Get3DY() << " z =" << another[cpt].Get3DZ() << " " << __LINE__ << std::endl;
 			}
        //     memcpy(another, anchor, sizeof(Point3D) * (nbPoints - 1));
          }
@@ -191,63 +205,41 @@ contructeur par défaut
 #define A_Y 1
 #define A_Z 2
 
-      void CalculeCentre( void )
-      {
-         double ltemp = 0.0,
-         lmax[3] =  {  0.0,0.0,0.0  },
-         lmin[3] =  {  DBL_MAX,DBL_MAX,DBL_MAX  };
-
-         for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
-         {
-            ltemp =	anchor[cpt].Get3DX();
-            lmax[A_X ] = max (lmax[A_X ] , ltemp);
-            lmin[A_X ] = min (lmin[A_X ] , ltemp);
-
-            ltemp =	anchor[cpt].Get3DY();
-            lmax[A_Y ] = max (lmax[A_Y ] , ltemp);
-            lmin[A_Y ] = min (lmin[A_Y ] , ltemp);
-
-            ltemp =	anchor[cpt].Get3DZ();
-            lmax[A_Z ] = max (lmax[A_Z ] , ltemp);
-            lmin[A_Z ] = min (lmin[A_Z ] , ltemp);
-         }
-
-         midx = (lmax[A_X ] + lmin[A_X ]) / 2.0;
-         midy = (lmax[A_Y ] + lmin[A_Y ]) / 2.0;
-         midz = (lmax[A_Z ] + lmin[A_Z ]) / 2.0;
+      Point3D GetCentre ( void ){
+              return Point3D(midx, midy, midz);
       }
 
 /*-------------------------------------------------- */
       void SetColor(const unsigned long col)
       {
-		//std::cout << "color :" << col << std::endl;
-         color = col;
+	std::cout << "color :" << col << std::endl;
+        color = col;
       }
 /*-------------------------------------------------- */
       void SetColor(char* buf_rep)
-	  {
-		if (strncmp (buf_rep, "BLUE", 4) == 0)
-		{
-			SetColor (0x000000FFL);
-		}
-		else if (strncmp (buf_rep, "GREEN", 5) == 0)
-		{
-			SetColor (0x0000FF00L);
-		}
-		else if (strncmp (buf_rep, "RED", 3) == 0)
-		{
-			SetColor (0x00FF0000L);
-		}
-		else if (strncmp (buf_rep, "YELLOW", 6) == 0)
-		{
-			SetColor (0x00FFFF00L);
-		}
-		else if (strncmp (buf_rep, "0x", 2) == 0 and strlen(buf_rep) >= 10)
-		{
-         std::cout << " X color =>  "<< buf_rep << " gets :" << strtoul(buf_rep, NULL, 0) << std::endl;
-			SetColor (strtol(buf_rep, NULL, 0));
-		}
-	  }
+      {
+          if (strncmp (buf_rep, "BLUE", 4) == 0)
+          {
+              SetColor (0x000000FFL);
+          }
+          else if (strncmp (buf_rep, "GREEN", 5) == 0)
+          {
+               SetColor (0x0000FF00L);
+          }
+          else if (strncmp (buf_rep, "RED", 3) == 0)
+          {
+              SetColor (0x00FF0000L);
+          }
+          else if (strncmp (buf_rep, "YELLOW", 6) == 0)
+          {
+              SetColor (0x00FFFF00L);
+          }
+          else if (strncmp (buf_rep, "0x", 2) == 0 and strlen(buf_rep) >= 10)
+          {
+              std::cout << " X color =>  "<< buf_rep << " gets :" << strtoul(buf_rep, NULL, 0) << std::endl;
+              SetColor (strtol(buf_rep, NULL, 0));
+          }
+      }
 /*-------------------------------------------------- */
       const unsigned long GetColor(void)
       {
@@ -342,7 +334,7 @@ ur un longueur speed.
          double dx = n.Get3DX() - midx,
             dz = n.Get3DZ() - midz,
             dy = n.Get3DY() - midy,
-			maxd = max(max(max( fabs(dx), fabs(dz)), fabs(dy)), (double)FLT_MIN)/speed;
+            	maxd = max(max(max( fabs(dx), fabs(dz)), fabs(dy)), (double)FLT_MIN)/speed;
 /*
 std::cout << " => dx : " << dx << " dy : "  << dy << " dz : " << dz
 << " => pdx : " << n.Get3DX() << " pdy : "  << n.Get3DY() << " pdz : " << n.Get3DZ()
@@ -430,7 +422,7 @@ réalloue et réattribue la table des segments liés
       void SetXSegments(unsigned int SetnbSeg, unsigned int * new_array)
       {
 
-		if (nbSeg)
+	if (nbSeg)
          {
             if (aSeg)
             {
@@ -477,8 +469,10 @@ Affiche les segments du polypt sous X
 -------------------------------------------------- */
       void DisplayPolyPoints (Display *d, GC gcView, Pixmap & ptBuffer, int DisplayType = 0)
       {
+//     color = 0x00FF00FFL;
          if ( color )
             XSetForeground (d, gcView, color);
+//         std::cout << "-> color : " << color << std::endl;
 
          if (nbSeg && (DisplayType == 0) || (DisplayType & 1))
          {
@@ -490,7 +484,7 @@ Affiche les segments du polypt sous X
             for (int cpt = 0; cpt < nbSeg; cpt ++)
             {
 
-			xsegs[cpt] = PointToXsegment(
+		xsegs[cpt] = PointToXsegment(
                   anchor[aSeg[cpt*2]],
                   anchor[aSeg[(cpt*2)+1]]);
             }
@@ -625,11 +619,20 @@ par défaut -1 : revoie le point central d'équilibre
          anchor = (Point3D *)NULL;
       }
 
+/*-------------------------------------------------- */
+      short int action (short int &Action, int IsFocus/* = 0 */, const Point3D pt_ref/* = (const Point3D) 0*/);
+/*-------------------------------------------------- */
+      void SetPtEltParent(Element * pte);
+/*-------------------------------------------------- */
+      Element* GetPtEltParent();
+/*-------------------------------------------------- */
+      void CalculeCentre(void);
 /*--------------------------------------------------
  destructeur
 -------------------------------------------------- */
       ~ PolyPoints (void)
       {
+ std::cout << " => Free polypoint :" << __LINE__ << std::endl;
          FreePolyPnt ();
       }
 
@@ -637,11 +640,11 @@ par défaut -1 : revoie le point central d'équilibre
 fonction virtuelle devant permettre aux différents types de polypt de
 changer de dimension.
 -------------------------------------------------- */
-	virtual void SetDim ( Point3D p1, Point3D p2){};
-
-      //private :
+      virtual void SetDim ( Point3D p1, Point3D p2){};
 
       protected :
+      // pointeur  de l'element parent à injecter :
+        Element* ptEltParent;
 	// tableau des points constituant le polypt
       Point3D * anchor;
 	// coordonées du milieu (ou du pt d'équilibre) du polypt
@@ -700,7 +703,7 @@ class Cercle : public PolyPoints
 		anchor [cpt_seq].Get3DX() = (sin(rad) * lg_arc) + ((Point3D) pCentre).Get3DX();
 		anchor [cpt_seq].Get3DY() = (cos(rad) * lg_arc) + ((Point3D) pCentre).Get3DY();
 		anchor [cpt_seq].Get3DZ() = ((Point3D) pCentre).Get3DZ();
-// std::cout << " =>" << __LINE__ << std::endl;
+// std::cout <yy< " =>" << __LINE__ << std::endl;
  		anchor[cpt_seq].transpose();
 		}
        	CalculeCentre();
@@ -727,6 +730,7 @@ class Sphere : public PolyPoints
 			) : PolyPoints ()
 	{
 
+ std::cout << "SPHERE =>" << __LINE__ << std::endl;
 	pRayon = pRayon1;
 	// calcul des coordonées du rayon de la sphère
 	double dx = ((Point3D) pCentre).Get3DX() - ((Point3D) pRayon).Get3DX();
@@ -745,17 +749,17 @@ class Sphere : public PolyPoints
 	double rad1 = 0.0, rad2 = 0.0; // progression par arc
 
 	// calculer le nombre de points
-    nbPoints = pParCycle * pParCycle;
+        nbPoints = pParCycle * pParCycle;
 
 	// constituer un cercle
-    anchor = (Point3D *)new Point3D [nbPoints] ;
-    assert (anchor != NULL);
+        anchor = (Point3D *)new Point3D [nbPoints] ;
+        assert (anchor != NULL);
 //	memset (anchor, 0, sizeof(Point3D) * nbPoints);
 
 	// ajouter des segments de jointure
 	nbSeg = (nbPoints + pParCycle) ;
 	aSeg = new unsigned int [nbSeg * 2];
-    assert (aSeg != NULL);
+        assert (aSeg != NULL);
 
 	// boucle de tracage d'un cercle centré sur pCentre
 	for (int cpt_seq1 = 0; cpt_seq1 < pParCycle; cpt_seq1 ++)
@@ -792,7 +796,7 @@ class Sphere : public PolyPoints
 		anchor[((cpt_seq1 + 1) *  pParCycle) - 1].IsCut() = 1;
 		}
 	anchor[(pParCycle *  pParCycle) - 1].IsCut() = 1;
-    CalculeCentre();
+        CalculeCentre();
 	};
 
 /*-------------------------------------------------- */
