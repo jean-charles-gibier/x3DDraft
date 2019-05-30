@@ -9,6 +9,7 @@
 #include <X11/Xlib.h>
 #include "x3DDraft.h"
 #include "element.h"
+#include "assembly.h"
 #include "gxscreen.h"
 
 /******************************************************************************
@@ -29,6 +30,7 @@ public:
 	XColor red, green, blue;
         Colormap color_map;
 	Element * last; //dernier element enregistré
+	Assembly *assembly = NULL; //une selection d'elements
 	unsigned long black, white;
 	// Meta constructor
 	Meta (void);
@@ -153,6 +155,7 @@ boucle principale d'affichage
 	void PlotWorld ()
 	{
 		static int flag = 0;
+                unsigned nbPerAssembly = 8;
 		d = getDisplay();
 
                 const Point3D centre_world = ((double) (viewWidth / 2), (double) (viewHeight / 2), (double) 2.0);
@@ -160,14 +163,21 @@ boucle principale d'affichage
 
 		Element *navette = last;
 		// tant que l'élément existe
+
+                if ( assembly == NULL /* test || nouvelle selection */) {
+                        assembly = new Assembly( last, EAST_GRAB, nbPerAssembly );
+                }
+
 		if (navette)
 		{
-                        const Point3D centre_element = navette->GetBarycenter();
-                        const Point3D pt_ref = centre_element;
-//				std::cout << "pt_ref :  (" << centre_element << ")  " << std::endl;
 
 			do
 			{
+                                const Point3D centre_element = navette->GetBarycenter();
+                                const Point3D pt_ref = centre_element;
+                        //		std::cout << "pt_ref :  (" << centre_element << ")  " << std::endl;
+                                bool isInAssembly = assembly->isPresent(navette);
+			//	std::cout << "found :  (" << isInAssembly << ")  " << std::endl;
 				// prendre le polypoint associé à l'élément
 				PolyPoints *poly_point = navette->GetEPolyPoints ();
 				assert (poly_point);
@@ -177,7 +187,7 @@ boucle principale d'affichage
                                 for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++) {
 
 				        // l'element à le focus -> c'est celui sur lequel on agit
-				        (poly_point + cptp)->action (ActionKey, navette->GetFocus(), pt_ref);
+				        (poly_point + cptp)->action (ActionKey, navette->GetFocus() || isInAssembly, pt_ref);
 				        // afficher l'element
 				        (poly_point + cptp)->DisplayPolyPoints (d, gcView, buffer);
                                         }

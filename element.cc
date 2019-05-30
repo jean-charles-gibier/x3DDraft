@@ -1,4 +1,4 @@
-#include <X11/Xlib.h>
+//#include <X11/Xlib.h>
 #include "element.h"
 #include "string.h"
 #include "x3DDraft.h"
@@ -125,6 +125,40 @@ Parcours (void)
 }
 
 /******************************************************************************
+Parcours de la liste chainée avec callback
+   ******************************************************************************/
+
+Element *Element::
+ParcoursCallback ( Element * pickMethod( int &, Element *) /*= NULL*/ )
+{
+  int cpt_elem = 0;
+  Element * navette = this;
+  double * indexElt = NULL;
+// TODO positioner le nb d'elements => nb elem de meta ?
+  do
+    {
+        cpt_elem ++;
+        navette = navette->GetPrev ();
+    }
+  while (navette);
+
+  if (cpt_elem > 0)
+        indexElt = (double *)new double [cpt_elem];
+  navette = this;
+  cpt_elem = 0;
+  do
+    {
+        cpt_elem ++;
+        indexElt [cpt_elem] = ((Point3D)navette->GetBarycenter()).Get3DX();
+        navette = navette->GetPrev ();
+    }
+  while (navette);
+
+  return this;
+
+}
+
+/******************************************************************************
 retourne le pointeur sur l'élément précédent
    ******************************************************************************/
 
@@ -243,7 +277,7 @@ CalculeCentre (void)
 /******************************************************************************
 retourne un pp correspondant au barycentre de l'element
    ******************************************************************************/
-const Point3D Element::
+Point3D Element::
 GetBarycenter (void)
 {
   return Point3D(midx, midy, midz);

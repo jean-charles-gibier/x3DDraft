@@ -18,8 +18,10 @@ class Element
       Element * InsertAfter ( Element * olast = NULL, int vno = -1, char * vName = (char *)NULL);
       Element * InsertBefore ( Element * olast = NULL, int vno = -1, char * vName = (char *)NULL);
       Element * GetNext (void);
+      Element * GetPrev (void);
       Element * Cut (void);
       Element * Parcours (void);
+      Element * ParcoursCallback ( Element * pickMethod( int &, Element *) = NULL );
       int  GetNo (void);
       char *  GetName (void);
 // methodes d'affectation
@@ -27,10 +29,9 @@ class Element
       PolyPoints * AddPolyPoints (const PolyPoints * pp = NULL,
 					const unsigned long col = 0L,
 					const char * name = NULL);
-      Element * GetPrev (void);
 // methodes d'acquisition
       PolyPoints * GetEPolyPoints (void);
-      const Point3D GetBarycenter (void);
+      Point3D GetBarycenter (void);
       void  CalculeCentre (void);
 /*-------------------------------------------------- */
       Element() {
@@ -66,6 +67,7 @@ de déplacement/ transfert  issues du clavier.
       {
          return nbPolyPoints;
       }
+
 /*--------------------------------------------------
 	sortie des infos sur stdout
 -------------------------------------------------- */

@@ -12,6 +12,8 @@ SRCS = x3DDraft.cc \
 	element.cc \
 	point3d.cc \
 	polypnt.cc \
+	assembly.cc \
+	motion.cc \
 	meta.cc \
 	x3DDraft.h \
 	gxscreen.h \
@@ -25,11 +27,13 @@ OBJS = x3DDraft.o \
 	element.o \
 	point3d.o \
 	polypnt.o \
+	assembly.o \
+	motion.o \
 	meta.o
 
-ALL = README Imakefile Makefile.std x3DDraft.man $(SRCS) x3DDraft.h 
+ALL = README Imakefile Makefile.std x3DDraft.man $(SRCS) x3DDraft.h
 
-all:	$(TARGET) 
+all:	$(TARGET)
 
 $(TARGET):	$(OBJS) $(SRCS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
