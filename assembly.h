@@ -10,13 +10,14 @@
 
 #define EXTERNAL_METHOD   99
 #define EAST_GRAB 1
+typedef Element* ElementPtr;
 
 class Assembly {
 
         private :
                 unsigned nbElementsFound = 0;
                 double barycenter = .0;
-                Element **arrayAssembly; // array
+                ElementPtr *arrayAssembly; // array
 
         public :
                 Assembly( Element * racine,  int typeSelection = 0 ,  unsigned nbRequested = 1, Element ** pickMethod( unsigned &, Element *) = NULL ) {
@@ -37,36 +38,55 @@ class Assembly {
                         }
                 }
 
-                Element ** pickEastMethod( unsigned &nbRetrieved, Element * e) {
+                void showArray(){
+                                std::cout <<" ----------- " << std::endl;
+                        for(unsigned nbe = 0; nbe < nbElementsFound; nbe ++) {
 
-                        arrayAssembly = new Element* [nbRetrieved];
+                                std::cout << nbe <<" : " << arrayAssembly[nbe]  << std::endl;
+                        }
+                                std::cout <<" ----------- " << std::endl;
+
+                }
+
+                ElementPtr * pickEastMethod( unsigned &nbToRetrieve, Element * e) {
+
+                        arrayAssembly = new ElementPtr [nbToRetrieve];
                         assert(arrayAssembly);
 
-                        unsigned cptElement = 0;
 			Element *navette = e;
-                        for(unsigned nbe = 0; nbe < nbRetrieved; nbe ++) {
+                        for(unsigned nbe = 0; nbe < nbToRetrieve; nbe ++) {
                                 arrayAssembly[nbe] = NULL;
                         }
 
 			while (navette)	{
                                 Point3D pt = navette-> GetBarycenter();
-				Element *tmp = navette;
-                                for(unsigned nbe = 0; nbe < nbRetrieved; nbe ++) {
+                                unsigned cptElement = 0;
+                                for(unsigned nbe = 0; nbe < nbToRetrieve; nbe ++) {
                                         //        std::cout << " --> pickEastMethod navette :" << pt << " ."<< std::endl;
-                                        unsigned cptRetrieved = min(nbRetrieved-1, cptElement);
+                                        unsigned cptRetrieved = min(nbToRetrieve-1, cptElement);
+
                                         if (arrayAssembly[cptRetrieved] == NULL ||
-                                         navette-> GetBarycenter().Get3DX() < arrayAssembly[cptRetrieved]->GetBarycenter().Get3DX()) {
-//                                                std::cout << " ----> " <<  navette << std::endl;
+                                         navette->GetBarycenter().Get3DX() < arrayAssembly[cptRetrieved]->GetBarycenter().Get3DX()) {
+// on décale ceux qui sont
+// derriere tant que le contenu à
+// décaler n'est pas nul.
+                                                for(unsigned decale = nbToRetrieve - 1; decale > cptRetrieved; decale --) {
+
+                                                        arrayAssembly[decale] = arrayAssembly[decale-1];
+                                                        std::cout  << " ."<< std::endl;
+                                                }
+
                                                 arrayAssembly[cptRetrieved] = navette;
+                                                std::cout << " -------------> pick "<< arrayAssembly[cptRetrieved] << " alias :" << cptRetrieved  <<":" << navette << " ."<< std::endl;
                                                 break;
                                         }
-
+                                        cptElement ++;
                                 }
 				navette = navette->GetPrev ();
-                                cptElement ++;
 			}
 
-                        nbElementsFound = nbRetrieved;
+                        nbElementsFound = nbToRetrieve;
+                        return arrayAssembly;
                 }
 
                 // Si l'element est répertorié ( pointeur de l'element présent
@@ -74,8 +94,9 @@ class Assembly {
                 bool isPresent( Element * eToCheck ) {
                         for(unsigned nbe = 0; nbe < nbElementsFound; nbe ++) {
 
+//                                std::cout << nbe <<" (" << eToCheck <<"=="<< arrayAssembly[nbe] <<")" << std::endl;
                                 if (eToCheck == arrayAssembly[nbe]) {
-//                                        std::cout << " ----> true"  << std::endl;
+//                                        std::cout << nbe << "/" << nbElementsFound <<" ----> true"  << std::endl;
                                         return true;
                                         }
                                 }
@@ -86,6 +107,7 @@ class Assembly {
                ~Assembly(){
 
                        if (arrayAssembly != NULL) {
+                                std::cout << " ----> Someone destroys arrayAssembly !!"  << std::endl;
                                delete [] arrayAssembly;
                        }
                }

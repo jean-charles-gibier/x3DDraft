@@ -30,7 +30,7 @@ public:
 	XColor red, green, blue;
         Colormap color_map;
 	Element * last; //dernier element enregistré
-	Assembly *assembly = NULL; //une selection d'elements
+	Assembly * assembly = NULL; //une selection d'elements
 	unsigned long black, white;
 	// Meta constructor
 	Meta (void);
@@ -166,6 +166,7 @@ boucle principale d'affichage
 
                 if ( assembly == NULL /* test || nouvelle selection */) {
                         assembly = new Assembly( last, EAST_GRAB, nbPerAssembly );
+                        assert(assembly);
                 }
 
 		if (navette)
@@ -177,7 +178,7 @@ boucle principale d'affichage
                                 const Point3D pt_ref = centre_element;
                         //		std::cout << "pt_ref :  (" << centre_element << ")  " << std::endl;
                                 bool isInAssembly = assembly->isPresent(navette);
-			//	std::cout << "found :  (" << isInAssembly << ")  " << std::endl;
+		        //		std::cout << "found :  (" << isInAssembly << ")  " << std::endl;
 				// prendre le polypoint associé à l'élément
 				PolyPoints *poly_point = navette->GetEPolyPoints ();
 				assert (poly_point);
@@ -187,7 +188,7 @@ boucle principale d'affichage
                                 for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++) {
 
 				        // l'element à le focus -> c'est celui sur lequel on agit
-				        (poly_point + cptp)->action (ActionKey, navette->GetFocus() || isInAssembly, pt_ref);
+				        (poly_point + cptp)->action (ActionKey, /* navette->GetFocus() || */ isInAssembly, pt_ref);
 				        // afficher l'element
 				        (poly_point + cptp)->DisplayPolyPoints (d, gcView, buffer);
                                         }
