@@ -17,22 +17,27 @@ action (short int &Action, int IsFocus = 0, const Point3D pt_ref = (const Point3
   switch (Action)
     {
     case COTE_TRIGO:
+      if (IsFocus)		// l'élément ayant le focus  bouge
 	Rotate (pt_ref, 0.0, 0.0, ANGLE_TRIGO * M_PI);
       break;
 
     case COTE_HORA:
+      if (IsFocus)		// l'élément ayant le focus  bouge
 	Rotate (pt_ref, 0.0, 0.0, ANGLE_HORA * M_PI);
       break;
 
     case ORDONEE_TRIGO:
+      if (IsFocus)		// l'élément ayant le focus  bouge
 	Rotate (pt_ref, 0.0, ANGLE_TRIGO * M_PI, 0.0);
       break;
 
     case ORDONEE_HORA:
+      if (IsFocus)		// l'élément ayant le focus  bouge
 	Rotate (pt_ref, 0.0, ANGLE_HORA * M_PI, 0.0);
       break;
 
     case ABSCISSE_TRIGO:
+      if (IsFocus)		// l'élément ayant le focus  bouge
 	Rotate (pt_ref, ANGLE_TRIGO * M_PI, 0.0, 0.0);
       break;
 

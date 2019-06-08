@@ -95,7 +95,7 @@ class Point3D {
 
 	/*-------------------------------------------------------*/
 	/* lorsque les coordonées 3D sont définies les coordonées 2D sont déterminées  par 'transpose' */
-	void transpose(void)
+	Point3D transpose(void)
 	{
 
 		double fixmaxx = (PtFuiteX - x3d);
@@ -137,6 +137,7 @@ class Point3D {
 			y2d = PtFuiteY;
                         }
 //		cout << *this << std::endl;
+		return *this;
 	};
 
 	/*-------------------------------------------------------*/

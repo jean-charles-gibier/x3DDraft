@@ -205,8 +205,8 @@ contructeur par défaut
 #define A_Y 1
 #define A_Z 2
 
-      Point3D GetCentre ( void ){
-              return Point3D(midx, midy, midz);
+      Point3D GetBaryCenter ( void ){
+              return Point3D(midx, viewHeight-midy, midz);
       }
 
 /*-------------------------------------------------- */
@@ -268,7 +268,7 @@ contructeur par défaut
       {
          short toproced = 0;
          double	l_midx = ((Point3D) p).Get3DX() ? ((Point3D) p).Get3DX() : midx,
-            l_midy = ((Point3D) p).Get3DY() ? ((Point3D) p).Get3DY() : midy,
+            l_midy = ((Point3D) p).Get3DY() ? viewHeight-((Point3D) p).Get3DY() : midy,
             l_midz = ((Point3D) p).Get3DZ() ? ((Point3D) p).Get3DZ() : midz;
 
 /* on renverse en xy en travaillant sur n */
@@ -454,8 +454,8 @@ du point (numéro) a au point (numéro) b
 		{
 		 if (nbSeg > 1)
 			{
-		    memcpy(another, aSeg, sizeof(unsigned int) * ((nbSeg - 1) * 2));
-		    delete [] aSeg;
+	         	memcpy(another, aSeg, sizeof(unsigned int) * ((nbSeg - 1) * 2));
+		        delete [] aSeg;
 			}
 
 		 aSeg = another;

@@ -133,7 +133,6 @@ ParcoursCallback ( Element * pickMethod( int &, Element *) /*= NULL*/ )
 {
   int cpt_elem = 0;
   Element * navette = this;
-  double * indexElt = NULL;
 // TODO positioner le nb d'elements => nb elem de meta ?
   do
     {
@@ -143,13 +142,12 @@ ParcoursCallback ( Element * pickMethod( int &, Element *) /*= NULL*/ )
   while (navette);
 
   if (cpt_elem > 0)
-        indexElt = (double *)new double [cpt_elem];
+  //      indexElt = (double *)new double [cpt_elem];
   navette = this;
   cpt_elem = 0;
   do
     {
         cpt_elem ++;
-        indexElt [cpt_elem] = ((Point3D)navette->GetBarycenter()).Get3DX();
         navette = navette->GetPrev ();
     }
   while (navette);
@@ -212,7 +210,7 @@ AddPolyPoints (const PolyPoints * pp/* = NULL*/,
   for (int cpt = 0; cpt < nbPolyPoints; cpt++) {
     (PPList + cpt)->Copy (*(oldPPList + cpt) );
     (oldPPList +cpt)->FreePolyPnt ();
-    Point3D pmid = (oldPPList +cpt)->GetCentre();
+    Point3D pmid = (oldPPList +cpt)->GetBaryCenter();
     l_midx += pmid.Get3DX();
     l_midy += pmid.Get3DY();
     l_midz += pmid.Get3DZ();
@@ -223,7 +221,7 @@ AddPolyPoints (const PolyPoints * pp/* = NULL*/,
 
   if (pp) {				// il y a un pp à copier
     (PPList + nbPolyPoints)->Copy (*pp);
-    Point3D pmid = (PPList + nbPolyPoints)->GetCentre();
+    Point3D pmid = (PPList + nbPolyPoints)->GetBaryCenter();
     l_midx += pmid.Get3DX();
     l_midy += pmid.Get3DY();
     l_midz += pmid.Get3DZ();
@@ -261,7 +259,7 @@ CalculeCentre (void)
 
   // std::cout << "nb :" << nbPolyPoints + 1 << "."<< std::endl;
   for (int cpt = 0; cpt < nbPolyPoints; cpt++) {
-    Point3D pmid = (PPList +cpt)->GetCentre();
+    Point3D pmid = (PPList +cpt)->GetBaryCenter();
     l_midx += pmid.Get3DX();
     l_midy += pmid.Get3DY();
     l_midz += pmid.Get3DZ();
@@ -280,6 +278,7 @@ retourne un pp correspondant au barycentre de l'element
 Point3D Element::
 GetBarycenter (void)
 {
+   //     CalculeCentre();
   return Point3D(midx, midy, midz);
 }
 

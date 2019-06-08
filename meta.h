@@ -154,32 +154,40 @@ boucle principale d'affichage
 
 	void PlotWorld ()
 	{
-		static int flag = 0;
-                unsigned nbPerAssembly = 8;
+                unsigned nbPerAssembly = 9;
 		d = getDisplay();
 
                 const Point3D centre_world = ((double) (viewWidth / 2), (double) (viewHeight / 2), (double) 2.0);
                 // const Point3D pt_ref = centre_world;
 
 		Element *navette = last;
-		// tant que l'élément existe
 
                 if ( assembly == NULL /* test || nouvelle selection */) {
                         assembly = new Assembly( last, EAST_GRAB, nbPerAssembly );
                         assert(assembly);
                 }
 
+                // barrycentre de l'assemblage qui a le focus
+                Point3D pt_ref = assembly->GetBarycenter();
+                        // 		std::cout << "pt_ref :  (" << pt_ref << ")  " << std::endl;
+		// tant que l'élément existe
+// XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX() - 16 , (int)pt_ref.Get2DY(), (int)pt_ref.Get2DX() + 16, (int)pt_ref.Get2DY() );
+// XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() -16 , (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() + 16);
 		if (navette)
 		{
 
 			do
 			{
-                                const Point3D centre_element = navette->GetBarycenter();
-                                const Point3D pt_ref = centre_element;
-                        //		std::cout << "pt_ref :  (" << centre_element << ")  " << std::endl;
                                 bool isInAssembly = assembly->isPresent(navette);
 		        //		std::cout << "found :  (" << isInAssembly << ")  " << std::endl;
+                                Point3D centre_element = navette->GetBarycenter();
+                       // 		std::cout << "centre_assembly :  (" << centre_assembly << ")  " << std::endl;
+                        //               if( centre_assembly.Get3DX() == 0.0) { std::cout << "STOP" << std::endl; exit( 1);}
 				// prendre le polypoint associé à l'élément
+// if ( isInAssembly ) {
+// XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX() - 8 , (int)centre_element.Get2DY(), (int)centre_element.Get2DX() + 8, (int)centre_element.Get2DY() );
+//XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX(), (int)centre_element.Get2DY() -8 , (int)centre_element.Get2DX(), (int)centre_element.Get2DY() + 8);
+// }
 				PolyPoints *poly_point = navette->GetEPolyPoints ();
 				assert (poly_point);
                                 // on a plusieurs polypoints pour cet element
@@ -191,6 +199,9 @@ boucle principale d'affichage
 				        (poly_point + cptp)->action (ActionKey, /* navette->GetFocus() || */ isInAssembly, pt_ref);
 				        // afficher l'element
 				        (poly_point + cptp)->DisplayPolyPoints (d, gcView, buffer);
+				        Point3D cppt = (poly_point + cptp)->GetBaryCenter ();
+// XDrawLine(d, buffer, gcView, (int)cppt.Get2DX() - 4 , (int)cppt.Get2DY(), (int)cppt.Get2DX() + 4, (int)cppt.Get2DY());
+// XDrawLine(d, buffer, gcView, (int)cppt.Get2DX(), (int)cppt.Get2DY() -4, (int)cppt.Get2DX(), (int)cppt.Get2DY() + 4);
                                         }
 
 				// on prend l'élément précédent
@@ -198,7 +209,6 @@ boucle principale d'affichage
 			}
 			while (navette);
 		}
-		flag = 1;
         }
 
 	/*

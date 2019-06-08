@@ -16,7 +16,7 @@ class Assembly {
 
         private :
                 unsigned nbElementsFound = 0;
-                double barycenter = .0;
+                Point3D barycenter;
                 ElementPtr *arrayAssembly; // array
 
         public :
@@ -59,7 +59,6 @@ class Assembly {
                         }
 
 			while (navette)	{
-                                Point3D pt = navette-> GetBarycenter();
                                 unsigned cptElement = 0;
                                 for(unsigned nbe = 0; nbe < nbToRetrieve; nbe ++) {
                                         //        std::cout << " --> pickEastMethod navette :" << pt << " ."<< std::endl;
@@ -73,20 +72,42 @@ class Assembly {
                                                 for(unsigned decale = nbToRetrieve - 1; decale > cptRetrieved; decale --) {
 
                                                         arrayAssembly[decale] = arrayAssembly[decale-1];
-                                                        std::cout  << " ."<< std::endl;
                                                 }
 
                                                 arrayAssembly[cptRetrieved] = navette;
-                                                std::cout << " -------------> pick "<< arrayAssembly[cptRetrieved] << " alias :" << cptRetrieved  <<":" << navette << " ."<< std::endl;
                                                 break;
                                         }
                                         cptElement ++;
                                 }
 				navette = navette->GetPrev ();
 			}
+// calcul de la moyenne sur les elements slectionnes
 
+                        for (unsigned nbSel = 0; nbSel < nbToRetrieve; nbSel ++ ){
+                                Element *el = arrayAssembly[nbSel] ;
+                                if (el != NULL ){
+                                        Point3D pt = el -> GetBarycenter();
+                                        barycenter.Get3DX() += pt.Get3DX();
+                                        barycenter.Get3DY() += pt.Get3DY();
+                                        barycenter.Get3DZ() += pt.Get3DZ();
+                                }
+                        }
+
+                        barycenter.Get3DX() /= (double)nbToRetrieve;
+                        barycenter.Get3DY() /= (double)nbToRetrieve;
+                        barycenter.Get3DZ() /= (double)nbToRetrieve;
+//                        std::cout << " -------------> final centre :" << barycenter << " ."<< std::endl;
+                        barycenter.transpose();
                         nbElementsFound = nbToRetrieve;
                         return arrayAssembly;
+                }
+
+                /******************************************************************************
+                retourne le barycentre de l'assembly
+                   ******************************************************************************/
+                Point3D GetBarycenter (void)
+                {
+                  return Point3D(barycenter.Get3DX(), /*viewHeight-*/barycenter.Get3DY(), barycenter.Get3DZ()).transpose();// barycenter;
                 }
 
                 // Si l'element est répertorié ( pointeur de l'element présent
@@ -107,7 +128,7 @@ class Assembly {
                ~Assembly(){
 
                        if (arrayAssembly != NULL) {
-                                std::cout << " ----> Someone destroys arrayAssembly !!"  << std::endl;
+//                                std::cout << " ----> Someone destroys arrayAssembly !!"  << std::endl;
                                delete [] arrayAssembly;
                        }
                }
