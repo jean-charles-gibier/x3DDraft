@@ -26,12 +26,12 @@ action (short int &Action, int IsFocus = 0, const Point3D pt_ref = (const Point3
 	Rotate (pt_ref, 0.0, 0.0, ANGLE_HORA * M_PI);
       break;
 
-    case ORDONEE_TRIGO:
+    case ORDONNEE_TRIGO:
       if (IsFocus)		// l'élément ayant le focus  bouge
 	Rotate (pt_ref, 0.0, ANGLE_TRIGO * M_PI, 0.0);
       break;
 
-    case ORDONEE_HORA:
+    case ORDONNEE_HORA:
       if (IsFocus)		// l'élément ayant le focus  bouge
 	Rotate (pt_ref, 0.0, ANGLE_HORA * M_PI, 0.0);
       break;
@@ -55,12 +55,12 @@ action (short int &Action, int IsFocus = 0, const Point3D pt_ref = (const Point3
 	MoveZ ((/*long*/ double) -DEFAULT_SPEED);
       break;
 
-    case ORDONEE_PLUS:
+    case ORDONNEE_PLUS:
       if (!IsFocus)		// l'élément ayant le focus ne bouge pas
 	MoveY ((/*long*/ double) DEFAULT_SPEED);
       break;
 
-    case ORDONEE_MOINS:
+    case ORDONNEE_MOINS:
       if (!IsFocus)		// l'élément ayant le focus ne bouge pas
 	MoveY ((/*long*/ double) -DEFAULT_SPEED);
       break;

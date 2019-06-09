@@ -14,14 +14,14 @@
 ******************************************************************************/
 #define 	ABSCISSE_PLUS		1
 #define 	ABSCISSE_MOINS		-1
-#define 	ORDONEE_PLUS		2
-#define 	ORDONEE_MOINS		-2
+#define 	ORDONNEE_PLUS		2
+#define 	ORDONNEE_MOINS		-2
 #define 	COTE_PLUS		3
 #define 	COTE_MOINS		-3
 #define 	ABSCISSE_TRIGO		4
 #define 	ABSCISSE_HORA		-4
-#define 	ORDONEE_TRIGO		5
-#define 	ORDONEE_HORA		-5
+#define 	ORDONNEE_TRIGO		5
+#define 	ORDONNEE_HORA		-5
 #define 	COTE_TRIGO		6
 #define 	COTE_HORA		-6
 #define 	NONE			10
@@ -29,11 +29,18 @@
 #define		RECULE			-13
 #define 	ELT_ABSCISSE_TRIGO		14
 #define 	ELT_ABSCISSE_HORA		-14
-#define 	ELT_ORDONEE_TRIGO		15
-#define 	ELT_ORDONEE_HORA		-15
+#define 	ELT_ORDONNEE_TRIGO		15
+#define 	ELT_ORDONNEE_HORA		-15
 #define 	ELT_COTE_TRIGO		16
 #define 	ELT_COTE_HORA		-16
 #define 	ESPACE			150
+
+#define 	UPPER_FACE			1
+#define 	LOWER_FACE			2
+#define 	WEST_FACE			3
+#define 	EAST_FACE			4
+#define 	FRONT_FACE			5
+#define 	BACK_FACE			6
 
 #define LG_ARRAY_FLOAT 32768
 #define BORNE_SUP  LG_ARRAY_FLOAT

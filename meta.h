@@ -32,6 +32,10 @@ public:
 	Element * last; //dernier element enregistré
 	Assembly * assembly = NULL; //une selection d'elements
 	unsigned long black, white;
+        // direction contexte
+        unsigned context = EAST_FACE;
+        unsigned leave_context_in = 0;
+
 	// Meta constructor
 	Meta (void);
 	Meta (const Meta& m);
@@ -88,6 +92,7 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 
 	void SortZElem (void)
 	{
+// CALCUL A REVOIR -> on ne descend pas au polypnt
 		int fini, first;
 
 		do 	// boucle d'itération tant qu'un swap est possible
@@ -163,13 +168,13 @@ boucle principale d'affichage
 		Element *navette = last;
 
                 if ( assembly == NULL /* test || nouvelle selection */) {
-                        assembly = new Assembly( last, EAST_GRAB, nbPerAssembly );
+                        assembly = new Assembly( last, context, nbPerAssembly );
                         assert(assembly);
+                } else {
+                        assembly->resetBarycenter();
                 }
-
                 // barrycentre de l'assemblage qui a le focus
                 Point3D pt_ref = assembly->GetBarycenter();
-                        // 		std::cout << "pt_ref :  (" << pt_ref << ")  " << std::endl;
 		// tant que l'élément existe
 // XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX() - 16 , (int)pt_ref.Get2DY(), (int)pt_ref.Get2DX() + 16, (int)pt_ref.Get2DY() );
 // XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() -16 , (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() + 16);
@@ -179,10 +184,7 @@ boucle principale d'affichage
 			do
 			{
                                 bool isInAssembly = assembly->isPresent(navette);
-		        //		std::cout << "found :  (" << isInAssembly << ")  " << std::endl;
                                 Point3D centre_element = navette->GetBarycenter();
-                       // 		std::cout << "centre_assembly :  (" << centre_assembly << ")  " << std::endl;
-                        //               if( centre_assembly.Get3DX() == 0.0) { std::cout << "STOP" << std::endl; exit( 1);}
 				// prendre le polypoint associé à l'élément
 // if ( isInAssembly ) {
 // XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX() - 8 , (int)centre_element.Get2DY(), (int)centre_element.Get2DX() + 8, (int)centre_element.Get2DY() );
@@ -200,8 +202,8 @@ boucle principale d'affichage
 				        // afficher l'element
 				        (poly_point + cptp)->DisplayPolyPoints (d, gcView, buffer);
 				        Point3D cppt = (poly_point + cptp)->GetBaryCenter ();
-// XDrawLine(d, buffer, gcView, (int)cppt.Get2DX() - 4 , (int)cppt.Get2DY(), (int)cppt.Get2DX() + 4, (int)cppt.Get2DY());
-// XDrawLine(d, buffer, gcView, (int)cppt.Get2DX(), (int)cppt.Get2DY() -4, (int)cppt.Get2DX(), (int)cppt.Get2DY() + 4);
+ XDrawLine(d, buffer, gcView, (int)cppt.Get2DX() - 4 , (int)cppt.Get2DY(), (int)cppt.Get2DX() + 4, (int)cppt.Get2DY());
+ XDrawLine(d, buffer, gcView, (int)cppt.Get2DX(), (int)cppt.Get2DY() -4, (int)cppt.Get2DX(), (int)cppt.Get2DY() + 4);
                                         }
 
 				// on prend l'élément précédent
@@ -229,9 +231,9 @@ Traite les commandes reçues du clavier.
 				XLookupString ((XKeyEvent *) & event, ch, 1, &keysym, (XComposeStatus *) NULL);
 
 				if (keysym == XK_KP_Up || keysym == XK_Up || *ch == '8')
-				ActionKey = ORDONEE_PLUS;
+				ActionKey = ORDONNEE_PLUS;
 				else if (keysym == XK_KP_Down || keysym == XK_Down || *ch == '2')
-				ActionKey = ORDONEE_MOINS;
+				ActionKey = ORDONNEE_MOINS;
 				else if (keysym == XK_KP_Left || keysym == XK_Left || *ch == '4')
 				ActionKey = ABSCISSE_MOINS;
 				else if (keysym == XK_KP_Right || keysym == XK_Right || *ch == '6')
@@ -245,9 +247,9 @@ Traite les commandes reçues du clavier.
 				else if (toupper (*ch) == 'I')
 				ActionKey = ABSCISSE_HORA;
 				else if (toupper (*ch) == 'O')
-				ActionKey = ORDONEE_TRIGO;
+				ActionKey = ORDONNEE_TRIGO;
 				else if (toupper (*ch) == 'P')
-				ActionKey = ORDONEE_HORA;
+				ActionKey = ORDONNEE_HORA;
 				else if (toupper (*ch) == 'K')
 				ActionKey = COTE_TRIGO;
 				else if (toupper (*ch) == 'L')
@@ -257,19 +259,80 @@ Traite les commandes reçues du clavier.
 				else if (toupper (*ch) == 'R')
 				ActionKey = RECULE;
 
-				else if (toupper (*ch) == 'A')
+				else if (toupper (*ch) == 'Q')
 				ActionKey = ELT_ABSCISSE_TRIGO;
 				else if (toupper (*ch) == 'Z')
 				ActionKey = ELT_ABSCISSE_HORA;
 				else if (toupper (*ch) == 'E')
-				ActionKey = ELT_ORDONEE_TRIGO;
+				ActionKey = ELT_ORDONNEE_TRIGO;
 				else if (toupper (*ch) == 'R')
-				ActionKey = ELT_ORDONEE_HORA;
+				ActionKey = ELT_ORDONNEE_HORA;
 				else if (toupper (*ch) == 'T')
 				ActionKey = ELT_COTE_TRIGO;
 				else if (toupper (*ch) == 'Y')
 				ActionKey = ELT_COTE_HORA;
+// TODO : decoupler la récupération des actions de la partie controle
+				else if (*ch == 'S') {
+                                        if (context != UPPER_FACE && !leave_context_in) {
+                                                context = UPPER_FACE;
+                                                if (assembly != NULL){
+                                                        delete(assembly); assembly = NULL;
+                                                        }
+                                                ActionKey = ORDONNEE_TRIGO;
+                                                leave_context_in = 25;
+                                        }
 
+                                }
+				else if (*ch == 'D') {
+                                        if (context != LOWER_FACE && !leave_context_in) {
+                                                context = LOWER_FACE;
+                                                if (assembly != NULL){
+                                                        delete(assembly); assembly = NULL;
+                                                        }
+                                                ActionKey = ORDONNEE_TRIGO;
+                                                leave_context_in = 25;
+                                        }
+                                }
+				else if (*ch == 'F') {
+                                        if (context != WEST_FACE && !leave_context_in) {
+                                                context = WEST_FACE;
+                                                if (assembly != NULL){
+                                                        delete(assembly); assembly = NULL;
+                                                        }
+                                                ActionKey = COTE_TRIGO;
+                                                leave_context_in = 25;
+                                        }
+                                }
+				else if (*ch == 'G') {
+                                        if (context != EAST_FACE && !leave_context_in) {
+                                                context = EAST_FACE;
+                                                if (assembly != NULL){
+                                                        delete(assembly); assembly = NULL;
+                                                        }
+                                                ActionKey = COTE_TRIGO;
+                                                leave_context_in = 25;
+                                        }
+                                }
+				else if (*ch == 'H') {
+                                        if (context != FRONT_FACE && !leave_context_in) {
+                                                context = FRONT_FACE;
+                                                if (assembly != NULL){
+                                                        delete(assembly); assembly = NULL;
+                                                        }
+                                                ActionKey = ABSCISSE_TRIGO;
+                                                leave_context_in = 25;
+                                        }
+                                }
+				else if (*ch == 'J') {
+                                        if (context != BACK_FACE && !leave_context_in) {
+                                                context = BACK_FACE;
+                                                if (assembly != NULL){
+                                                        delete(assembly); assembly = NULL;
+                                                        }
+                                                ActionKey = ABSCISSE_TRIGO;
+                                                leave_context_in = 25;
+                                        }
+                                }
 				else if (*ch == ' ')
 				{ActionKey = ESPACE;}
 				else if (*ch == '5')
@@ -293,6 +356,12 @@ Traite les commandes reçues du clavier.
 				break;
 			}
 		}
+                                if (leave_context_in-- <= 0) {
+				        //std::cout << " STOP " << std::endl;
+				        ActionKey = ESPACE;
+                                        context = 99;
+                                        leave_context_in = 0;
+                                        }
 		return 0;
 	}
 
@@ -323,7 +392,7 @@ Afficheur de l'objet Meta
 		UpdateKeys ();
 				// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
 		PlotWorld ();
-				// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
+                                // std::cout << "Meta (" << __LINE__ << "," << d << ")  " << std::endl;
 		SortZElem ();
 				// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
 		SwapBuffers ();

@@ -22,22 +22,13 @@ public :
 		medianne =  sqrt(2.0 * (mm * mm));
 		double remain = 0.0;
 
-		for (int cpt = 0; cpt <LG_ARRAY_FLOAT ; cpt ++)
+/*		for (int cpt = 0; cpt <LG_ARRAY_FLOAT ; cpt ++)
 		{
 			// cette formule donne un effet d'éloignement mais il doit y avoir mieux
 			aEffetFuite[cpt] = pow(log(0.5 * ((double)cpt+1.0)),3.0); // 781
-			// aEffetFuite[cpt] = max ((double)cpt / log((double)cpt + 1.0), remain);
-			//aEffetFuite[cpt] = log((double)cpt +  sqrt(pow((double)cpt,2.0) - 1.0)) ;
-			//aEffetFuite[cpt] = pow(log((1.0 * (double)(cpt + 1))/M_PI),3.0); // 671
-			//aEffetFuite[cpt] = pow(log(sqrt(cpt + 1)),3.0);  //121
-			//aEffetFuite[cpt] = pow(log(sqrt(((double) (cpt * (cpt/2))))),3.0);  //872
-			//aEffetFuite[cpt] = pow(log(0.66666 * ((double)cpt+2.0)),3.0); // 856
-			//remain = aEffetFuite[cpt] ;
-                        //if(!(cpt % 20) && cpt < 20000)
-                //		cout << "POINT : "<< cpt <<	" " << (long)aEffetFuite[cpt]	<< " 500\n";
 
 		}
-
+*/
 	};
 
 	static GXScreen* getInstance(void) {
