@@ -92,14 +92,15 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 
 	void SortZElem (void)
 	{
-// CALCUL A REVOIR -> on ne descend pas au polypnt
-		int fini, first;
+        // CALCUL A REVOIR -> on ne descend pas au polypnt
+		int fini, first, is_pp_sorted;
 
 		do 	// boucle d'itération tant qu'un swap est possible
 		{
 			Element *navette = last;
 			// tant que l'élément existe
 			fini = 1;
+                        is_pp_sorted = 0;
 
 			if (navette)
 			{
@@ -138,16 +139,39 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 							Cote ->InsertBefore (ePetiteCote);
 							if (ePetiteCote->GetNext () == NULL) // on swappe le 1er élément de la liste
 							{
-
 								last = ePetiteCote;	// nouvelle ancre de liste
 							}
 
 							fini = 0;
 						}
 
+                                        // on a plusieurs polypoints pour cet element
+                                        unsigned int nbPolyPoints = navette->GetNbPolyPoints();
+			                unsigned pp_fini = 1;
+                                        // On va trier l'ordre Z de chaque polypoint
+                                        PolyPoints *poly_point = navette->GetEPolyPoints ();
+                                        assert (poly_point);
+                                        do {
+			                        pp_fini = 1;
+                                                for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints; cptp ++) {
+
+                                                        Point3D cppt1 = (poly_point + cptp)->GetBaryCenter ();
+                                                        Point3D cppt2 = (poly_point + cptp + 1)->GetBaryCenter ();
+
+                                                        if (cppt1.Get3DZ() < cppt2.Get3DZ()) {
+                                                                PolyPoints pptmp = *(poly_point + cptp);
+                                                                *(poly_point + cptp) = *(poly_point + cptp + 1);
+                                                                *(poly_point + cptp + 1) = pptmp;
+
+			                                        pp_fini = 0;
+                                                                }
+                                                        }
+                                                }
+                                                while(!pp_fini);
 					}
 				}
 				while (navette);
+                                is_pp_sorted = 1;
 			}
 		}
 		while (!fini);
@@ -167,7 +191,7 @@ boucle principale d'affichage
 
 		Element *navette = last;
 
-                if ( assembly == NULL /* test || nouvelle selection */) {
+                if ( assembly == NULL ) {
                         assembly = new Assembly( last, context, nbPerAssembly );
                         assert(assembly);
                 } else {
@@ -185,11 +209,13 @@ boucle principale d'affichage
 			{
                                 bool isInAssembly = assembly->isPresent(navette);
                                 Point3D centre_element = navette->GetBarycenter();
-				// prendre le polypoint associé à l'élément
-// if ( isInAssembly ) {
-// XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX() - 8 , (int)centre_element.Get2DY(), (int)centre_element.Get2DX() + 8, (int)centre_element.Get2DY() );
-//XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX(), (int)centre_element.Get2DY() -8 , (int)centre_element.Get2DX(), (int)centre_element.Get2DY() + 8);
-// }
+                                // prendre le polypoint associé à l'élément
+#ifdef SHOW_CENTER_ELEMENT
+if ( isInAssembly ) {
+        XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX() - 8 , (int)centre_element.Get2DY(), (int)centre_element.Get2DX() + 8, (int)centre_element.Get2DY() );
+        XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX(), (int)centre_element.Get2DY() -8 , (int)centre_element.Get2DX(), (int)centre_element.Get2DY() + 8);
+}
+#endif // SHOW_CENTER_ELEMENT
 				PolyPoints *poly_point = navette->GetEPolyPoints ();
 				assert (poly_point);
                                 // on a plusieurs polypoints pour cet element
@@ -198,12 +224,14 @@ boucle principale d'affichage
                                 for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++) {
 
 				        // l'element à le focus -> c'est celui sur lequel on agit
-				        (poly_point + cptp)->action (ActionKey, /* navette->GetFocus() || */ isInAssembly, pt_ref);
+				        (poly_point + cptp)->action (ActionKey, isInAssembly, pt_ref);
 				        // afficher l'element
 				        (poly_point + cptp)->DisplayPolyPoints (d, gcView, buffer);
 				        Point3D cppt = (poly_point + cptp)->GetBaryCenter ();
+#ifdef SHOW_CENTER_POLYPNT
  XDrawLine(d, buffer, gcView, (int)cppt.Get2DX() - 4 , (int)cppt.Get2DY(), (int)cppt.Get2DX() + 4, (int)cppt.Get2DY());
  XDrawLine(d, buffer, gcView, (int)cppt.Get2DX(), (int)cppt.Get2DY() -4, (int)cppt.Get2DX(), (int)cppt.Get2DY() + 4);
+#endif // SHOW_CENTER_POLYPNT
                                         }
 
 				// on prend l'élément précédent
@@ -356,12 +384,13 @@ Traite les commandes reçues du clavier.
 				break;
 			}
 		}
-                                if (leave_context_in-- <= 0) {
-				        //std::cout << " STOP " << std::endl;
-				        ActionKey = ESPACE;
-                                        context = 99;
-                                        leave_context_in = 0;
-                                        }
+
+        if (leave_context_in-- <= 0) {
+                ActionKey = ESPACE;
+                context = 99;
+                leave_context_in = 0;
+                }
+
 		return 0;
 	}
 

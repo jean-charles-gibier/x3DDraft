@@ -58,12 +58,30 @@ class Point3D {
 	/*-------------------------------------------------------*/
 	double GetPtFuiteX(void) { return PtFuiteX; };
 	/*-------------------------------------------------------*/
-
 	int SetGXScreen (GXScreen * ptGxscr = NULL);
 
 	/*-------------------------------------------------------*/
+	/* transforme 1 point en XPoint XLib*/
+//#pragma message ( "C Preprocessor => PointToXpoint declaration" )
+	static XPoint PointToXpoint(Point3D point)
+	{
+		XPoint xpoint;
+		if (point.x2d == INVIS_POINT || point.z3d < 1.0)
+		{
+			xpoint.x = -1;
+			xpoint.y = -1;
+		}
+		else // l'élément est "derriere" la camera -> on supprime le point
+
+		{
+			xpoint.x = point.x2d;
+			xpoint.y = viewHeight - point.y2d;
+		}
+		return xpoint;
+	}
+
 	/* transorme 2 points en segment Xlib */
-	friend XSegment PointToXsegment(Point3D point1, Point3D point2)
+	static XSegment PointToXsegment(Point3D point1, Point3D point2)
 	{
 		XSegment xseg;
 		if ((point1.x2d == INVIS_POINT) || (point2.y2d == INVIS_POINT)  || (point1.z3d < 1.0) || (point2.z3d < 1.0))
@@ -122,11 +140,6 @@ class Point3D {
                         x2d =   ROUND(x3d + (zDiff * cos(TheBorne) * cx));
                         y2d =   ROUND(y3d + (zDiff * sin(TheBorne) * cy));
                         }
-//                        else if (z3d < 0.0) {
-//                        x2d =   min(max(ROUND(x3d + (z3d * cos(TheBorne) * cx)),0), viewWidth );
-//                        y2d =   min(max(ROUND(y3d + (z3d * sin(TheBorne) * cy)),0), viewHeight );
-//                        }
-// std::cout << "--- x2d :" << x2d << " y2d  :" << y2d <<  " z3d :"<<  z3d <<std::endl;
 
 		if ((PtFuiteX > x3d && PtFuiteX < x2d) ||
 			(PtFuiteX < x3d && PtFuiteX > x2d)) {

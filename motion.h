@@ -7,7 +7,7 @@
 // defini un mouvement
 // en cours ou en preparation par une suite de commande a executer
 // soit 1 fois
-// soit plusieurs fois jusqu'a atteindre une position donnée (defini par des
+// soit plusieurs fois jusqu'a atteindre une position donnée (definie par des
 // conditions geometriques concordantes
 //
 class Motion {

@@ -91,8 +91,10 @@ class PolyPoints {
       {
          if (nbSeg || nbPoints)
          {
-            std::cout << "fin de programme : PolyPoints Copie suspecte" << std::endl;
-            exit (-1);
+//            std::cout << "fin de programme : PolyPoints Copie suspecte" << std::endl;
+//            exit (-1);
+
+             //FreePolyPnt();
          }
 
          if(pp.nbSeg)
@@ -178,7 +180,6 @@ contructeur par défaut
 		 for (unsigned int cpt = 0; cpt < (nbPoints - 1); cpt ++) {
 			another[cpt] = anchor[cpt];
 			}
-       //     memcpy(another, anchor, sizeof(Point3D) * (nbPoints - 1));
          }
 
          if ( anchor )
@@ -189,12 +190,10 @@ contructeur par défaut
          anchor = another;
          anchor[(nbPoints - 1)] = p;
 
-//         std::cout << "  AddPoint anchor => x = " << anchor[(nbPoints - 1)].Get3DX() << " y =" << anchor[(nbPoints - 1)].Get3DY() << " z =" << anchor[(nbPoints - 1)].Get3DZ() << " " << __LINE__ << std::endl;
          anchor[(nbPoints - 1)].transpose();
 
        	 CalculeCentre();
 
-        // std::cout << " => midx = "<< midx << " midy =" << midy << " midz =" << midz << " " << __LINE__ << std::endl;
          return anchor;
       }
 
@@ -317,7 +316,6 @@ contructeur par défaut
          {
             for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
             {
-//  std::cout << " =>" << __LINE__ << std::endl;
              anchor[cpt].transpose();
             }
          }
@@ -469,27 +467,34 @@ Affiche les segments du polypt sous X
 -------------------------------------------------- */
       void DisplayPolyPoints (Display *d, GC gcView, Pixmap & ptBuffer, int DisplayType = 0)
       {
-//     color = 0x00FF00FFL;
          if ( color )
             XSetForeground (d, gcView, color);
-//         std::cout << "-> color : " << color << std::endl;
 
          if (nbSeg && (DisplayType == 0) || (DisplayType & 1))
          {
 
 		 XSegment xsegs [nbSeg];
+		 XPoint xpoints [nbSeg];
 
 		 assert (xsegs);
 
             for (int cpt = 0; cpt < nbSeg; cpt ++)
             {
 
-		xsegs[cpt] = PointToXsegment(
+#ifdef WIRED_MODE
+		xsegs[cpt] = Point3D::PointToXsegment(
                   anchor[aSeg[cpt*2]],
                   anchor[aSeg[(cpt*2)+1]]);
+#else
+                // ici on ne prend que le premier point de chaque segment
+                xpoints[cpt] = Point3D::PointToXpoint(aSeg[cpt*2]);
+#endif // WIRED_MODE
             }
-
-            XDrawSegments (d, ptBuffer, gcView, xsegs, nbSeg);
+#ifdef WIRED_MODE
+                XDrawSegments (d, ptBuffer, gcView, xsegs, nbSeg);
+#else
+                XFillPolygon(d, ptBuffer, gcView, xpoints, nbSeg, FillSolid, CoordModeOrigin);
+#endif // WIRED_MODE
          }
 
 char bigbuf[8192] ={0};
@@ -498,18 +503,19 @@ char bigbuf[8192] ={0};
          {
             int offset_deb , offset_fin, index;
             XSegment xsegs [nbPoints];
+	    XPoint xpoints [nbPoints];
             assert (xsegs);
 
             for (index = 0, offset_deb = 0, offset_fin = 0; index < (nbPoints - 1);  index ++)
             {
-XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX() - 4 , (int)anchor[index].GetPtFuiteY(), (int)anchor[index].GetPtFuiteX() + 4, (int)anchor[index].GetPtFuiteY() );
-XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() -4 , (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() + 4);
+                XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX() - 4 , (int)anchor[index].GetPtFuiteY(), (int)anchor[index].GetPtFuiteX() + 4, (int)anchor[index].GetPtFuiteY() );
+                XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() -4 , (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() + 4);
 
 			if (anchor[index].IsCut() == 0 && index < (nbPoints - 1))
 			{
-				xsegs[offset_fin] = PointToXsegment( anchor[index], anchor[index+1]);
+				xsegs[offset_fin] = Point3D::PointToXsegment( anchor[index], anchor[index+1]);
+                                xpoints[offset_fin] = Point3D::PointToXpoint(anchor[index]);
 if ( strlen(bigbuf) < 8000)
-//sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", index, xsegs[offset_fin].x1, xsegs[offset_fin].y1, xsegs[offset_fin].x2, xsegs[offset_fin].y2);
 sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
 				offset_fin ++;
 			}
@@ -519,23 +525,25 @@ sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
 				offset_deb = offset_fin;
 			}
             }
-/* tracer le segement de fin */
-			if (anchor[index].IsCut() == 0)
-			{
-				xsegs[offset_fin] = PointToXsegment( anchor[0], anchor[index]);
-if ( strlen(bigbuf) < 8000)
-//sprintf (bigbuf + strlen(bigbuf), "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]", index, xsegs[offset_fin].x1, xsegs[offset_fin].y1, xsegs[offset_fin].x2, xsegs[offset_fin].y2);
-sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
-				offset_fin ++;
-			}
+                /* tracer le segement de fin */
+            if (anchor[index].IsCut() == 0)
+	    {
+		xsegs[offset_fin] = Point3D::PointToXsegment( anchor[0], anchor[index]);
+                xpoints[offset_fin] = Point3D::PointToXpoint(anchor[index]);
+// if ( strlen(bigbuf) < 8000)
+// sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
+		offset_fin ++;
+	    }
 
-			if (offset_fin > offset_deb)
-			{
-			XDrawSegments (d, ptBuffer, gcView, &(xsegs[ offset_deb ]), offset_fin - offset_deb);
-			}
-// printf ( "[[%d] x1 : %d y1 : %d x2 : %d y2 : %d]\n", index, xsegs[0].x1, xsegs[0].y1, xsegs[0].x2, xsegs[0].y2);
-         }
-
+	    if (offset_fin > offset_deb)
+	    {
+		XDrawSegments (d, ptBuffer, gcView, &(xsegs[ offset_deb ]), offset_fin - offset_deb);
+// test 4 Rubick
+XFillPolygon(d, ptBuffer, gcView, xpoints, offset_fin - offset_deb, FillSolid, CoordModeOrigin);
+// Else
+	    }
+        }
+/*
 if (startText == 0) {
         startText = 1;
 windowText =
@@ -564,6 +572,7 @@ XDrawString ( d, windowText, myGC,
 // std::cout << " =>" << __LINE__ << " nb seg :" << bigbuf << std::endl;
 XSync(d, False);
 }
+*/
       }
 
 /*--------------------------------------------------
@@ -696,14 +705,13 @@ class Cercle : public PolyPoints
 	for (int cpt_seq = 0; cpt_seq < pParCycle; cpt_seq ++)
 		{
 		// on copie les infos du point pCentre
-        anchor[cpt_seq].CopyProperties(pCentre);
+                anchor[cpt_seq].CopyProperties(pCentre);
 
 		// calcul de chaque point du cercle
 		rad = ((M_PI * 2.0 * (double)cpt_seq)/(double)pParCycle);
 		anchor [cpt_seq].Get3DX() = (sin(rad) * lg_arc) + ((Point3D) pCentre).Get3DX();
 		anchor [cpt_seq].Get3DY() = (cos(rad) * lg_arc) + ((Point3D) pCentre).Get3DY();
 		anchor [cpt_seq].Get3DZ() = ((Point3D) pCentre).Get3DZ();
-// std::cout <yy< " =>" << __LINE__ << std::endl;
  		anchor[cpt_seq].transpose();
 		}
        	CalculeCentre();
@@ -754,7 +762,6 @@ class Sphere : public PolyPoints
 	// constituer un cercle
         anchor = (Point3D *)new Point3D [nbPoints] ;
         assert (anchor != NULL);
-//	memset (anchor, 0, sizeof(Point3D) * nbPoints);
 
 	// ajouter des segments de jointure
 	nbSeg = (nbPoints + pParCycle) ;
@@ -782,14 +789,13 @@ class Sphere : public PolyPoints
 			anchor [ NumPoint ].Get3DX() = (sin(rad2) * lr) + ((Point3D) pCentre).Get3DX();
 			anchor [ NumPoint ].Get3DY() = (cos(rad2) * lr) + ((Point3D) pCentre).Get3DY();
 			anchor [ NumPoint ].Get3DZ() =  (lg_arc * cos(rad1) ) + ((Point3D) pCentre).Get3DZ();
-// std::cout << " =>" << __LINE__ << std::endl;
 			anchor[ NumPoint].transpose();
 
 			aSeg[ (NumPoint * 2) ] = NumPoint;
 			aSeg[ (NumPoint * 2) + 1 ] = max((NumPoint - pParCycle),0) ;
 
 			}
-// clos le cercle
+                // clos le cercle
 		aSeg[ ( nbPoints * 2) + (cpt_seq1 * 2)] = cpt_seq1 * pParCycle;
 		aSeg[ ( nbPoints * 2) + (cpt_seq1 * 2) + 1] = ((cpt_seq1 + 1) * pParCycle) - 1;
 
@@ -826,7 +832,6 @@ Plan(void) : PolyPoints() {  };
 		double lgTrame = 100. // largeur du quadrillage
 			) : PolyPoints ()
 	{
-/**/
 	Point3D pnull;
 
 	double px = max(fabs(pa.Get3dx() - pb.Get3dx()), (double)FLT_QZERO);
@@ -836,15 +841,10 @@ Plan(void) : PolyPoints() {  };
 	double pxpz = px/pz;
 	double pzpy = pz/py;
 
-//	std::cout << "pa " << pa << "pb " << pb << "pc " << pc << std::endl;
-//	std::cout << "pxpy " << pxpy << "pxpz " << pxpz << "pzpy " << pzpy << std::endl;
-//	std::cout << "atan(pxpy) " << tan(pxpy) << " atan(pxpz) " << tan(pxpz) << " atan(pxpy) " <<tan(pzpy) << std::endl;
-	/**/
-
-    unsigned int nbDalles = (unsigned int) (ceil (lgPlan / lgTrame));
-    nbPoints = (nbDalles * nbDalles * 5);
-    anchor = (Point3D *)new Point3D [nbPoints] ;
-    assert (anchor != NULL);
+        unsigned int nbDalles = (unsigned int) (ceil (lgPlan / lgTrame));
+        nbPoints = (nbDalles * nbDalles * 5);
+        anchor = (Point3D *)new Point3D [nbPoints] ;
+        assert (anchor != NULL);
 
 	for (unsigned int i = 0; i <  nbDalles; i ++) {
                 for (unsigned int j = 0; j <  nbDalles; j ++) {
@@ -853,35 +853,30 @@ Plan(void) : PolyPoints() {  };
                         anchor[(((i*nbDalles)+j)*5)].Get3DZ() = pa.Get3dz() + (lgTrame * (double)j);
                         anchor[(((i*nbDalles)+j)*5)].IsCut() = 0;
                         anchor[(((i*nbDalles)+j)*5)].transpose();
-//        std::cout << " => "<<  (((i*nbDalles)+j)*5)  << " X :" << anchor[(((i*nbDalles)+j)*5)].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)].Get3DZ() << " "  << std::endl;
 
                         anchor[(((i*nbDalles)+j)*5)+1].Get3DX() = pa.Get3dx() + (lgTrame * (double)i);
                         anchor[(((i*nbDalles)+j)*5)+1].Get3DY() = pa.Get3dy();
                         anchor[(((i*nbDalles)+j)*5)+1].Get3DZ() = pa.Get3dz() + (lgTrame * (double)(j+1));
                         anchor[(((i*nbDalles)+j)*5)+1].IsCut() = 0;
                         anchor[(((i*nbDalles)+j)*5)+1].transpose();
-//        std::cout << " =>"<<   (((i*nbDalles)+j)*5)+1  << " X :" << anchor[(((i*nbDalles)+j)*5)+1].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)+1].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)+1].Get3DZ() << " " <<  std::endl;
 
                         anchor[(((i*nbDalles)+j)*5)+2].Get3DX() = pa.Get3dx() + (lgTrame * (double)(i + 1));
                         anchor[(((i*nbDalles)+j)*5)+2].Get3DY() = pa.Get3dy();
                         anchor[(((i*nbDalles)+j)*5)+2].Get3DZ() = pa.Get3dz() + (lgTrame * (double)(j + 1));
                         anchor[(((i*nbDalles)+j)*5)+2].IsCut() = 0;
                         anchor[(((i*nbDalles)+j)*5)+2].transpose();
-//        std::cout << " =>"<<   (((i*nbDalles)+j)*5)+2 << " X :" << anchor[(((i*nbDalles)+j)*5)+2].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)+2].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)+2].Get3DZ() << " " <<  std::endl;
 
                         anchor[(((i*nbDalles)+j)*5)+3].Get3DX() = pa.Get3dx() + (lgTrame * (double)(i+1));
                         anchor[(((i*nbDalles)+j)*5)+3].Get3DY() = pa.Get3dy();
                         anchor[(((i*nbDalles)+j)*5)+3].Get3DZ() = pa.Get3dz() + (lgTrame * (double)j) ;
                         anchor[(((i*nbDalles)+j)*5)+3].IsCut() = 0;
                         anchor[(((i*nbDalles)+j)*5)+3].transpose();
-//        std::cout << " =>"<<   (((i*nbDalles)+j)*5)+3 << " X :" << anchor[(((i*nbDalles)+j)*5)+3].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)+3].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)+3].Get3DZ() << " "<<  std::endl;
 
                         anchor[(((i*nbDalles)+j)*5)+4].Get3DX() = pa.Get3dx() + (lgTrame * (double)i);
                         anchor[(((i*nbDalles)+j)*5)+4].Get3DY() = pa.Get3dy();
                         anchor[(((i*nbDalles)+j)*5)+4].Get3DZ() = pa.Get3dz() + (lgTrame * (double)j);
                         anchor[(((i*nbDalles)+j)*5)+4].IsCut() = 1 ; // (j+1 == nbDalles && i+1 == nbDalles);
                         anchor[(((i*nbDalles)+j)*5)+4].transpose();
-//        std::cout << " =>"<<   (((i*nbDalles)+j)*5)+4 << " X :" << anchor[(((i*nbDalles)+j)*5)+4].Get3DX() <<" Y :" << anchor[(((i*nbDalles)+j)*5)+4].Get3DY() << " Z :"<< anchor[(((i*nbDalles)+j)*5)+4].Get3DZ() << " "  << std::endl;
                         }
 		}
 

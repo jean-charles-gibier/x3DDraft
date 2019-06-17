@@ -5,21 +5,36 @@
 #include "element.h"
 
 //
-// defini un assemblage de polypoints
-// selectionnés par une méthode appelée par callback
+// define an asembbly of "element"
+// selectelecte by a method or a callback method
 
 #define EXTERNAL_METHOD   99
-#define EAST_GRAB 1
 typedef Element* ElementPtr;
 
 class Assembly {
 
         private :
+                // number of "element" grabbed in this assembly
                 unsigned nbElementsFound = 0;
                 Point3D barycenter;
                 ElementPtr *arrayAssembly; // array
 
         public :
+                //
+                // Instanciate the "assembly" :
+                //
+                // parameters :
+                // Element * racine : initial pointer of linked list of
+                // "elements" in this universe
+                // int orientation : selection type of the assembly. For
+                // instance the public
+                // method "pickMethod" picks up the "nbRequested" farest "elements" on east, west, etc. side
+                // (see orientation value) of this universe
+                // unsigned nbRequested : nb of "element" pointers to copy in
+                // assembly
+                // pickMethodPt (optional) : pointer on fonction that collects
+                // "element"
+                //
                 Assembly( Element * racine,  int orientation = 0 ,  unsigned nbRequested = 1, Element ** pickMethodPt( unsigned &, Element *) = NULL ) {
 
                         if (racine == NULL) {
@@ -38,6 +53,9 @@ class Assembly {
                         }
                 }
 
+                //
+                // prints assembly details on std output
+                //
                 void showArray(){
                                 std::cout <<" ----------- " << std::endl;
                         for(unsigned nbe = 0; nbe < nbElementsFound; nbe ++) {
@@ -48,6 +66,9 @@ class Assembly {
 
                 }
 
+                //
+                // re compute barycenter of each "element" on this assembly
+                //
                 void resetBarycenter(){
                         for(unsigned nbe = 0; nbe < nbElementsFound; nbe ++) {
 
@@ -64,7 +85,10 @@ class Assembly {
 
                         }
                 }
-
+                //
+                // Default fonction that grabs "element" in this assembly
+                // 'see constructor
+                //
                 ElementPtr * pickMethod( unsigned &nbToRetrieve, Element * e, unsigned orientation ) {
                         arrayAssembly = new ElementPtr [nbToRetrieve];
                         assert(arrayAssembly);
@@ -79,11 +103,9 @@ class Assembly {
                                 unsigned cptElement = 0;
                                 for(unsigned nbe = 0; nbe < nbToRetrieve; nbe ++) {
                                         unsigned cptRetrieved = min(nbToRetrieve-1, cptElement);
-//                                                std::cout << " --> test :" << orientation << " ."<< std::endl;
 
                                         if (
                                                 arrayAssembly[cptRetrieved] == NULL ||
-
                                                 (navette->GetBarycenter().Get3DX() < arrayAssembly[cptRetrieved]->GetBarycenter().Get3DX() && orientation == EAST_FACE) ||
                                                 (navette->GetBarycenter().Get3DX() > arrayAssembly[cptRetrieved]->GetBarycenter().Get3DX() && orientation == WEST_FACE) ||
                                                 (navette->GetBarycenter().Get3DY() > arrayAssembly[cptRetrieved]->GetBarycenter().Get3DY() && orientation == UPPER_FACE) ||
@@ -91,7 +113,7 @@ class Assembly {
                                                 (navette->GetBarycenter().Get3DZ() < arrayAssembly[cptRetrieved]->GetBarycenter().Get3DZ() && orientation == FRONT_FACE) ||
                                                 (navette->GetBarycenter().Get3DZ() > arrayAssembly[cptRetrieved]->GetBarycenter().Get3DZ() && orientation == BACK_FACE)
                                          ) {
-// on décale ceux qui sont derriere tant que le contenu à décaler n'est pas nul.
+                                                // we shift all nearest "element" while content is not nul.
                                                 for(unsigned decale = nbToRetrieve - 1; decale > cptRetrieved; decale --) {
 
                                                         arrayAssembly[decale] = arrayAssembly[decale-1];
@@ -104,8 +126,8 @@ class Assembly {
                                 }
 				navette = navette->GetPrev ();
 			}
-// calcul de la moyenne sur les elements slectionnes
 
+                        // we re-compute the average of all barycenters on selected "element"
                         for (unsigned nbSel = 0; nbSel < nbToRetrieve; nbSel ++ ){
                                 Element *el = arrayAssembly[nbSel] ;
                                 if (el != NULL ){
@@ -119,39 +141,39 @@ class Assembly {
                         barycenter.Get3DX() /= (double)nbToRetrieve;
                         barycenter.Get3DY() /= (double)nbToRetrieve;
                         barycenter.Get3DZ() /= (double)nbToRetrieve;
-//                        std::cout << " -------------> final centre :" << barycenter << " ."<< std::endl;
                         barycenter.transpose();
                         nbElementsFound = nbToRetrieve;
                         return arrayAssembly;
                 }
 
                 /******************************************************************************
-                retourne le barycentre de l'assembly
+                return barycenter of the assembly
                    ******************************************************************************/
                 Point3D GetBarycenter (void)
                 {
-                  return Point3D(barycenter.Get3DX(), /*viewHeight-*/barycenter.Get3DY(), barycenter.Get3DZ()).transpose();// barycenter;
+                  return Point3D(barycenter.Get3DX(), barycenter.Get3DY(), barycenter.Get3DZ()).transpose();// barycenter;
                 }
 
-                // Si l'element est répertorié ( pointeur de l'element présent
-                // dans la liste)
+                //
+                // isPresent cheks if "eleemnt" pointer is present in this
+                // assembly selection list
+                //
                 bool isPresent( Element * eToCheck ) {
                         for(unsigned nbe = 0; nbe < nbElementsFound; nbe ++) {
 
-//                                std::cout << nbe <<" (" << eToCheck <<"=="<< arrayAssembly[nbe] <<")" << std::endl;
                                 if (eToCheck == arrayAssembly[nbe]) {
-//                                        std::cout << nbe << "/" << nbElementsFound <<" ----> true"  << std::endl;
                                         return true;
                                         }
                                 }
-//                                std::cout << " ----> false"  << std::endl;
                 return false;
                 }
 
+                //
+                // destructor
+                //
                ~Assembly(){
 
                        if (arrayAssembly != NULL) {
-//                                std::cout << " ----> Someone destroys arrayAssembly !!"  << std::endl;
                                delete [] arrayAssembly;
                        }
                }
