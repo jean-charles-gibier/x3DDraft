@@ -35,35 +35,35 @@ class Point3D {
 	//	Point3D ();
 	/*-------------------------------------------------------*/
 	/* donne la dimension x en 2D (transformée) */
-	int Get2DX(void) { return x2d; };
+	int get2DX(void) { return x2d; };
 	/*-------------------------------------------------------*/
 	/* donne la dimension y en 2D (transformée) */
-	int Get2DY(void) { return y2d; };
+	int get2DY(void) { return y2d; };
 	/*-------------------------------------------------------*/
-	double & Get3DX(void) { return x3d; };
+	double & get3DX(void) { return x3d; };
 	/*-------------------------------------------------------*/
-	double & Get3DY(void) { return y3d; };
+	double & get3DY(void) { return y3d; };
 	/*-------------------------------------------------------*/
-	double & Get3DZ(void) { return z3d; };
+	double & get3DZ(void) { return z3d; };
 	/*-------------------------------------------------------*/
-	double Get3dx(void) const { return x3d; };
+	double get3DX(void) const { return x3d; };
 	/*-------------------------------------------------------*/
-	double Get3dy(void) const { return y3d; };
+	double get3DY(void) const { return y3d; };
 	/*-------------------------------------------------------*/
-	double Get3dz(void) const { return z3d; };
+	double get3DZ(void) const { return z3d; };
 	/*-------------------------------------------------------*/
 	unsigned int & IsCut(void) { return cut; };
 	/*-------------------------------------------------------*/
-	double GetPtFuiteY(void) { return PtFuiteY; };
+	double getPtFuiteY(void) { return PtFuiteY; };
 	/*-------------------------------------------------------*/
-	double GetPtFuiteX(void) { return PtFuiteX; };
+	double getPtFuiteX(void) { return PtFuiteX; };
 	/*-------------------------------------------------------*/
-	int SetGXScreen (GXScreen * ptGxscr = NULL);
+	int setGXScreen (GXScreen * ptGxscr = NULL);
 
 	/*-------------------------------------------------------*/
 	/* transforme 1 point en XPoint XLib*/
-	//#pragma message ( "C Preprocessor => PointToXpoint declaration" )
-	static XPoint PointToXpoint(Point3D point)
+	//#pragma message ( "C Preprocessor => pointToXpoint declaration" )
+	static XPoint pointToXpoint(Point3D point)
 	{
 		XPoint xpoint;
 		if (point.x2d == INVIS_POINT || point.z3d < 1.0)
@@ -81,7 +81,7 @@ class Point3D {
 	}
 
 	/* transorme 2 points en segment Xlib */
-	static XSegment PointToXsegment(Point3D point1, Point3D point2)
+	static XSegment pointToXsegment(Point3D point1, Point3D point2)
 	{
 		XSegment xseg;
 		if ((point1.x2d == INVIS_POINT) || (point2.y2d == INVIS_POINT)  || (point1.z3d < 1.0) || (point2.z3d < 1.0))
@@ -122,10 +122,10 @@ class Point3D {
 		double dx =  (fixmaxx == .0) ? FLT_QZERO : (double)fixmaxx; // distance au pt fuite en x
 		double dy =  (fixmaxy == .0) ? FLT_QZERO : (double)fixmaxy; // distance au pt fuite en y
 
-		double delta_y = dy / dx ; // coeff directeur
-		double delta_x = dx / dy ; // coeff directeur inv
+		double delta_y = dy / dx ; // coefF directeur
+		double delta_x = dx / dy ; // coefF directeur inv
 
-		// calcul du coefficient de réduction de la longueur du segment projetté
+		// calcul du coefFicient de réduction de la longueur du segment projetté
 		//égal au rapport lg segment / lg diagonale de l'écran.
 
 		double cx = fabs( (dx * sqrt(1.0 + pow(delta_y, 2.0))) / (M_SQRT2 * medianne));
@@ -148,14 +148,12 @@ class Point3D {
 				(PtFuiteY < y3d && PtFuiteY > y2d)) {
 			y2d = PtFuiteY;
 		}
-		//		cout << *this << std::endl;
 		return *this;
 	};
 
 	/*-------------------------------------------------------*/
-	void CopyProperties(Point3D point)
+	void copyProperties(Point3D point)
 	{
-		// aEffetFuite = point.aEffetFuite; => calculé dynamiquement
 		PtFuiteY = point.PtFuiteY;
 		PtFuiteX = point.PtFuiteX;
 		medianne  = point.medianne;
@@ -174,12 +172,12 @@ protected:
 	/*-------------------------------------------------------*/
 private:
 
-	inline double  CoefF( )
+	inline double  coefF( )
 	{
 		return (y3d - PtFuiteY) / (x3d - PtFuiteX);
 	};
 
-	inline double CoefFinv( void )
+	inline double coefFinv( void )
 	{
 		return (x3d - PtFuiteX) / (y3d - PtFuiteY);
 	};

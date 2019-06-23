@@ -64,7 +64,7 @@ Destructeur de GXScreen
 		while (navette)
 		{
 			Element *tmp = navette;
-			navette = navette->GetPrev ();
+			navette = navette->getPrev ();
 			delete (tmp);
 		}
 
@@ -79,9 +79,9 @@ Destructeur de GXScreen
 
 	// Affichage
 	// Actions préalables a démarrage du programme
-	int InstallWorld ()
+	int installWorld ()
 	{
-		SortZElem ();
+		sortZElem ();
 		return 0;
 	}
 
@@ -90,7 +90,7 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 	apparence dans l'axe des Z. (Tri dit "alacon" (C)).
 ****************************************************************************/
 
-	void SortZElem (void)
+	void sortZElem (void)
 	{
 		// CALCUL A REVOIR -> on ne descend pas au polypnt
 		int fini, first, is_pp_sorted;
@@ -109,24 +109,24 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 					double ldPetiteCote, ldGrandeCote;
 					Element *eGrandeCote = navette;	// on sauve le pointeur
 
-					PolyPoints *poly_point = navette->GetEPolyPoints ();
+					PolyPoints *poly_point = navette->getEPolyPoints ();
 					assert (poly_point);
 
 					// le critère de tri par défaut : la cote du point central
-					ldGrandeCote = (poly_point->GetPoint ()).Get3DZ ();
+					ldGrandeCote = (poly_point->getPoint ()).get3DZ ();
 
 					// on prend l'élément précédent
-					navette = navette->GetPrev ();
+					navette = navette->getPrev ();
 
 					if (navette)
 					{
 						Element *ePetiteCote = navette;	// on sauve le pointeur
 
-						poly_point = navette->GetEPolyPoints ();
+						poly_point = navette->getEPolyPoints ();
 						assert (poly_point);
 
 						// on récupère la cote de l'element précédant
-						ldPetiteCote = (poly_point->GetPoint ()).Get3DZ ();
+						ldPetiteCote = (poly_point->getPoint ()).get3DZ ();
 
 						// si la cote de l'élément precedant est plus grande que la cote en cours
 						// on les échange (l'affichage commence par les elements les + lointains)
@@ -134,10 +134,10 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 						{
 							Element *Cote;	// on sauve le pointeur
 
-							//(Cote = eGrandeCote->Cut ())->InsertBefore (ePetiteCote);
-							Cote = eGrandeCote->Cut ();
-							Cote ->InsertBefore (ePetiteCote);
-							if (ePetiteCote->GetNext () == NULL) // on swappe le 1er élément de la liste
+							//(Cote = eGrandeCote->Cut ())->insertBefore (ePetiteCote);
+							Cote = eGrandeCote->cut ();
+							Cote ->insertBefore (ePetiteCote);
+							if (ePetiteCote->getNext () == NULL) // on swappe le 1er élément de la liste
 							{
 								last = ePetiteCote;	// nouvelle ancre de liste
 							}
@@ -146,19 +146,19 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 						}
 
 						// on a plusieurs polypoints pour cet element
-						unsigned int nbPolyPoints = navette->GetNbPolyPoints();
+						unsigned int nbPolyPoints = navette->getNbPolyPoints();
 						unsigned pp_fini = 1;
 						// On va trier l'ordre Z de chaque polypoint
-						PolyPoints *poly_point = navette->GetEPolyPoints ();
+						PolyPoints *poly_point = navette->getEPolyPoints ();
 						assert (poly_point);
 						do {
 							pp_fini = 1;
 							for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints; cptp ++) {
 
-								Point3D cppt1 = (poly_point + cptp)->GetBaryCenter ();
-								Point3D cppt2 = (poly_point + cptp + 1)->GetBaryCenter ();
+								Point3D cppt1 = (poly_point + cptp)->getBarycenter ();
+								Point3D cppt2 = (poly_point + cptp + 1)->getBarycenter ();
 
-								if (cppt1.Get3DZ() < cppt2.Get3DZ()) {
+								if (cppt1.get3DZ() < cppt2.get3DZ()) {
 									PolyPoints pptmp = *(poly_point + cptp);
 									*(poly_point + cptp) = *(poly_point + cptp + 1);
 									*(poly_point + cptp + 1) = pptmp;
@@ -181,7 +181,7 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 boucle principale d'affichage
 ****************************************************************************/
 
-	void PlotWorld ()
+	void plotWorld ()
 	{
 		unsigned nbPerAssembly = 9;
 		d = getDisplay();
@@ -198,10 +198,10 @@ boucle principale d'affichage
 			assembly->resetBarycenter();
 		}
 		// barrycentre de l'assemblage qui a le focus
-		Point3D pt_ref = assembly->GetBarycenter();
+		Point3D pt_ref = assembly->getBarycenter();
 #ifdef SHOW_CENTER_ASSEMBLY
-		XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX() - 16 , (int)pt_ref.Get2DY(), (int)pt_ref.Get2DX() + 16, (int)pt_ref.Get2DY() );
-		XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() -16 , (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() + 16);
+		XDrawLine(d, buffer, gcView, (int)pt_ref.get2DX() - 16 , (int)pt_ref.get2DY(), (int)pt_ref.get2DX() + 16, (int)pt_ref.get2DY() );
+		XDrawLine(d, buffer, gcView, (int)pt_ref.get2DX(), (int)pt_ref.get2DY() -16 , (int)pt_ref.get2DX(), (int)pt_ref.get2DY() + 16);
 #endif // SHOW_CENTER_ASSEMBLY
 		// tant que l'élément existe
 		if (navette)
@@ -209,35 +209,35 @@ boucle principale d'affichage
 			do
 			{
 				bool isInAssembly = assembly->isPresent(navette);
-				Point3D centre_element = navette->GetBarycenter();
+				Point3D centre_element = navette->getBarycenter();
 				// prendre le polypoint associé à l'élément
 #ifdef SHOW_CENTER_ELEMENT
 				if ( isInAssembly ) {
-					XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX() - 8 , (int)centre_element.Get2DY(), (int)centre_element.Get2DX() + 8, (int)centre_element.Get2DY() );
-					XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX(), (int)centre_element.Get2DY() -8 , (int)centre_element.Get2DX(), (int)centre_element.Get2DY() + 8);
+					XDrawLine(d, buffer, gcView, (int)centre_element.get2DX() - 8 , (int)centre_element.get2DY(), (int)centre_element.get2DX() + 8, (int)centre_element.get2DY() );
+					XDrawLine(d, buffer, gcView, (int)centre_element.get2DX(), (int)centre_element.get2DY() -8 , (int)centre_element.get2DX(), (int)centre_element.get2DY() + 8);
 				}
 #endif // SHOW_CENTER_ELEMENT
-				PolyPoints *poly_point = navette->GetEPolyPoints ();
+				PolyPoints *poly_point = navette->getEPolyPoints ();
 				assert (poly_point);
 				// on a plusieurs polypoints pour cet element
-				unsigned int nbPolyPoints = navette->GetNbPolyPoints();
+				unsigned int nbPolyPoints = navette->getNbPolyPoints();
 
 				for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++) {
 
 					// l'element à le focus -> c'est celui sur lequel on agit
 					(poly_point + cptp)->action (ActionKey, isInAssembly, pt_ref);
 					// afficher l'element
-					(poly_point + cptp)->DisplayPolyPoints (d, gcView, buffer);
-					Point3D cppt = (poly_point + cptp)->GetBaryCenter ();
+					(poly_point + cptp)->displayPolyPoints (d, gcView, buffer);
+					Point3D cppt = (poly_point + cptp)->getBarycenter ();
 
 #ifdef SHOW_CENTER_POLYPNT
-					XDrawLine(d, buffer, gcView, (int)cppt.Get2DX() - 4 , (int)cppt.Get2DY(), (int)cppt.Get2DX() + 4, (int)cppt.Get2DY());
-					XDrawLine(d, buffer, gcView, (int)cppt.Get2DX(), (int)cppt.Get2DY() -4, (int)cppt.Get2DX(), (int)cppt.Get2DY() + 4);
+					XDrawLine(d, buffer, gcView, (int)cppt.get2DX() - 4 , (int)cppt.get2DY(), (int)cppt.get2DX() + 4, (int)cppt.get2DY());
+					XDrawLine(d, buffer, gcView, (int)cppt.get2DX(), (int)cppt.get2DY() -4, (int)cppt.get2DX(), (int)cppt.get2DY() + 4);
 #endif // SHOW_CENTER_POLYPNT
 				}
 
 				// on prend l'élément précédent
-				navette = navette->GetPrev ();
+				navette = navette->getPrev ();
 			}
 			while (navette);
 		}
@@ -246,7 +246,7 @@ boucle principale d'affichage
 	/*
 Traite les commandes reçues du clavier.
 */
-	short int UpdateKeys ( void )
+	short int updateKeys ( void )
 	{
 		XEvent event;
 		KeySym keysym;
@@ -368,7 +368,6 @@ Traite les commandes reçues du clavier.
 				ActionKey = NONE;
 				else if (*ch == '@')
 				{
-					//cout << " Break detected, exit : " << *ch << endl;
 					throw  "Break detected, exit" ;
 				}
 				else
@@ -399,7 +398,7 @@ Traite les commandes reçues du clavier.
 prépare le buffer avant affichage
 *****************************************************************************/
 
-	void SwapBuffers (void)
+	void swapBuffers (void)
 	{
 		d = getDisplay();
 		//clock_t td,tf;
@@ -414,26 +413,20 @@ prépare le buffer avant affichage
 	/******************************************************************************
 Afficheur de l'objet Meta
 ******************************************************************************/
-	int DisplayWorld ()
+	int displayWorld ()
 	{
 		usleep(TIME_USLEEP);
 		d = getDisplay();
-		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
-		UpdateKeys ();
-		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
-		PlotWorld ();
-		// std::cout << "Meta (" << __LINE__ << "," << d << ")  " << std::endl;
-		SortZElem ();
-		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
-		SwapBuffers ();
-		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
+		updateKeys ();
+		plotWorld ();
+		sortZElem ();
+		swapBuffers ();
 		XSync (d, False);
-		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
 	}
 
 	// Ouverture display
-	int OpenDisplay (const char * defaultDisplay = "0.0:127.0.0.1")
-	// int OpenDisplay (std::string defaultDisplay = "0.0:127.0.0.1")
+	int openDisplay (const char * defaultDisplay = "0.0:127.0.0.1")
+	// int openDisplay (std::string defaultDisplay = "0.0:127.0.0.1")
 	{
 		std::cout << "Try to open display " << defaultDisplay << std::endl;
 		d = XOpenDisplay(defaultDisplay);
@@ -449,12 +442,12 @@ Afficheur de l'objet Meta
 	}
 
 	// default screen
-	int GetDefaultScreen () {
+	int getDefaultScreen () {
 		return s;
 	}
 
 	/* Créer la fenetre. */
-	Window CreateSimpleWindow ( int x = 10, int y = 10, int largeur = 100, int hauteur = 100, int largeur_bord = 1) {
+	Window createSimpleWindow ( int x = 10, int y = 10, int largeur = 100, int hauteur = 100, int largeur_bord = 1) {
 		d = getDisplay();
 		win = XCreateSimpleWindow(d, RootWindow(d, s), x, y, largeur, hauteur, largeur_bord, BlackPixel(d, s), WhitePixel(d, s));
 		return win;
@@ -462,7 +455,7 @@ Afficheur de l'objet Meta
 
 	// Setup buffer
 	void
-	SetupBuffer (void)
+	setupBuffer (void)
 	{
 		d = getDisplay();
 		buffer = XCreatePixmap (d, viewWin, viewWidth, viewHeight, DefaultDepth (d, DefaultScreen (d)));
@@ -582,7 +575,7 @@ Mapping de la fenêtre principale
 */
 		XMapWindow (d, win);
 		XMapSubwindows (d, win);
-		SetupBuffer ();
+		setupBuffer ();
 
 		/*
 "Shut off keyboard autorepeat" pour la durée du jeu
@@ -597,7 +590,7 @@ mais ça n'a pas l'air de fonctionner.
 retrouve un element dans GXScreen selon son numéro
 ******************************************************************************/
 
-	Element *GetElem (int no = 0)
+	Element *getElement (int no = 0)
 	{
 		Element *navette = last;
 		// tant que l'élément existe
@@ -605,10 +598,10 @@ retrouve un element dans GXScreen selon son numéro
 		{
 			do
 			{// on compare son numéro
-				if (no == navette->GetNo ())
+				if (no == navette->getNo ())
 				break;
 				// on prend l'élément précédent
-				navette = navette->GetPrev ();
+				navette = navette->getPrev ();
 			}
 			while (navette);
 		}
@@ -618,18 +611,18 @@ retrouve un element dans GXScreen selon son numéro
 	/******************************************************************************
 ******************************************************************************/
 
-	PolyPoints *GetSPolyPoints (int no = 0)
+	PolyPoints *getSPolyPoints (int no = 0)
 	{
-		Element *elem = GetElem (no);
+		Element *elem = getElement (no);
 		assert (elem);
-		return elem->GetEPolyPoints ();
+		return elem->getEPolyPoints ();
 	}
 
 	/******************************************************************************
 ajoute un élément de type polypoint dans GXScreen
 ******************************************************************************/
 
-	Element *AddElem (PolyPoints * pp = (PolyPoints *) NULL, int no = 0)
+	Element *addElement (PolyPoints * pp = (PolyPoints *) NULL, int no = 0)
 	{
 		Element *elem = new Element;
 
@@ -637,11 +630,11 @@ ajoute un élément de type polypoint dans GXScreen
 		{
 			if (pp) {
 				// copie du polypoint avant insertion
-				elem->AddPolyPoints (pp);
-				pp->SetPtEltParent(elem);
+				elem->addPolyPoints (pp);
+				pp->setPtEltParent(elem);
 			}
 			// s'il n'a pas de numéro on lui affecte celui de son arrivée
-			last = elem->InsertAfter (last, no ? no : nbElem);
+			last = elem->insertAfter (last, no ? no : nbElem);
 			nbElem++;
 		}
 		else
@@ -657,7 +650,7 @@ ajoute un élément de type polypoint dans GXScreen
 retourne le nombre d'éléments a afficher
 ******************************************************************************/
 
-	unsigned short GetNbElem (void)
+	unsigned short getNbElem (void)
 	{
 		return nbElem;
 	}
@@ -666,7 +659,7 @@ retourne le nombre d'éléments a afficher
 lecture du fichier texte de configuration des éléments.
 ******************************************************************************/
 
-	Element *ReadFConfigElem (const char * configName = "x3DDraft.cfg")
+	Element *readFConfigElem (const char * configName = "x3DDraft.cfg")
 	{
 
 		char buf_cfg[0x100];
@@ -727,13 +720,13 @@ lecture du fichier texte de configuration des éléments.
 					//printf ("ELEMENT\n");
 					if (strncmp (buf_cfg, "ELEMENT", 7) == 0)
 					{
-						cur_elem = this->AddElem ();
+						cur_elem = this->addElement ();
 						assert (cur_elem);
 
 						if (!is_started)
 						{
 							is_started = 1;
-							cur_elem->SetFocus (1);
+							cur_elem->setFocus (1);
 						}
 
 						next_state = POLYPOINT | SPHERE | PLAN;
@@ -750,7 +743,7 @@ lecture du fichier texte de configuration des éléments.
 					{
 						char buf_option[0x20], buf_rep[0x20];
 						char *pstr = strchr (buf_cfg + 9, ':');
-						cur_polypoint = cur_elem->AddPolyPoints ();
+						cur_polypoint = cur_elem->addPolyPoints ();
 
 						if (pstr)
 						{
@@ -781,7 +774,7 @@ lecture du fichier texte de configuration des éléments.
 						{
 							if (sscanf (pstr + 1, "%d %d", &a, &b) == 2)
 							{
-								cur_polypoint->AddXSegment (a, b);
+								cur_polypoint->addXSegment (a, b);
 							}
 						}
 
@@ -799,7 +792,7 @@ lecture du fichier texte de configuration des éléments.
 					{
 						char buf_option[0x20], buf_rep[0x20];
 						char *pstr = strchr (buf_cfg + 6, ':');
-						cur_polypoint = cur_elem->AddPolyPoints ();
+						cur_polypoint = cur_elem->addPolyPoints ();
 
 						if (pstr)
 						{
@@ -823,7 +816,7 @@ lecture du fichier texte de configuration des éléments.
 					{
 						char buf_option[0x20], buf_rep[0x20];
 						char *pstr = strchr (buf_cfg + 4, ':');
-						cur_polypoint = cur_elem->AddPolyPoints ();
+						cur_polypoint = cur_elem->addPolyPoints ();
 
 						while (pstr)
 						{
@@ -879,11 +872,11 @@ lecture du fichier texte de configuration des éléments.
 							//							printf ("%d\n", __LINE__);
 							//attention  le format %Lf n'est pas portable
 							int nbi = sscanf (pstr + 1, "%lf %lf %lf %10s",
-							&(pt3d.Get3DX ()),
-							&(pt3d.Get3DY ()),
-							&(pt3d.Get3DZ ()), buf_cfg);
+							&(pt3d.get3DX ()),
+							&(pt3d.get3DY ()),
+							&(pt3d.get3DZ ()), buf_cfg);
 
-							// std::cout << "So : " <<pt3d.Get3DX () << " " << pt3d.Get3DY () << " " <<  pt3d.Get3DZ () << std::endl;
+							// std::cout << "So : " <<pt3d.get3DX () << " " << pt3d.get3DY () << " " <<  pt3d.get3DZ () << std::endl;
 							// std::cout << "----------------------------- "  << std::endl;
 							// std::cout << " cur pp >> " << *cur_polypoint << std::endl;
 							// std::cout << "----------------------------- "  << std::endl;
@@ -893,7 +886,7 @@ lecture du fichier texte de configuration des éléments.
 							{
 								//								printf ("%d\n", __LINE__);
 								// affecter les points de fuite et dimensions
-								pt3d.SetGXScreen();
+								pt3d.setGXScreen();
 
 								if (nbi >= 4)
 								{
@@ -957,20 +950,20 @@ lecture du fichier texte de configuration des éléments.
 								//								printf ("rayon %d\n", __LINE__);
 								pt3dCirc = pt3d;
 								Sphere c (pt3dCent, pt3dCirc, 20);
-								cur_polypoint = cur_elem->AddPolyPoints (&c);
+								cur_polypoint = cur_elem->addPolyPoints (&c);
 							}
 							else if(next_state & POINT_PLAN_3)
 							{
 								pt3ddz = pt3d;
-								// std::cout << "cur_polypoint : " <<pt3ddx.Get3DX () << " " << pt3ddy.Get3DY () << " " <<  pt3ddz.Get3DZ () <<  " lg_plan :" << lg_plan << " lg_trame :" << lg_trame << std::endl;
+								// std::cout << "cur_polypoint : " <<pt3ddx.get3DX () << " " << pt3ddy.get3DY () << " " <<  pt3ddz.get3DZ () <<  " lg_plan :" << lg_plan << " lg_trame :" << lg_trame << std::endl;
 								Plan p (pt3ddx, pt3ddy, pt3ddz, lg_plan, lg_trame);
-								cur_polypoint = cur_elem->AddPolyPoints (&p);
+								cur_polypoint = cur_elem->addPolyPoints (&p);
 							}
 							next_state = ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN;
 							//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 						}
 						//							printf ("%d\n %0x\n", __LINE__, next_state);
-						//cout << "So2 : " <<pt3d.Get3DX () << " " << pt3d.Get3DY () << " " <<  pt3d.Get3DZ () << endl;
+						//cout << "So2 : " <<pt3d.get3DX () << " " << pt3d.get3DY () << " " <<  pt3d.get3DZ () << endl;
 					}
 					else
 					{
@@ -1039,7 +1032,7 @@ lecture du fichier texte de configuration des éléments.
 	Pixmap instrBuffer;
 	GC gcView;
 	Element * &GetLast(void) {return last;};
-	//	PolyPoints * GetSPolyPoints(int no = 0);
+	//	PolyPoints * getSPolyPoints(int no = 0);
 	unsigned short nbElem;
 	//initialiser le tableau des points de fuite
 	double *aEffetFuite/*[LG_ARRAY_FLOAT]*/, PtFuiteY, PtFuiteX, medianne ;

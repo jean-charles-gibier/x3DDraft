@@ -80,10 +80,10 @@ class PolyPoints {
 
 		for (int cpt = 0 ; cpt < pp.nbPoints ; cpt ++)
 		{
-			s << "segment " << cpt << ": 3dx " << pp.anchor[cpt].Get3DX() << " 3dy "
-			<< pp.anchor[cpt].Get3DY() << " 3dz " << pp.anchor[cpt].Get3DZ()
-			<< " transpo 2D -> 2dx :" << pp.anchor[cpt].Get2DX()
-			<< " 2dy : "<< pp.anchor[cpt].Get2DY() << std::endl;
+			s << "segment " << cpt << ": 3dx " << pp.anchor[cpt].get3DX() << " 3dy "
+			<< pp.anchor[cpt].get3DY() << " 3dz " << pp.anchor[cpt].get3DZ()
+			<< " transpo 2D -> 2dx :" << pp.anchor[cpt].get2DX()
+			<< " 2dy : "<< pp.anchor[cpt].get2DY() << std::endl;
 		}
 
 		for (int cpt = 0 ; cpt < pp.nbSeg * 2; cpt ++)
@@ -106,7 +106,7 @@ class PolyPoints {
 			//            std::cout << "fin de programme : PolyPoints Copie suspecte" << std::endl;
 			//            exit (-1);
 
-			//FreePolyPnt();
+			//freePolyPnt();
 		}
 
 		if(pp.nbSeg)
@@ -204,7 +204,7 @@ contructeur par défaut
 
 		anchor[(nbPoints - 1)].transpose();
 
-		CalculeCentre();
+		calculeCentre();
 
 		return anchor;
 	}
@@ -216,7 +216,7 @@ contructeur par défaut
 #define A_Y 1
 #define A_Z 2
 
-	Point3D GetBaryCenter ( void ){
+	Point3D getBarycenter ( void ){
 		return Point3D(midx, viewHeight-midy, midz);
 	}
 
@@ -278,9 +278,9 @@ contructeur par défaut
 	void Rotate(const Point3D p ,double deg_xy, double deg_xz, double deg_yz)
 	{
 		short toproced = 0;
-		double	l_midx = ((Point3D) p).Get3DX() ? ((Point3D) p).Get3DX() : midx,
-		l_midy = ((Point3D) p).Get3DY() ? viewHeight-((Point3D) p).Get3DY() : midy,
-		l_midz = ((Point3D) p).Get3DZ() ? ((Point3D) p).Get3DZ() : midz;
+		double	l_midx = ((Point3D) p).get3DX() ? ((Point3D) p).get3DX() : midx,
+		l_midy = ((Point3D) p).get3DY() ? viewHeight-((Point3D) p).get3DY() : midy,
+		l_midz = ((Point3D) p).get3DZ() ? ((Point3D) p).get3DZ() : midz;
 
 		/* on renverse en xy en travaillant sur n */
 		if(deg_xy != 0.0)
@@ -288,11 +288,11 @@ contructeur par défaut
 			toproced = 1;
 			for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
 			{
-				double 	tempx = anchor[cpt].Get3DX() - l_midx,
-				tempy = anchor[cpt].Get3DY() - l_midy;
+				double 	tempx = anchor[cpt].get3DX() - l_midx,
+				tempy = anchor[cpt].get3DY() - l_midy;
 
-				anchor[cpt].Get3DX() = (tempx * cos(deg_xy)) - (tempy * sin(deg_xy)) + l_midx;
-				anchor[cpt].Get3DY() = (tempx * sin(deg_xy)) + (tempy * cos(deg_xy)) + l_midy;
+				anchor[cpt].get3DX() = (tempx * cos(deg_xy)) - (tempy * sin(deg_xy)) + l_midx;
+				anchor[cpt].get3DY() = (tempx * sin(deg_xy)) + (tempy * cos(deg_xy)) + l_midy;
 			}
 		}
 
@@ -302,11 +302,11 @@ contructeur par défaut
 			toproced = 1;
 			for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
 			{
-				double 	tempx = anchor[cpt].Get3DX() - l_midx,
-				tempz = anchor[cpt].Get3DZ() - l_midz;
+				double 	tempx = anchor[cpt].get3DX() - l_midx,
+				tempz = anchor[cpt].get3DZ() - l_midz;
 
-				anchor[cpt].Get3DX() = (tempx * cos(deg_xz)) - (tempz * sin(deg_xz)) + l_midx;
-				anchor[cpt].Get3DZ() = (tempx * sin(deg_xz)) + (tempz * cos(deg_xz)) + l_midz;
+				anchor[cpt].get3DX() = (tempx * cos(deg_xz)) - (tempz * sin(deg_xz)) + l_midx;
+				anchor[cpt].get3DZ() = (tempx * sin(deg_xz)) + (tempz * cos(deg_xz)) + l_midz;
 			}
 		}
 
@@ -316,11 +316,11 @@ contructeur par défaut
 			toproced = 1;
 			for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
 			{
-				double 	tempy = anchor[cpt].Get3DY() - l_midy,
-				tempz = anchor[cpt].Get3DZ() - l_midz;
+				double 	tempy = anchor[cpt].get3DY() - l_midy,
+				tempz = anchor[cpt].get3DZ() - l_midz;
 
-				anchor[cpt].Get3DY() = (tempy * cos(deg_yz)) - (tempz * sin(deg_yz)) + l_midy;
-				anchor[cpt].Get3DZ() = (tempy * sin(deg_yz)) + (tempz * cos(deg_yz)) + l_midz;
+				anchor[cpt].get3DY() = (tempy * cos(deg_yz)) - (tempz * sin(deg_yz)) + l_midy;
+				anchor[cpt].get3DZ() = (tempy * sin(deg_yz)) + (tempz * cos(deg_yz)) + l_midz;
 			}
 		}
 
@@ -337,53 +337,53 @@ contructeur par défaut
 bouger un polypt dans le sens du vecteur (point central, point N° np)
 ur un longueur speed.
 -------------------------------------------------- */
-	void MoveP(const unsigned int np ,double speed = .07)
+	void moveP(const unsigned int np ,double speed = .07)
 	{
 		Point3D n = anchor[min(np, nbPoints -1)];
-		CalculeCentre();
-		double dx = n.Get3DX() - midx,
-		dz = n.Get3DZ() - midz,
-		dy = n.Get3DY() - midy,
+		calculeCentre();
+		double dx = n.get3DX() - midx,
+		dz = n.get3DZ() - midz,
+		dy = n.get3DY() - midy,
 		maxd = max(max(max( fabs(dx), fabs(dz)), fabs(dy)), (double)FLT_MIN)/speed;
 		/*
 std::cout << " => dx : " << dx << " dy : "  << dy << " dz : " << dz
-<< " => pdx : " << n.Get3DX() << " pdy : "  << n.Get3DY() << " pdz : " << n.Get3DZ()
+<< " => pdx : " << n.get3DX() << " pdy : "  << n.get3DY() << " pdz : " << n.get3DZ()
 << " midx : " << midx << " midy : "  << midy << " midz : " << midz << " maxd : " << maxd <<__LINE__ << std::endl;
 */
-		Move(n, dx/maxd , dy/maxd , dz/maxd );
+		move(n, dx/maxd , dy/maxd , dz/maxd );
 	}
 
 	/*--------------------------------------------------
 avance dans l'axe des Z
 --------------------------------------------------*/
 
-	void MoveZ(double speed = .17)
+	void moveZ(double speed = .17)
 	{
-		Move(Point3D(  ) , 0.0 , 0.0 , speed );
+		move(Point3D(  ) , 0.0 , 0.0 , speed );
 	}
 
 	/*--------------------------------------------------
 avance dans l'axe des Y
 --------------------------------------------------*/
 
-	void MoveY(double speed = .17)
+	void moveY(double speed = .17)
 	{
-		Move(Point3D(  ) , 0.0 , speed , 0.0 );
+		move(Point3D(  ) , 0.0 , speed , 0.0 );
 	}
 
 	/*--------------------------------------------------
 avance dans l'axe des X
 --------------------------------------------------*/
 
-	void MoveX(double speed = .17)
+	void moveX(double speed = .17)
 	{
-		Move(Point3D(  ) , speed , 0.0 , 0.0 );
+		move(Point3D(  ) , speed , 0.0 , 0.0 );
 	}
 
 	/*--------------------------------------------------
 bouger un polypt dans l 'un des 3 axes X Y Z
 -------------------------------------------------- */
-	void Move(const Point3D p ,double mx, double my , double mz)
+	void move(const Point3D p ,double mx, double my , double mz)
 	{
 		short toproced = 0;
 		if(mz != 0.0)
@@ -391,8 +391,8 @@ bouger un polypt dans l 'un des 3 axes X Y Z
 			toproced = 1;
 			for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
 			{
-				double tempz = anchor[cpt].Get3DZ() + mz;
-				anchor[cpt].Get3DZ() = tempz;
+				double tempz = anchor[cpt].get3DZ() + mz;
+				anchor[cpt].get3DZ() = tempz;
 				midz += mz;
 			}
 
@@ -401,8 +401,8 @@ bouger un polypt dans l 'un des 3 axes X Y Z
 				toproced = 1;
 				for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
 				{
-					double tempy = anchor[cpt].Get3DY() + my;
-					anchor[cpt].Get3DY() = tempy;
+					double tempy = anchor[cpt].get3DY() + my;
+					anchor[cpt].get3DY() = tempy;
 				}
 				midy += my;
 			}
@@ -412,8 +412,8 @@ bouger un polypt dans l 'un des 3 axes X Y Z
 				toproced = 1;
 				for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
 				{
-					double tempx = anchor[cpt].Get3DX() + mx;
-					anchor[cpt].Get3DX() = tempx;
+					double tempx = anchor[cpt].get3DX() + mx;
+					anchor[cpt].get3DX() = tempx;
 				}
 				midx += mx;
 			}
@@ -429,7 +429,7 @@ bouger un polypt dans l 'un des 3 axes X Y Z
 	/*--------------------------------------------------
 réalloue et réattribue la table des segments liés
 -------------------------------------------------- */
-	void SetXSegments(unsigned int SetnbSeg, unsigned int * new_array)
+	void setXSegments(unsigned int SetnbSeg, unsigned int * new_array)
 	{
 
 		if (nbSeg)
@@ -455,7 +455,7 @@ réalloue et réattribue la table des segments liés
 Ajoute une laison entre des points existants du polypt
 du point (numéro) a au point (numéro) b
 -------------------------------------------------- */
-	void AddXSegment(unsigned int a, unsigned int b)
+	void addXSegment(unsigned int a, unsigned int b)
 	{
 		unsigned int * another = new unsigned int [(++nbSeg * 2)];
 		assert (another);
@@ -477,7 +477,7 @@ du point (numéro) a au point (numéro) b
 	/*--------------------------------------------------
 Affiche les segments du polypt sous X
 -------------------------------------------------- */
-	void DisplayPolyPoints (Display *d, GC gcView, Pixmap & ptBuffer, int DisplayType = 0)
+	void displayPolyPoints (Display *d, GC gcView, Pixmap & ptBuffer, int DisplayType = 0)
 	{
 		if ( color )
 		XSetForeground (d, gcView, color);
@@ -494,12 +494,12 @@ Affiche les segments du polypt sous X
 			{
 
 #ifdef WIRED_MODE
-				xsegs[cpt] = Point3D::PointToXsegment(
+				xsegs[cpt] = Point3D::pointToXsegment(
 				anchor[aSeg[cpt*2]],
 				anchor[aSeg[(cpt*2)+1]]);
 #else
 				// ici on ne prend que le premier point de chaque segment
-				xpoints[cpt] = Point3D::PointToXpoint(aSeg[cpt*2]);
+				xpoints[cpt] = Point3D::pointToXpoint(aSeg[cpt*2]);
 #endif // WIRED_MODE
 			}
 #ifdef WIRED_MODE
@@ -520,13 +520,13 @@ Affiche les segments du polypt sous X
 
 			for (index = 0, offset_deb = 0, offset_fin = 0; index < (nbPoints - 1);  index ++)
 			{
-				XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX() - 4 , (int)anchor[index].GetPtFuiteY(), (int)anchor[index].GetPtFuiteX() + 4, (int)anchor[index].GetPtFuiteY() );
-				XDrawLine(d, ptBuffer, gcView, (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() -4 , (int)anchor[index].GetPtFuiteX(), (int)anchor[index].GetPtFuiteY() + 4);
+				XDrawLine(d, ptBuffer, gcView, (int)anchor[index].getPtFuiteX() - 4 , (int)anchor[index].getPtFuiteY(), (int)anchor[index].getPtFuiteX() + 4, (int)anchor[index].getPtFuiteY() );
+				XDrawLine(d, ptBuffer, gcView, (int)anchor[index].getPtFuiteX(), (int)anchor[index].getPtFuiteY() -4 , (int)anchor[index].getPtFuiteX(), (int)anchor[index].getPtFuiteY() + 4);
 
 				if (anchor[index].IsCut() == 0 && index < (nbPoints - 1))
 				{
-					xsegs[offset_fin] = Point3D::PointToXsegment( anchor[index], anchor[index+1]);
-					xpoints[offset_fin] = Point3D::PointToXpoint(anchor[index]);
+					xsegs[offset_fin] = Point3D::pointToXsegment( anchor[index], anchor[index+1]);
+					xpoints[offset_fin] = Point3D::pointToXpoint(anchor[index]);
 					if ( strlen(bigbuf) < 8000)
 					sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
 					offset_fin ++;
@@ -540,8 +540,8 @@ Affiche les segments du polypt sous X
 			/* tracer le segement de fin */
 			if (anchor[index].IsCut() == 0)
 			{
-				xsegs[offset_fin] = Point3D::PointToXsegment( anchor[0], anchor[index]);
-				xpoints[offset_fin] = Point3D::PointToXpoint(anchor[index]);
+				xsegs[offset_fin] = Point3D::pointToXsegment( anchor[0], anchor[index]);
+				xpoints[offset_fin] = Point3D::pointToXpoint(anchor[index]);
 				// if ( strlen(bigbuf) < 8000)
 				// sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
 				offset_fin ++;
@@ -559,7 +559,7 @@ Affiche les segments du polypt sous X
 if (startText == 0) {
 		startText = 1;
 windowText =
-		XCreateSimpleWindow (d,
+		XcreateSimpleWindow (d,
 								RootWindow  (d,  DefaultScreen (d)),
 							100,
 							100,
@@ -598,7 +598,7 @@ affiche les infos de base d'un polypt
 			if (nfile != NULL && line)
 			fprintf(stdout , " fichier %s ligne %d \t", nfile, line);
 			fprintf(stdout , " segment %d : 3dx %2.3f  3dy %2.3f 3dZ %2.3f \n",
-			cpt , (float) anchor[cpt].Get3DX(), (float) anchor[cpt].Get3DY(), (float) anchor[cpt].Get3DZ());
+			cpt , (float) anchor[cpt].get3DX(), (float) anchor[cpt].get3DY(), (float) anchor[cpt].get3DZ());
 		}
 	}
 
@@ -606,7 +606,7 @@ affiche les infos de base d'un polypt
 renvoie un point constituant le polypt identifié par son numéro d'index
 par défaut -1 : revoie le point central d'équilibre
 -------------------------------------------------- */
-	Point3D GetPoint(int numpoint = -1)
+	Point3D getPoint(int numpoint = -1)
 	{
 		if (numpoint < 0)
 		{
@@ -627,7 +627,7 @@ par défaut -1 : revoie le point central d'équilibre
 libération et raz
 -------------------------------------------------- */
 
-	void FreePolyPnt (void)
+	void freePolyPnt (void)
 	{
 		if (nbPoints)
 		delete [] anchor;
@@ -643,25 +643,25 @@ libération et raz
 	/*-------------------------------------------------- */
 	short int action (short int &Action, int IsFocus/* = 0 */, const Point3D pt_ref/* = (const Point3D) 0*/);
 	/*-------------------------------------------------- */
-	void SetPtEltParent(Element * pte);
+	void setPtEltParent(Element * pte);
 	/*-------------------------------------------------- */
-	Element* GetPtEltParent();
+	Element* getPtEltParent();
 	/*-------------------------------------------------- */
-	void CalculeCentre(void);
+	void calculeCentre(void);
 	/*--------------------------------------------------
 destructeur
 -------------------------------------------------- */
 	~ PolyPoints (void)
 	{
 		std::cout << " => Free polypoint :" << __LINE__ << std::endl;
-		FreePolyPnt ();
+		freePolyPnt ();
 	}
 
 	/*--------------------------------------------------
 fonction virtuelle devant permettre aux différents types de polypt de
 changer de dimension.
 -------------------------------------------------- */
-	virtual void SetDim ( Point3D p1, Point3D p2){};
+	virtual void setDim ( Point3D p1, Point3D p2){};
 
 	protected :
 	// pointeur  de l'element parent à injecter :
@@ -691,9 +691,9 @@ class Cercle : public PolyPoints
 	double degres = 360.0 // partie a dessiner
 	) : PolyPoints ()
 	{
-		double dx = ((Point3D) pCentre).Get3DX() - ((Point3D) pRayon1).Get3DX();
-		double dy = ((Point3D) pCentre).Get3DY() - ((Point3D) pRayon1).Get3DY();
-		double dz = ((Point3D) pCentre).Get3DZ() - ((Point3D) pRayon1).Get3DZ();
+		double dx = ((Point3D) pCentre).get3DX() - ((Point3D) pRayon1).get3DX();
+		double dy = ((Point3D) pCentre).get3DY() - ((Point3D) pRayon1).get3DY();
+		double dz = ((Point3D) pCentre).get3DZ() - ((Point3D) pRayon1).get3DZ();
 
 		// calcul du rayon par les hypoténuses
 		double hypo_xy = sqrt((dx * dx) + (dy * dy));
@@ -717,16 +717,16 @@ class Cercle : public PolyPoints
 		for (int cpt_seq = 0; cpt_seq < pParCycle; cpt_seq ++)
 		{
 			// on copie les infos du point pCentre
-			anchor[cpt_seq].CopyProperties(pCentre);
+			anchor[cpt_seq].copyProperties(pCentre);
 
 			// calcul de chaque point du cercle
 			rad = ((M_PI * 2.0 * (double)cpt_seq)/(double)pParCycle);
-			anchor [cpt_seq].Get3DX() = (sin(rad) * lg_arc) + ((Point3D) pCentre).Get3DX();
-			anchor [cpt_seq].Get3DY() = (cos(rad) * lg_arc) + ((Point3D) pCentre).Get3DY();
-			anchor [cpt_seq].Get3DZ() = ((Point3D) pCentre).Get3DZ();
+			anchor [cpt_seq].get3DX() = (sin(rad) * lg_arc) + ((Point3D) pCentre).get3DX();
+			anchor [cpt_seq].get3DY() = (cos(rad) * lg_arc) + ((Point3D) pCentre).get3DY();
+			anchor [cpt_seq].get3DZ() = ((Point3D) pCentre).get3DZ();
 			anchor[cpt_seq].transpose();
 		}
-		CalculeCentre();
+		calculeCentre();
 	};
 	//    protected :
 private:
@@ -753,9 +753,9 @@ class Sphere : public PolyPoints
 		std::cout << "SPHERE =>" << __LINE__ << std::endl;
 		pRayon = pRayon1;
 		// calcul des coordonées du rayon de la sphère
-		double dx = ((Point3D) pCentre).Get3DX() - ((Point3D) pRayon).Get3DX();
-		double dy = ((Point3D) pCentre).Get3DY() - ((Point3D) pRayon).Get3DY();
-		double dz = ((Point3D) pCentre).Get3DZ() - ((Point3D) pRayon).Get3DZ();
+		double dx = ((Point3D) pCentre).get3DX() - ((Point3D) pRayon).get3DX();
+		double dy = ((Point3D) pCentre).get3DY() - ((Point3D) pRayon).get3DY();
+		double dz = ((Point3D) pCentre).get3DZ() - ((Point3D) pRayon).get3DZ();
 
 		// calcul du rayon par les hypoténuses
 		double hypo_xy = sqrt((dx * dx) + (dy * dy));
@@ -795,12 +795,12 @@ class Sphere : public PolyPoints
 
 				double lr = lg_arc * sin(rad1);
 
-				anchor [ NumPoint ].CopyProperties(pCentre);
+				anchor [ NumPoint ].copyProperties(pCentre);
 				anchor [ NumPoint ].IsCut() = 0;
 
-				anchor [ NumPoint ].Get3DX() = (sin(rad2) * lr) + ((Point3D) pCentre).Get3DX();
-				anchor [ NumPoint ].Get3DY() = (cos(rad2) * lr) + ((Point3D) pCentre).Get3DY();
-				anchor [ NumPoint ].Get3DZ() =  (lg_arc * cos(rad1) ) + ((Point3D) pCentre).Get3DZ();
+				anchor [ NumPoint ].get3DX() = (sin(rad2) * lr) + ((Point3D) pCentre).get3DX();
+				anchor [ NumPoint ].get3DY() = (cos(rad2) * lr) + ((Point3D) pCentre).get3DY();
+				anchor [ NumPoint ].get3DZ() =  (lg_arc * cos(rad1) ) + ((Point3D) pCentre).get3DZ();
 				anchor[ NumPoint].transpose();
 
 				aSeg[ (NumPoint * 2) ] = NumPoint;
@@ -814,11 +814,11 @@ class Sphere : public PolyPoints
 			anchor[((cpt_seq1 + 1) *  pParCycle) - 1].IsCut() = 1;
 		}
 		anchor[(pParCycle *  pParCycle) - 1].IsCut() = 1;
-		CalculeCentre();
+		calculeCentre();
 	};
 
 	/*-------------------------------------------------- */
-	void SetDim (Point3D p1, Point3D p2){};
+	void setDim (Point3D p1, Point3D p2){};
 	/*-------------------------------------------------- */
 
 	//protected :
@@ -846,9 +846,9 @@ public:
 	{
 		Point3D pnull;
 
-		double px = max(fabs(pa.Get3dx() - pb.Get3dx()), (double)FLT_QZERO);
-		double py = max(fabs(pa.Get3dy() - pb.Get3dy()), (double)FLT_QZERO);
-		double pz = max(fabs(pa.Get3dz() - pb.Get3dz()), (double)FLT_QZERO);
+		double px = max(fabs(pa.get3DX() - pb.get3DX()), (double)FLT_QZERO);
+		double py = max(fabs(pa.get3DY() - pb.get3DY()), (double)FLT_QZERO);
+		double pz = max(fabs(pa.get3DZ() - pb.get3DZ()), (double)FLT_QZERO);
 		double pxpy = px/py;
 		double pxpz = px/pz;
 		double pzpy = pz/py;
@@ -860,33 +860,33 @@ public:
 
 		for (unsigned int i = 0; i <  nbDalles; i ++) {
 			for (unsigned int j = 0; j <  nbDalles; j ++) {
-				anchor[(((i*nbDalles)+j)*5)].Get3DX() = pa.Get3dx() + (lgTrame * (double)i);
-				anchor[(((i*nbDalles)+j)*5)].Get3DY() = pa.Get3dy();
-				anchor[(((i*nbDalles)+j)*5)].Get3DZ() = pa.Get3dz() + (lgTrame * (double)j);
+				anchor[(((i*nbDalles)+j)*5)].get3DX() = pa.get3DX() + (lgTrame * (double)i);
+				anchor[(((i*nbDalles)+j)*5)].get3DY() = pa.get3DY();
+				anchor[(((i*nbDalles)+j)*5)].get3DZ() = pa.get3DZ() + (lgTrame * (double)j);
 				anchor[(((i*nbDalles)+j)*5)].IsCut() = 0;
 				anchor[(((i*nbDalles)+j)*5)].transpose();
 
-				anchor[(((i*nbDalles)+j)*5)+1].Get3DX() = pa.Get3dx() + (lgTrame * (double)i);
-				anchor[(((i*nbDalles)+j)*5)+1].Get3DY() = pa.Get3dy();
-				anchor[(((i*nbDalles)+j)*5)+1].Get3DZ() = pa.Get3dz() + (lgTrame * (double)(j+1));
+				anchor[(((i*nbDalles)+j)*5)+1].get3DX() = pa.get3DX() + (lgTrame * (double)i);
+				anchor[(((i*nbDalles)+j)*5)+1].get3DY() = pa.get3DY();
+				anchor[(((i*nbDalles)+j)*5)+1].get3DZ() = pa.get3DZ() + (lgTrame * (double)(j+1));
 				anchor[(((i*nbDalles)+j)*5)+1].IsCut() = 0;
 				anchor[(((i*nbDalles)+j)*5)+1].transpose();
 
-				anchor[(((i*nbDalles)+j)*5)+2].Get3DX() = pa.Get3dx() + (lgTrame * (double)(i + 1));
-				anchor[(((i*nbDalles)+j)*5)+2].Get3DY() = pa.Get3dy();
-				anchor[(((i*nbDalles)+j)*5)+2].Get3DZ() = pa.Get3dz() + (lgTrame * (double)(j + 1));
+				anchor[(((i*nbDalles)+j)*5)+2].get3DX() = pa.get3DX() + (lgTrame * (double)(i + 1));
+				anchor[(((i*nbDalles)+j)*5)+2].get3DY() = pa.get3DY();
+				anchor[(((i*nbDalles)+j)*5)+2].get3DZ() = pa.get3DZ() + (lgTrame * (double)(j + 1));
 				anchor[(((i*nbDalles)+j)*5)+2].IsCut() = 0;
 				anchor[(((i*nbDalles)+j)*5)+2].transpose();
 
-				anchor[(((i*nbDalles)+j)*5)+3].Get3DX() = pa.Get3dx() + (lgTrame * (double)(i+1));
-				anchor[(((i*nbDalles)+j)*5)+3].Get3DY() = pa.Get3dy();
-				anchor[(((i*nbDalles)+j)*5)+3].Get3DZ() = pa.Get3dz() + (lgTrame * (double)j) ;
+				anchor[(((i*nbDalles)+j)*5)+3].get3DX() = pa.get3DX() + (lgTrame * (double)(i+1));
+				anchor[(((i*nbDalles)+j)*5)+3].get3DY() = pa.get3DY();
+				anchor[(((i*nbDalles)+j)*5)+3].get3DZ() = pa.get3DZ() + (lgTrame * (double)j) ;
 				anchor[(((i*nbDalles)+j)*5)+3].IsCut() = 0;
 				anchor[(((i*nbDalles)+j)*5)+3].transpose();
 
-				anchor[(((i*nbDalles)+j)*5)+4].Get3DX() = pa.Get3dx() + (lgTrame * (double)i);
-				anchor[(((i*nbDalles)+j)*5)+4].Get3DY() = pa.Get3dy();
-				anchor[(((i*nbDalles)+j)*5)+4].Get3DZ() = pa.Get3dz() + (lgTrame * (double)j);
+				anchor[(((i*nbDalles)+j)*5)+4].get3DX() = pa.get3DX() + (lgTrame * (double)i);
+				anchor[(((i*nbDalles)+j)*5)+4].get3DY() = pa.get3DY();
+				anchor[(((i*nbDalles)+j)*5)+4].get3DZ() = pa.get3DZ() + (lgTrame * (double)j);
 				anchor[(((i*nbDalles)+j)*5)+4].IsCut() = 1 ; // (j+1 == nbDalles && i+1 == nbDalles);
 				anchor[(((i*nbDalles)+j)*5)+4].transpose();
 			}
@@ -894,9 +894,9 @@ public:
 
 		// déplacer l'objet
 		Rotate(pnull, pxpy * M_PI , pxpz * M_PI, pzpy * M_PI);
-		Move(pnull, pc.Get3dx(), pc.Get3dy() , pc.Get3dz());
+		move(pnull, pc.get3DX(), pc.get3DY() , pc.get3DZ());
 
-		CalculeCentre();
+		calculeCentre();
 	}
 };
 #endif //__POLYPNT_INCLUDE_

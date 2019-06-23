@@ -36,26 +36,20 @@ main (int argc, char *argv[])
 			configName = argv[1];
 			std::cout << "DBG  " << configName << " " <<__LINE__ << std::endl;
 		}
-		//        std::cout << "DBG Meta " << __FILE__ << " " << __LINE__ << std::endl;
 		meta = Meta::getInstance( configName );
-		//        std::cout << "DBG Meta " << __FILE__ << " " << __LINE__ << std::endl;
 	}
 	catch (int err) {
 		std::cout << "erreur init programme :" << err << std::endl;
 		exit (-1);
 	}
-	//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
 
 	/* Ouvrir la connexion avec le serveur local. */
-	meta->OpenDisplay("127.0.0.1:0.0");
+	meta->openDisplay("127.0.0.1:0.0");
 
-	meta->GetDefaultScreen();
-	//cout << "DBG Meta ? " << __FILE__ << " " << __LINE__ << endl;
+	meta->getDefaultScreen();
 
 	// on initialise l'environnement X
 	meta->Xinitialize ();
-	//cout << "DBG Meta ! " << __FILE__ << " " << __LINE__ << endl;
-	//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
 
 	sigemptyset( &new_set );
 	sigaddset( &new_set, SIGINT );
@@ -63,12 +57,9 @@ main (int argc, char *argv[])
 
 	for (;;)
 	{
-		//cout << __LINE__ << endl;
 		if (XPending (meta->d))
 		{
-			//			cout << __LINE__ << endl;
 			XNextEvent (meta->d, &event);
-			//			cout << __LINE__ << endl;
 		}
 		if (event.type == Expose)
 		break;
@@ -76,20 +67,14 @@ main (int argc, char *argv[])
 
 	mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);
 
-	meta->InstallWorld ();
-
-	//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
-	// std::cout << __LINE__ << std::endl;
+	meta->installWorld ();
 
 	// boucle principale du programme
 	try
 	{
 		for (;;)
 		{
-			//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
-			meta->DisplayWorld ();
-			//        std::cout << "DBG " << meta->GetElem(0)->Parcours() << __FILE__ << " " << __LINE__ << std::endl;
-			// std::cout << __LINE__ << std::endl;
+			meta->displayWorld ();
 		}
 		mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);
 	}

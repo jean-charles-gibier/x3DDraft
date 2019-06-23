@@ -7,7 +7,7 @@
 insert_celui_la_apres(celui_ci) et renvoie celui_la
 ******************************************************************************/
 Element *Element::
-InsertAfter (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char *) NULL*/)
+insertAfter (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char *) NULL*/)
 {
 	// si le point d'insertion n'est pas défini
 	if (!elem)
@@ -42,7 +42,7 @@ InsertAfter (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char 
 insert_celui_la_avant(celui_ci) et renvoie celui_la
 ******************************************************************************/
 Element *Element::
-InsertBefore (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char *)NULL*/)
+insertBefore (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char *)NULL*/)
 {
 	// si le point d'insertion n'est pas défini
 	if (!elem)
@@ -84,7 +84,7 @@ Cut supprimme un élément de la liste chainée.
 ******************************************************************************/
 
 Element *Element::
-Cut (void)
+cut (void)
 {
 	if (Precedant)
 	{
@@ -104,20 +104,18 @@ Parcours de la liste chainée en partant de navette.
 ******************************************************************************/
 
 Element *Element::
-Parcours (void)
+parcours (void)
 {
 	int cpt_elem = 0;
 	Element * navette = this;
 	std::cout << "Element de queue :" << std::endl;
 	do
 	{
-
-		//cout << endl << " <==> "<< navette->GetNo() << " : " << cpt_elem << " <==> " << ((green.pixel == navette->GetEPolyPoints()->GetColor ()) ? "GREEN" : "   ")<< endl;
 		//#ifdef NOTATALL
-		(navette -> GetEPolyPoints())->print();
+		(navette -> getEPolyPoints())->print();
 		//#endif // NOTATALL
 		cpt_elem ++;
-		navette = navette->GetPrev ();
+		navette = navette->getPrev ();
 	}
 	while (navette);
 	return this;
@@ -129,7 +127,7 @@ Parcours de la liste chainée avec callback
 ******************************************************************************/
 
 Element *Element::
-ParcoursCallback ( Element * pickMethod( int &, Element *) /*= NULL*/ )
+parcoursCallback ( Element * pickMethod( int &, Element *) /*= NULL*/ )
 {
 	int cpt_elem = 0;
 	Element * navette = this;
@@ -137,7 +135,7 @@ ParcoursCallback ( Element * pickMethod( int &, Element *) /*= NULL*/ )
 	do
 	{
 		cpt_elem ++;
-		navette = navette->GetPrev ();
+		navette = navette->getPrev ();
 	}
 	while (navette);
 
@@ -148,7 +146,7 @@ ParcoursCallback ( Element * pickMethod( int &, Element *) /*= NULL*/ )
 	do
 	{
 		cpt_elem ++;
-		navette = navette->GetPrev ();
+		navette = navette->getPrev ();
 	}
 	while (navette);
 
@@ -161,7 +159,7 @@ retourne le pointeur sur l'élément précédent
 ******************************************************************************/
 
 Element *Element::
-GetNext (void)
+getNext (void)
 {
 	return Suivant;
 }
@@ -171,7 +169,7 @@ retourne le pointeur sur l'élément suivant
 ******************************************************************************/
 
 Element *Element::
-GetPrev (void)
+getPrev (void)
 {
 	return Precedant;
 }
@@ -181,7 +179,7 @@ retourne le numéro de l'élément
 ******************************************************************************/
 
 int Element::
-GetNo (void)
+getNo (void)
 {
 	return no;
 }
@@ -194,7 +192,7 @@ avec éventuellement une nouvelle couleur et un nouveau nom.
 // TODO set multiple et itérable (ajouter compteur de polypoint)
 // se calquer sur AddPoint
 PolyPoints *Element::
-AddPolyPoints (const PolyPoints * pp/* = NULL*/,
+addPolyPoints (const PolyPoints * pp/* = NULL*/,
 const unsigned long col/* = 0L*/,
 const char *name/* = NULL*/)
 {
@@ -209,11 +207,11 @@ const char *name/* = NULL*/)
 
 	for (int cpt = 0; cpt < nbPolyPoints; cpt++) {
 		(PPList + cpt)->Copy (*(oldPPList + cpt) );
-		(oldPPList +cpt)->FreePolyPnt ();
-		Point3D pmid = (oldPPList +cpt)->GetBaryCenter();
-		l_midx += pmid.Get3DX();
-		l_midy += pmid.Get3DY();
-		l_midz += pmid.Get3DZ();
+		(oldPPList +cpt)->freePolyPnt ();
+		Point3D pmid = (oldPPList +cpt)->getBarycenter();
+		l_midx += pmid.get3DX();
+		l_midy += pmid.get3DY();
+		l_midz += pmid.get3DZ();
 	}
 
 	if( nbPolyPoints )
@@ -221,12 +219,12 @@ const char *name/* = NULL*/)
 
 	if (pp) {				// il y a un pp à copier
 		(PPList + nbPolyPoints)->Copy (*pp);
-		Point3D pmid = (PPList + nbPolyPoints)->GetBaryCenter();
-		l_midx += pmid.Get3DX();
-		l_midy += pmid.Get3DY();
-		l_midz += pmid.Get3DZ();
+		Point3D pmid = (PPList + nbPolyPoints)->getBarycenter();
+		l_midx += pmid.get3DX();
+		l_midy += pmid.get3DY();
+		l_midz += pmid.get3DZ();
 	}
-	(PPList + nbPolyPoints)->SetPtEltParent(this);
+	(PPList + nbPolyPoints)->setPtEltParent(this);
 	(PPList + nbPolyPoints)->setOrder(nbPolyPoints);
 
 	if (col) {				//il y a une couleur à copier
@@ -234,12 +232,10 @@ const char *name/* = NULL*/)
 		(PPList + nbPolyPoints)->SetColor (col);
 	}
 
-	// std::cout << "DBG " << __FILE__ << " " << __LINE__ <<  " "  << *(PPList + nbPolyPoints) << std::endl;
 	nbPolyPoints ++;
 	midx = l_midx / (double)nbPolyPoints;
 	midy = l_midy / (double)nbPolyPoints;
 	midz = l_midz / (double)nbPolyPoints;
-	// std::cout << "DBG " << __FILE__ << " " << __LINE__ <<  " "  << midx <<  " "  << midy <<  " "  << midz << std::endl;
 
 	if (name) {				// il y a un nom à copier
 		strncpy (Name, name, sizeof (Name));
@@ -249,36 +245,33 @@ const char *name/* = NULL*/)
 }
 
 /******************************************************************************
-CalculeCentre => recalcule le barycentre
+calculeCentre => recalcule le barycentre
 ******************************************************************************/
 void Element::
-CalculeCentre (void)
+calculeCentre (void)
 {
 	// variables de recalcul du centre
 	double l_midx = .0, l_midy = .0, l_midz = .0;
 
-	// std::cout << "nb :" << nbPolyPoints + 1 << "."<< std::endl;
 	for (int cpt = 0; cpt < nbPolyPoints; cpt++) {
-		Point3D pmid = (PPList +cpt)->GetBaryCenter();
-		l_midx += pmid.Get3DX();
-		l_midy += pmid.Get3DY();
-		l_midz += pmid.Get3DZ();
+		Point3D pmid = (PPList +cpt)->getBarycenter();
+		l_midx += pmid.get3DX();
+		l_midy += pmid.get3DY();
+		l_midz += pmid.get3DZ();
 	}
 
 	midx = l_midx / (double)nbPolyPoints;
 	midy = l_midy / (double)nbPolyPoints;
 	midz = l_midz / (double)nbPolyPoints;
-	//  std::cout << "DBG " << __FILE__ << " " << __LINE__ <<  " "  << midx <<  " "  << midy <<  " "  << midz << std::endl;
-
 }
 
 /******************************************************************************
 retourne un pp correspondant au barycentre de l'element
 ******************************************************************************/
 Point3D Element::
-GetBarycenter (void)
+getBarycenter (void)
 {
-	//     CalculeCentre();
+	//     calculeCentre();
 	return Point3D(midx, midy, midz);
 }
 
@@ -286,7 +279,7 @@ GetBarycenter (void)
 retourne les infos du pp
 ******************************************************************************/
 PolyPoints *Element::
-GetEPolyPoints (void)
+getEPolyPoints (void)
 {
 	return PPList;
 }
@@ -296,7 +289,7 @@ retourne le nom de l'élément
 ******************************************************************************/
 
 char *Element::
-GetName (void)
+getName (void)
 {
 	return Name;
 }

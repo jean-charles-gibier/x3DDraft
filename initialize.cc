@@ -7,7 +7,7 @@ This object is planned for elements persistence
 ******************************************************************************/
 
 void 
-LoadDataBase (void)
+loadDataBase (void)
 {
 }
 #endif // __INITIALIZE__

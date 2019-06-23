@@ -47,42 +47,42 @@ action (short int &Action, int IsFocus = 0, const Point3D pt_ref = (const Point3
 
 	case COTE_PLUS:
 		if (!IsFocus)		// l'élément ayant le focus ne bouge pas
-		MoveZ ((/*long*/ double) DEFAULT_SPEED);
+		moveZ ((/*long*/ double) DEFAULT_SPEED);
 		break;
 
 	case COTE_MOINS:
 		if (!IsFocus)		// l'élément ayant le focus ne bouge pas
-		MoveZ ((/*long*/ double) -DEFAULT_SPEED);
+		moveZ ((/*long*/ double) -DEFAULT_SPEED);
 		break;
 
 	case ORDONNEE_PLUS:
 		if (!IsFocus)		// l'élément ayant le focus ne bouge pas
-		MoveY ((/*long*/ double) DEFAULT_SPEED);
+		moveY ((/*long*/ double) DEFAULT_SPEED);
 		break;
 
 	case ORDONNEE_MOINS:
 		if (!IsFocus)		// l'élément ayant le focus ne bouge pas
-		MoveY ((/*long*/ double) -DEFAULT_SPEED);
+		moveY ((/*long*/ double) -DEFAULT_SPEED);
 		break;
 
 	case ABSCISSE_PLUS:
 		if (!IsFocus)		// l'élément ayant le focus ne bouge pas
-		MoveX ((/*long*/ double) DEFAULT_SPEED);
+		moveX ((/*long*/ double) DEFAULT_SPEED);
 		break;
 
 	case ABSCISSE_MOINS:
 		if (!IsFocus)		// l'élément ayant le focus ne bouge pas
-		MoveX ((/*long*/ double) -DEFAULT_SPEED);
+		moveX ((/*long*/ double) -DEFAULT_SPEED);
 		break;
 
 	case AVANCE:
 		if (IsFocus)		// seul l'élément ayant le focus bouge
-		MoveP (4, DEFAULT_SPEED);
+		moveP (4, DEFAULT_SPEED);
 		break;
 
 	case RECULE:
 		if (IsFocus)		// seul l'élément ayant le focus bouge
-		MoveP (4, -DEFAULT_SPEED);
+		moveP (4, -DEFAULT_SPEED);
 		break;
 
 	case ESPACE:
@@ -98,18 +98,18 @@ action (short int &Action, int IsFocus = 0, const Point3D pt_ref = (const Point3
 }
 
 /* -------------------------------------------------- */
-void PolyPoints::SetPtEltParent(Element * pte)
+void PolyPoints::setPtEltParent(Element * pte)
 {
 	ptEltParent = pte;
 }
 /* -------------------------------------------------- */
-Element* PolyPoints::GetPtEltParent()
+Element* PolyPoints::getPtEltParent()
 {
 	return ptEltParent;
 }
 /* -------------------------------------------------- */
 // defini le barycentre
-void PolyPoints::CalculeCentre(void)
+void PolyPoints::calculeCentre(void)
 {
 	double ltemp = 0.0,
 	lmax[3] =  {  0.0,0.0,0.0  },
@@ -117,15 +117,15 @@ void PolyPoints::CalculeCentre(void)
 
 	for (int cpt = 0 ; cpt < nbPoints ; cpt ++)
 	{
-		ltemp =	anchor[cpt].Get3DX();
+		ltemp =	anchor[cpt].get3DX();
 		lmax[A_X ] = max (lmax[A_X ] , ltemp);
 		lmin[A_X ] = min (lmin[A_X ] , ltemp);
 
-		ltemp =	anchor[cpt].Get3DY();
+		ltemp =	anchor[cpt].get3DY();
 		lmax[A_Y ] = max (lmax[A_Y ] , ltemp);
 		lmin[A_Y ] = min (lmin[A_Y ] , ltemp);
 
-		ltemp =	anchor[cpt].Get3DZ();
+		ltemp =	anchor[cpt].get3DZ();
 		lmax[A_Z ] = max (lmax[A_Z ] , ltemp);
 		lmin[A_Z ] = min (lmin[A_Z ] , ltemp);
 	}
@@ -135,5 +135,5 @@ void PolyPoints::CalculeCentre(void)
 	midz = (lmax[A_Z ] + lmin[A_Z ]) / 2.0;
 
 	if (ptEltParent)
-	ptEltParent->CalculeCentre();
+	ptEltParent->calculeCentre();
 }

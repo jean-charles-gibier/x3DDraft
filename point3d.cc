@@ -35,7 +35,7 @@ Point3D::Point3D ( double _x_, double _y_, double _z_, GXScreen* ptGxscr)
 }
 
 int Point3D::
-SetGXScreen (GXScreen* ptGxscr /*= NULL*/)
+setGXScreen (GXScreen* ptGxscr /*= NULL*/)
 {
 	if (ptGxscr)
 	{

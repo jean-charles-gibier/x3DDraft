@@ -29,7 +29,7 @@ Meta * &Meta::getInstance(char * configName = NULL) {
 		single->initFuite();
 		// récupere les données
 		std::cout << "chargement du fichier :" << (configName == NULL  ? "Defaut"  : configName) << std::endl;
-		single->ReadFConfigElem(configName);
+		single->readFConfigElem(configName);
 	}
 	return single;
 }

@@ -15,24 +15,24 @@ class Element
 {
 public:
 	// methodes de gestion des listes chainées
-	Element * InsertAfter ( Element * olast = NULL, int vno = -1, char * vName = (char *)NULL);
-	Element * InsertBefore ( Element * olast = NULL, int vno = -1, char * vName = (char *)NULL);
-	Element * GetNext (void);
-	Element * GetPrev (void);
-	Element * Cut (void);
-	Element * Parcours (void);
-	Element * ParcoursCallback ( Element * pickMethod( int &, Element *) = NULL );
-	int  GetNo (void);
-	char *  GetName (void);
+	Element * insertAfter ( Element * olast = NULL, int vno = -1, char * vName = (char *)NULL);
+	Element * insertBefore ( Element * olast = NULL, int vno = -1, char * vName = (char *)NULL);
+	Element * getNext (void);
+	Element * getPrev (void);
+	Element * cut (void);
+	Element * parcours (void);
+	Element * parcoursCallback ( Element * pickMethod( int &, Element *) = NULL );
+	int  getNo (void);
+	char *  getName (void);
 	// methodes d'affectation
 	// TODO rendre multiple et itérable
-	PolyPoints * AddPolyPoints (const PolyPoints * pp = NULL,
+	PolyPoints * addPolyPoints (const PolyPoints * pp = NULL,
 	const unsigned long col = 0L,
 	const char * name = NULL);
 	// methodes d'acquisition
-	PolyPoints * GetEPolyPoints (void);
-	Point3D GetBarycenter (void);
-	void  CalculeCentre (void);
+	PolyPoints * getEPolyPoints (void);
+	Point3D getBarycenter (void);
+	void  calculeCentre (void);
 	/*-------------------------------------------------- */
 	Element() {
 		PPList = (PolyPoints *)NULL;
@@ -51,19 +51,19 @@ Le focus est interprété comme un booléen pour le moment
 Si il est à VRAI alors l'élément désigné execute les actions
 de déplacement/ transfert  issues du clavier.
 ---------------------------------------------------*/
-	void SetFocus(const unsigned short fc)
+	void setFocus(const unsigned short fc)
 	{
 		focus = fc;
 	}
 
 	/*-------------------------------------------------- */
-	const unsigned short GetFocus(void)
+	const unsigned short getFocus(void)
 	{
 		return focus;
 	}
 
 	/*-------------------------------------------------- */
-	const unsigned short GetNbPolyPoints(void)
+	const unsigned short getNbPolyPoints(void)
 	{
 		return nbPolyPoints;
 	}

@@ -66,22 +66,20 @@ class Assembly {
 	//
 	void resetBarycenter(){
 		for(unsigned nbe = 0; nbe < nbElementsFound; nbe ++) {
-			//std::cout << nbe <<" : " << arrayAssembly[nbe]  << std::endl;
-			PolyPoints *poly_point = arrayAssembly[nbe]->GetEPolyPoints ();
+			PolyPoints *poly_point = arrayAssembly[nbe]->getEPolyPoints ();
 			assert (poly_point);
 			// on a plusieurs polypoints pour cet element
-			unsigned int nbPolyPoints = arrayAssembly[nbe]->GetNbPolyPoints();
-			// le calcul du centre des polypoints appele le
-			// recalcul de l'element parent.
+			unsigned int nbPolyPoints = arrayAssembly[nbe]->getNbPolyPoints();
+			// le calcul du centre des polypoints appele le recalcul de l'element parent.
 			for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++) {
-				(poly_point + cptp)->CalculeCentre ();
+				(poly_point + cptp)->calculeCentre ();
 			}
 		}
 	}
 
 	//
-	// Default fonction that grabs "element" in this assembly
-	// 'see constructor
+	// Default fonction that grabs "element"s in this assembly
+	// see Assembly constructor
 	//
 	ElementPtr * pickMethod( unsigned &nbToRetrieve, Element * e, unsigned orientation ) {
 		arrayAssembly = new ElementPtr [nbToRetrieve];
@@ -98,12 +96,12 @@ class Assembly {
 				unsigned cptRetrieved = min(nbToRetrieve-1, cptElement);
 				if (
 						arrayAssembly[cptRetrieved] == NULL ||
-						(navette->GetBarycenter().Get3DX() < arrayAssembly[cptRetrieved]->GetBarycenter().Get3DX() && orientation == EAST_FACE) ||
-						(navette->GetBarycenter().Get3DX() > arrayAssembly[cptRetrieved]->GetBarycenter().Get3DX() && orientation == WEST_FACE) ||
-						(navette->GetBarycenter().Get3DY() > arrayAssembly[cptRetrieved]->GetBarycenter().Get3DY() && orientation == UPPER_FACE) ||
-						(navette->GetBarycenter().Get3DY() < arrayAssembly[cptRetrieved]->GetBarycenter().Get3DY() && orientation == LOWER_FACE) ||
-						(navette->GetBarycenter().Get3DZ() < arrayAssembly[cptRetrieved]->GetBarycenter().Get3DZ() && orientation == FRONT_FACE) ||
-						(navette->GetBarycenter().Get3DZ() > arrayAssembly[cptRetrieved]->GetBarycenter().Get3DZ() && orientation == BACK_FACE)
+						(navette->getBarycenter().get3DX() < arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == EAST_FACE) ||
+						(navette->getBarycenter().get3DX() > arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == WEST_FACE) ||
+						(navette->getBarycenter().get3DY() > arrayAssembly[cptRetrieved]->getBarycenter().get3DY() && orientation == UPPER_FACE) ||
+						(navette->getBarycenter().get3DY() < arrayAssembly[cptRetrieved]->getBarycenter().get3DY() && orientation == LOWER_FACE) ||
+						(navette->getBarycenter().get3DZ() < arrayAssembly[cptRetrieved]->getBarycenter().get3DZ() && orientation == FRONT_FACE) ||
+						(navette->getBarycenter().get3DZ() > arrayAssembly[cptRetrieved]->getBarycenter().get3DZ() && orientation == BACK_FACE)
 						) {
 					// we shift all nearest "element" while content is not nul.
 					for(unsigned decale = nbToRetrieve - 1; decale > cptRetrieved; decale --) {
@@ -114,33 +112,39 @@ class Assembly {
 				}
 				cptElement ++;
 			}
-			navette = navette->GetPrev ();
+			navette = navette->getPrev ();
 		}
 		// we re-compute the average of all barycenters on selected "element"
 		for (unsigned nbSel = 0; nbSel < nbToRetrieve; nbSel ++ ){
 			Element *el = arrayAssembly[nbSel] ;
 			if (el != NULL ){
-				Point3D pt = el -> GetBarycenter();
-				barycenter.Get3DX() += pt.Get3DX();
-				barycenter.Get3DY() += pt.Get3DY();
-				barycenter.Get3DZ() += pt.Get3DZ();
+				Point3D pt = el -> getBarycenter();
+				barycenter.get3DX() += pt.get3DX();
+				barycenter.get3DY() += pt.get3DY();
+				barycenter.get3DZ() += pt.get3DZ();
 			}
 		}
 
-		barycenter.Get3DX() /= (double)nbToRetrieve;
-		barycenter.Get3DY() /= (double)nbToRetrieve;
-		barycenter.Get3DZ() /= (double)nbToRetrieve;
+		barycenter.get3DX() /= (double)nbToRetrieve;
+		barycenter.get3DY() /= (double)nbToRetrieve;
+		barycenter.get3DZ() /= (double)nbToRetrieve;
 		barycenter.transpose();
 		nbElementsFound = nbToRetrieve;
 		return arrayAssembly;
 	}
 
 	/******************************************************************************
+	return new Element made up of several polypoints picked up from this Assembly
+		******************************************************************************/
+	Element getSnapElement( unsigned &nbToRetrieve, Element * e, unsigned orientation ) {
+		
+	}
+	/******************************************************************************
 	return barycenter of the assembly
 		******************************************************************************/
-	Point3D GetBarycenter (void)
+	Point3D getBarycenter (void)
 	{
-		return Point3D(barycenter.Get3DX(), barycenter.Get3DY(), barycenter.Get3DZ()).transpose();// barycenter;
+		return Point3D(barycenter.get3DX(), barycenter.get3DY(), barycenter.get3DZ()).transpose();// barycenter;
 	}
 
 	//
