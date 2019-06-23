@@ -4,27 +4,27 @@
 #include <stdio.h>
 
 //
-// defini un mouvement
-// en cours ou en preparation par une suite de commande a executer
-// soit 1 fois
-// soit plusieurs fois jusqu'a atteindre une position donnée (definie par des
-// conditions geometriques concordantes
+// TODO : define a motion
+// as a commands suit to be performed
+// either only once 
+// either many times until reaching a defined position 
+// such as a concordant geometrical position
 //
 class Motion {
-        public :
+	public :
 
-                int *arrayCommand = NULL;
+	int *arrayCommand = NULL;
 
-                Motion( int nbCommand = 10) {
-                arrayCommand = new int [nbCommand];
-                }
+	Motion( int nbCommand = 10) {
+		arrayCommand = new int [nbCommand];
+	}
 
-               ~Motion(){
+	~Motion(){
 
-                       if (arrayCommand != NULL) {
-                               delete [] arrayCommand;
-                       }
-               }
+		if (arrayCommand != NULL) {
+			delete [] arrayCommand;
+		}
+	}
 };
 
 #endif //__MOTION_INCLUDE__

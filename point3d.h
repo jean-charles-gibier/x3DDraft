@@ -12,7 +12,7 @@
 #include <X11/Xresource.h>
 #include <X11/keysym.h>
 /*
-Point 3D exprime la localisation d'un point dans l'espace XYZ
+Point 3D  define a vertex localization in 3 dimensions (XYZ) space
 */
 static unsigned int tdebug = 1;
 
@@ -29,10 +29,10 @@ class Point3D {
 	double _z_ = .0,
 	class GXScreen *ptGscr = (GXScreen *)NULL);
 
-//        ~Point3D (void) {
-//        std::cout << "destroy pt3D" << std::endl;
-//        };
-//	Point3D ();
+	//        ~Point3D (void) {
+	//        std::cout << "destroy pt3D" << std::endl;
+	//        };
+	//	Point3D ();
 	/*-------------------------------------------------------*/
 	/* donne la dimension x en 2D (transformée) */
 	int Get2DX(void) { return x2d; };
@@ -62,7 +62,7 @@ class Point3D {
 
 	/*-------------------------------------------------------*/
 	/* transforme 1 point en XPoint XLib*/
-//#pragma message ( "C Preprocessor => PointToXpoint declaration" )
+	//#pragma message ( "C Preprocessor => PointToXpoint declaration" )
 	static XPoint PointToXpoint(Point3D point)
 	{
 		XPoint xpoint;
@@ -92,7 +92,6 @@ class Point3D {
 			xseg.y2 = -1;
 		}
 		else // l'élément est "derriere" la camera -> on supprime le segment
-
 		{
 			xseg.x1 = point1.x2d;
 			xseg.y1 = viewHeight - point1.y2d;
@@ -102,14 +101,14 @@ class Point3D {
 		return xseg;
 	}
 
-/*--------------------------------------------------
+	/*--------------------------------------------------
 	sortie des infos sur stdout
 -------------------------------------------------- */
-      friend std::ostream & operator << ( std::ostream &s, const Point3D &pt)
-      {
+	friend std::ostream & operator << ( std::ostream &s, const Point3D &pt)
+	{
 		s << " x3:" << pt.x3d << " y3 :" << pt.y3d << " z3 :" << pt.z3d << " x2 :" << pt.x2d << " y2 :" << pt.y2d << std::endl;
-        return s;
-      }
+		return s;
+	}
 
 	/*-------------------------------------------------------*/
 	/* lorsque les coordonées 3D sont définies les coordonées 2D sont déterminées  par 'transpose' */
@@ -135,28 +134,28 @@ class Point3D {
 		// orientation trigonométrique de la ligne de fuite
 		double TheBorne = atan2(dy, dx);
 
-                if (z3d > 0.0) {
-                        double zDiff = pow(log(z3d+10),3.0);
-                        x2d =   ROUND(x3d + (zDiff * cos(TheBorne) * cx));
-                        y2d =   ROUND(y3d + (zDiff * sin(TheBorne) * cy));
-                        }
+		if (z3d > 0.0) {
+			double zDiff = pow(log(z3d+10),3.0);
+			x2d =   ROUND(x3d + (zDiff * cos(TheBorne) * cx));
+			y2d =   ROUND(y3d + (zDiff * sin(TheBorne) * cy));
+		}
 
 		if ((PtFuiteX > x3d && PtFuiteX < x2d) ||
-			(PtFuiteX < x3d && PtFuiteX > x2d)) {
+				(PtFuiteX < x3d && PtFuiteX > x2d)) {
 			x2d = PtFuiteX;
-                        }
+		}
 		if ((PtFuiteY > y3d && PtFuiteY < y2d) ||
-			(PtFuiteY < y3d && PtFuiteY > y2d)) {
+				(PtFuiteY < y3d && PtFuiteY > y2d)) {
 			y2d = PtFuiteY;
-                        }
-//		cout << *this << std::endl;
+		}
+		//		cout << *this << std::endl;
 		return *this;
 	};
 
 	/*-------------------------------------------------------*/
 	void CopyProperties(Point3D point)
 	{
-		aEffetFuite = point.aEffetFuite;
+		// aEffetFuite = point.aEffetFuite; => calculé dynamiquement
 		PtFuiteY = point.PtFuiteY;
 		PtFuiteX = point.PtFuiteX;
 		medianne  = point.medianne;
@@ -167,7 +166,8 @@ protected:
 	unsigned int cut; // if true this point is not about to be linked with the next one
 	int x2d, y2d; //screen coordinates
 	double x3d, y3d, z3d, // absolute coordinates
-	*aEffetFuite , // range of Z reducing ratio (allocated in gscreen)
+	// *aEffetFuite , // range of Z reducing ratio (allocated in gscreen) => 
+	//  TODO suppress that (unused). This ratio is now dynamicaly computed
 	PtFuiteY , // point de fuite principal en Y
 	PtFuiteX , // point de fuite principal en Z
 	medianne ; // lg mediane

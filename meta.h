@@ -13,7 +13,7 @@
 #include "gxscreen.h"
 
 /******************************************************************************
-Les données nécessaires
+Definitions of the context "universe" to be displayed
 ******************************************************************************/
 
 class Meta {
@@ -28,33 +28,33 @@ public:
 	sigset_t new_set;
 	int s;
 	XColor red, green, blue;
-        Colormap color_map;
-	Element * last; //dernier element enregistré
-	Assembly * assembly = NULL; //une selection d'elements
+	Colormap color_map;
+	Element * last; // entry point of linked list of elements
+	Assembly * assembly = NULL; // selection of some elements
 	unsigned long black, white;
-        // direction contexte
-        unsigned context = EAST_FACE;
-        unsigned leave_context_in = 0;
+	// context direction
+	unsigned context = EAST_FACE;
+	unsigned leave_context_in = 0;
 
 	// Meta constructor
 	Meta (void);
 	Meta (const Meta& m);
 
-	//==== Methodes publiques =====
+	//==== Methods =====
 	static Meta * &getInstance(char * configName);
 	static Display* getDisplay();
 
-	// initialiser la progression des parallèles en Z
+	// initialize Z progression perspective
 	void initFuite(void)
 	{
-        /* récupere les valeurs ecran */
+		/* récupere les valeurs ecran */
 		PtFuiteY = GXScreen::PtFuiteY;
 		PtFuiteX = GXScreen::PtFuiteX;
 		medianne =  GXScreen::medianne;
 		aEffetFuite =  GXScreen::aEffetFuite;
 	}
 
-/******************************************************************************
+	/******************************************************************************
 Destructeur de GXScreen
 ******************************************************************************/
 
@@ -72,9 +72,9 @@ Destructeur de GXScreen
 			delete (single);
 		}
 
-                if(color_map){
-                        XFreeColormap(d, color_map);
-                }
+		if(color_map){
+			XFreeColormap(d, color_map);
+		}
 	}
 
 	// Affichage
@@ -92,7 +92,7 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 
 	void SortZElem (void)
 	{
-        // CALCUL A REVOIR -> on ne descend pas au polypnt
+		// CALCUL A REVOIR -> on ne descend pas au polypnt
 		int fini, first, is_pp_sorted;
 
 		do 	// boucle d'itération tant qu'un swap est possible
@@ -100,7 +100,7 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 			Element *navette = last;
 			// tant que l'élément existe
 			fini = 1;
-                        is_pp_sorted = 0;
+			is_pp_sorted = 0;
 
 			if (navette)
 			{
@@ -145,33 +145,33 @@ Trie les éléments de type Polypoints pour les ordoner en fonction de leur
 							fini = 0;
 						}
 
-                                        // on a plusieurs polypoints pour cet element
-                                        unsigned int nbPolyPoints = navette->GetNbPolyPoints();
-			                unsigned pp_fini = 1;
-                                        // On va trier l'ordre Z de chaque polypoint
-                                        PolyPoints *poly_point = navette->GetEPolyPoints ();
-                                        assert (poly_point);
-                                        do {
-			                        pp_fini = 1;
-                                                for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints; cptp ++) {
+						// on a plusieurs polypoints pour cet element
+						unsigned int nbPolyPoints = navette->GetNbPolyPoints();
+						unsigned pp_fini = 1;
+						// On va trier l'ordre Z de chaque polypoint
+						PolyPoints *poly_point = navette->GetEPolyPoints ();
+						assert (poly_point);
+						do {
+							pp_fini = 1;
+							for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints; cptp ++) {
 
-                                                        Point3D cppt1 = (poly_point + cptp)->GetBaryCenter ();
-                                                        Point3D cppt2 = (poly_point + cptp + 1)->GetBaryCenter ();
+								Point3D cppt1 = (poly_point + cptp)->GetBaryCenter ();
+								Point3D cppt2 = (poly_point + cptp + 1)->GetBaryCenter ();
 
-                                                        if (cppt1.Get3DZ() < cppt2.Get3DZ()) {
-                                                                PolyPoints pptmp = *(poly_point + cptp);
-                                                                *(poly_point + cptp) = *(poly_point + cptp + 1);
-                                                                *(poly_point + cptp + 1) = pptmp;
+								if (cppt1.Get3DZ() < cppt2.Get3DZ()) {
+									PolyPoints pptmp = *(poly_point + cptp);
+									*(poly_point + cptp) = *(poly_point + cptp + 1);
+									*(poly_point + cptp + 1) = pptmp;
 
-			                                        pp_fini = 0;
-                                                                }
-                                                        }
-                                                }
-                                                while(!pp_fini);
+									pp_fini = 0;
+								}
+							}
+						}
+						while(!pp_fini);
 					}
 				}
 				while (navette);
-                                is_pp_sorted = 1;
+				is_pp_sorted = 1;
 			}
 		}
 		while (!fini);
@@ -183,63 +183,65 @@ boucle principale d'affichage
 
 	void PlotWorld ()
 	{
-                unsigned nbPerAssembly = 9;
+		unsigned nbPerAssembly = 9;
 		d = getDisplay();
 
-                const Point3D centre_world = ((double) (viewWidth / 2), (double) (viewHeight / 2), (double) 2.0);
-                // const Point3D pt_ref = centre_world;
+		const Point3D centre_world = ((double) (viewWidth / 2), (double) (viewHeight / 2), (double) 2.0);
+		// const Point3D pt_ref = centre_world;
 
 		Element *navette = last;
 
-                if ( assembly == NULL ) {
-                        assembly = new Assembly( last, context, nbPerAssembly );
-                        assert(assembly);
-                } else {
-                        assembly->resetBarycenter();
-                }
-                // barrycentre de l'assemblage qui a le focus
-                Point3D pt_ref = assembly->GetBarycenter();
+		if ( assembly == NULL ) {
+			assembly = new Assembly( last, context, nbPerAssembly );
+			assert(assembly);
+		} else {
+			assembly->resetBarycenter();
+		}
+		// barrycentre de l'assemblage qui a le focus
+		Point3D pt_ref = assembly->GetBarycenter();
+#ifdef SHOW_CENTER_ASSEMBLY
+		XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX() - 16 , (int)pt_ref.Get2DY(), (int)pt_ref.Get2DX() + 16, (int)pt_ref.Get2DY() );
+		XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() -16 , (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() + 16);
+#endif // SHOW_CENTER_ASSEMBLY
 		// tant que l'élément existe
-// XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX() - 16 , (int)pt_ref.Get2DY(), (int)pt_ref.Get2DX() + 16, (int)pt_ref.Get2DY() );
-// XDrawLine(d, buffer, gcView, (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() -16 , (int)pt_ref.Get2DX(), (int)pt_ref.Get2DY() + 16);
 		if (navette)
 		{
-
 			do
 			{
-                                bool isInAssembly = assembly->isPresent(navette);
-                                Point3D centre_element = navette->GetBarycenter();
-                                // prendre le polypoint associé à l'élément
+				bool isInAssembly = assembly->isPresent(navette);
+				Point3D centre_element = navette->GetBarycenter();
+				// prendre le polypoint associé à l'élément
 #ifdef SHOW_CENTER_ELEMENT
-if ( isInAssembly ) {
-        XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX() - 8 , (int)centre_element.Get2DY(), (int)centre_element.Get2DX() + 8, (int)centre_element.Get2DY() );
-        XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX(), (int)centre_element.Get2DY() -8 , (int)centre_element.Get2DX(), (int)centre_element.Get2DY() + 8);
-}
+				if ( isInAssembly ) {
+					XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX() - 8 , (int)centre_element.Get2DY(), (int)centre_element.Get2DX() + 8, (int)centre_element.Get2DY() );
+					XDrawLine(d, buffer, gcView, (int)centre_element.Get2DX(), (int)centre_element.Get2DY() -8 , (int)centre_element.Get2DX(), (int)centre_element.Get2DY() + 8);
+				}
 #endif // SHOW_CENTER_ELEMENT
 				PolyPoints *poly_point = navette->GetEPolyPoints ();
 				assert (poly_point);
-                                // on a plusieurs polypoints pour cet element
-                                unsigned int nbPolyPoints = navette->GetNbPolyPoints();
+				// on a plusieurs polypoints pour cet element
+				unsigned int nbPolyPoints = navette->GetNbPolyPoints();
 
-                                for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++) {
+				for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++) {
 
-				        // l'element à le focus -> c'est celui sur lequel on agit
-				        (poly_point + cptp)->action (ActionKey, isInAssembly, pt_ref);
-				        // afficher l'element
-				        (poly_point + cptp)->DisplayPolyPoints (d, gcView, buffer);
-				        Point3D cppt = (poly_point + cptp)->GetBaryCenter ();
+					// l'element à le focus -> c'est celui sur lequel on agit
+					(poly_point + cptp)->action (ActionKey, isInAssembly, pt_ref);
+					// afficher l'element
+					(poly_point + cptp)->DisplayPolyPoints (d, gcView, buffer);
+					Point3D cppt = (poly_point + cptp)->GetBaryCenter ();
+
 #ifdef SHOW_CENTER_POLYPNT
- XDrawLine(d, buffer, gcView, (int)cppt.Get2DX() - 4 , (int)cppt.Get2DY(), (int)cppt.Get2DX() + 4, (int)cppt.Get2DY());
- XDrawLine(d, buffer, gcView, (int)cppt.Get2DX(), (int)cppt.Get2DY() -4, (int)cppt.Get2DX(), (int)cppt.Get2DY() + 4);
+					XDrawLine(d, buffer, gcView, (int)cppt.Get2DX() - 4 , (int)cppt.Get2DY(), (int)cppt.Get2DX() + 4, (int)cppt.Get2DY());
+					XDrawLine(d, buffer, gcView, (int)cppt.Get2DX(), (int)cppt.Get2DY() -4, (int)cppt.Get2DX(), (int)cppt.Get2DY() + 4);
 #endif // SHOW_CENTER_POLYPNT
-                                        }
+				}
 
 				// on prend l'élément précédent
 				navette = navette->GetPrev ();
 			}
 			while (navette);
 		}
-        }
+	}
 
 	/*
 Traite les commandes reçues du clavier.
@@ -299,68 +301,67 @@ Traite les commandes reçues du clavier.
 				ActionKey = ELT_COTE_TRIGO;
 				else if (toupper (*ch) == 'Y')
 				ActionKey = ELT_COTE_HORA;
-// TODO : decoupler la récupération des actions de la partie controle
+				// TODO : decoupler la récupération des actions de la partie controle
 				else if (*ch == 'S') {
-                                        if (context != UPPER_FACE && !leave_context_in) {
-                                                context = UPPER_FACE;
-                                                if (assembly != NULL){
-                                                        delete(assembly); assembly = NULL;
-                                                        }
-                                                ActionKey = ORDONNEE_TRIGO;
-                                                leave_context_in = 25;
-                                        }
-
-                                }
+					if (context != UPPER_FACE && !leave_context_in) {
+						context = UPPER_FACE;
+						if (assembly != NULL){
+							delete(assembly); assembly = NULL;
+						}
+						ActionKey = ORDONNEE_TRIGO;
+						leave_context_in = 25;
+					}
+				}
 				else if (*ch == 'D') {
-                                        if (context != LOWER_FACE && !leave_context_in) {
-                                                context = LOWER_FACE;
-                                                if (assembly != NULL){
-                                                        delete(assembly); assembly = NULL;
-                                                        }
-                                                ActionKey = ORDONNEE_TRIGO;
-                                                leave_context_in = 25;
-                                        }
-                                }
+					if (context != LOWER_FACE && !leave_context_in) {
+						context = LOWER_FACE;
+						if (assembly != NULL){
+							delete(assembly); assembly = NULL;
+						}
+						ActionKey = ORDONNEE_TRIGO;
+						leave_context_in = 25;
+					}
+				}
 				else if (*ch == 'F') {
-                                        if (context != WEST_FACE && !leave_context_in) {
-                                                context = WEST_FACE;
-                                                if (assembly != NULL){
-                                                        delete(assembly); assembly = NULL;
-                                                        }
-                                                ActionKey = COTE_TRIGO;
-                                                leave_context_in = 25;
-                                        }
-                                }
+					if (context != WEST_FACE && !leave_context_in) {
+						context = WEST_FACE;
+						if (assembly != NULL){
+							delete(assembly); assembly = NULL;
+						}
+						ActionKey = COTE_TRIGO;
+						leave_context_in = 25;
+					}
+				}
 				else if (*ch == 'G') {
-                                        if (context != EAST_FACE && !leave_context_in) {
-                                                context = EAST_FACE;
-                                                if (assembly != NULL){
-                                                        delete(assembly); assembly = NULL;
-                                                        }
-                                                ActionKey = COTE_TRIGO;
-                                                leave_context_in = 25;
-                                        }
-                                }
+					if (context != EAST_FACE && !leave_context_in) {
+						context = EAST_FACE;
+						if (assembly != NULL){
+							delete(assembly); assembly = NULL;
+						}
+						ActionKey = COTE_TRIGO;
+						leave_context_in = 25;
+					}
+				}
 				else if (*ch == 'H') {
-                                        if (context != FRONT_FACE && !leave_context_in) {
-                                                context = FRONT_FACE;
-                                                if (assembly != NULL){
-                                                        delete(assembly); assembly = NULL;
-                                                        }
-                                                ActionKey = ABSCISSE_TRIGO;
-                                                leave_context_in = 25;
-                                        }
-                                }
+					if (context != FRONT_FACE && !leave_context_in) {
+						context = FRONT_FACE;
+						if (assembly != NULL){
+							delete(assembly); assembly = NULL;
+						}
+						ActionKey = ABSCISSE_TRIGO;
+						leave_context_in = 25;
+					}
+				}
 				else if (*ch == 'J') {
-                                        if (context != BACK_FACE && !leave_context_in) {
-                                                context = BACK_FACE;
-                                                if (assembly != NULL){
-                                                        delete(assembly); assembly = NULL;
-                                                        }
-                                                ActionKey = ABSCISSE_TRIGO;
-                                                leave_context_in = 25;
-                                        }
-                                }
+					if (context != BACK_FACE && !leave_context_in) {
+						context = BACK_FACE;
+						if (assembly != NULL){
+							delete(assembly); assembly = NULL;
+						}
+						ActionKey = ABSCISSE_TRIGO;
+						leave_context_in = 25;
+					}
+				}
 				else if (*ch == ' ')
 				{ActionKey = ESPACE;}
 				else if (*ch == '5')
@@ -385,16 +386,16 @@ Traite les commandes reçues du clavier.
 			}
 		}
 
-        if (leave_context_in-- <= 0) {
-                ActionKey = ESPACE;
-                context = 99;
-                leave_context_in = 0;
-                }
+		if (leave_context_in-- <= 0 /* && ActionKey != ESPACE */) {
+			ActionKey = ESPACE;
+			context = 99;
+			leave_context_in = 0;
+		}
 
 		return 0;
 	}
 
-/******************************************************************************
+	/******************************************************************************
 prépare le buffer avant affichage
 *****************************************************************************/
 
@@ -410,24 +411,24 @@ prépare le buffer avant affichage
 		//while (!(clock() - td));
 	}
 
-/******************************************************************************
+	/******************************************************************************
 Afficheur de l'objet Meta
 ******************************************************************************/
 	int DisplayWorld ()
 	{
-                usleep(TIME_USLEEP);
+		usleep(TIME_USLEEP);
 		d = getDisplay();
-				// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
+		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
 		UpdateKeys ();
-				// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
+		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
 		PlotWorld ();
-                                // std::cout << "Meta (" << __LINE__ << "," << d << ")  " << std::endl;
+		// std::cout << "Meta (" << __LINE__ << "," << d << ")  " << std::endl;
 		SortZElem ();
-				// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
+		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
 		SwapBuffers ();
-				// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
+		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
 		XSync (d, False);
-				// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
+		// cout << "Meta (" << __LINE__ << "," << d << ")  " << endl;
 	}
 
 	// Ouverture display
@@ -439,7 +440,7 @@ Afficheur de l'objet Meta
 		std::cout << "open display " << defaultDisplay << std::endl;
 
 		if (d == NULL) {
-                        std::cerr << "Impossible d'ouvrir le display" << std::endl;
+			std::cerr << "Impossible d'ouvrir le display" << std::endl;
 			exit(1);
 		}
 
@@ -477,9 +478,9 @@ Afficheur de l'objet Meta
 	{
 		//Window win;
 		XSizeHints size_hints;
-                XVisualInfo vinfo;
+		XVisualInfo vinfo;
 		XColor xcold;
-                XWindowAttributes xwa;
+		XWindowAttributes xwa;
 
 		d = getDisplay();
 		black = BlackPixel (d, DefaultScreen (d));
@@ -537,45 +538,45 @@ Affectation directe des size hints
 		size_hints.min_width = size_hints.max_width = viewWidth;
 		size_hints.min_height = size_hints.max_height = viewHeight;
 		XSetNormalHints (d, win, &size_hints);
-/*
- *
- *
- */
-                int screen = XDefaultScreen(d);
-            //    XGetWindowAttributes(d, win, &xwa);
-            //    vinfo.depth = xwa.depth;
-            //    vinfo.visual = xwa.visual;
+		/*
+*
+*
+*/
+		int screen = XDefaultScreen(d);
+		//    XGetWindowAttributes(d, win, &xwa);
+		//    vinfo.depth = xwa.depth;
+		//    vinfo.visual = xwa.visual;
 
-  if (XMatchVisualInfo(d, screen, 24, TrueColor, &vinfo)) {
-    printf(" found 24bit TrueColor\n");
-  } else
-    if (XMatchVisualInfo(d, screen, 16, TrueColor, &vinfo)) {
-      printf(" found 16bit TrueColor\n");
-    } else
-      if (XMatchVisualInfo(d, screen, 15, TrueColor, &vinfo)) {
-	printf(" found 15bit TrueColor\n");
-      } else
-  	if (XMatchVisualInfo(d, screen, 8, PseudoColor, &vinfo)) {
-	  printf(" found 8bit PseudoColor\n");
-  	} else
-	  if (XMatchVisualInfo(d, screen, 8, GrayScale, &vinfo)) {
-	    printf(" found 8bit GrayScale\n");
-	  } else
-	    if (XMatchVisualInfo(d, screen, 8, StaticGray, &vinfo)) {
-	      printf(" found 8bit StaticGray\n");
-	    } else
-	      if (XMatchVisualInfo(d, screen, 1, StaticGray, &vinfo)) {
-  		printf(" found 1bit StaticGray\n");
-	      } else {
-  		printf("requires 16 bit display\n");
-  		exit (-1);
-	      }
-XMapRaised(d, DefaultRootWindow(d));
-         //       color_map = XCreateColormap(d, DefaultRootWindow(d), vinfo.visual, AllocAll);
-/*
- *  XStoreColors(dis,cmap,tmp,255);
- *      XSetWindowColormap(dis,win,cmap);
- */
+		if (XMatchVisualInfo(d, screen, 24, TrueColor, &vinfo)) {
+			printf(" found 24bit TrueColor\n");
+		} else
+		if (XMatchVisualInfo(d, screen, 16, TrueColor, &vinfo)) {
+			printf(" found 16bit TrueColor\n");
+		} else
+		if (XMatchVisualInfo(d, screen, 15, TrueColor, &vinfo)) {
+			printf(" found 15bit TrueColor\n");
+		} else
+		if (XMatchVisualInfo(d, screen, 8, PseudoColor, &vinfo)) {
+			printf(" found 8bit PseudoColor\n");
+		} else
+		if (XMatchVisualInfo(d, screen, 8, GrayScale, &vinfo)) {
+			printf(" found 8bit GrayScale\n");
+		} else
+		if (XMatchVisualInfo(d, screen, 8, StaticGray, &vinfo)) {
+			printf(" found 8bit StaticGray\n");
+		} else
+		if (XMatchVisualInfo(d, screen, 1, StaticGray, &vinfo)) {
+			printf(" found 1bit StaticGray\n");
+		} else {
+			printf("requires 16 bit display\n");
+			exit (-1);
+		}
+		XMapRaised(d, DefaultRootWindow(d));
+		//       color_map = XCreateColormap(d, DefaultRootWindow(d), vinfo.visual, AllocAll);
+		/*
+*  XStoreColors(dis,cmap,tmp,255);
+*  XSetWindowColormap(dis,win,cmap);
+*/
 		/*
 Mapping de la fenêtre principale
 */
@@ -584,7 +585,6 @@ Mapping de la fenêtre principale
 		SetupBuffer ();
 
 		/*
-
 "Shut off keyboard autorepeat" pour la durée du jeu
 mais ça n'a pas l'air de fonctionner.
 */
@@ -605,7 +605,6 @@ retrouve un element dans GXScreen selon son numéro
 		{
 			do
 			{// on compare son numéro
-
 				if (no == navette->GetNo ())
 				break;
 				// on prend l'élément précédent
@@ -637,11 +636,10 @@ ajoute un élément de type polypoint dans GXScreen
 		if (elem)
 		{
 			if (pp) {
-        			// copie du polypoint avant insertion
-	        		elem->AddPolyPoints (pp);
-                                pp->SetPtEltParent(elem);
-                        }
-
+				// copie du polypoint avant insertion
+				elem->AddPolyPoints (pp);
+				pp->SetPtEltParent(elem);
+			}
 			// s'il n'a pas de numéro on lui affecte celui de son arrivée
 			last = elem->InsertAfter (last, no ? no : nbElem);
 			nbElem++;
@@ -674,8 +672,8 @@ lecture du fichier texte de configuration des éléments.
 		char buf_cfg[0x100];
 		int next_state = DEBUT;
 		int is_started = 0;
-                int lg_trame = 100;
-                int lg_plan = 1000;
+		int lg_trame = 100;
+		int lg_plan = 1000;
 		PolyPoints *cur_polypoint = NULL;
 		Element *cur_elem = NULL;
 		Point3D *cur_point = NULL;
@@ -691,12 +689,12 @@ lecture du fichier texte de configuration des éléments.
 		{
 			while (fgets (buf_cfg, sizeof (buf_cfg), fconfig) != NULL)
 			{
-                                if (!strncmp (buf_cfg, "#", 1) || !buf_cfg[0]) {
-                                        printf ("%d\n %0x\n", __LINE__, next_state);
-                                }
-                                else if (next_state & (ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN))
+				if (!strncmp (buf_cfg, "#", 1) || !buf_cfg[0]) {
+					printf ("%d\n %0x\n", __LINE__, next_state);
+				}
+				else if (next_state & (ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN))
 				{
-//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+					//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 					next_state = (strncmp (buf_cfg, "ELEMENT", 7) == 0) ? ELEMENT :
 					(strncmp (buf_cfg, "POLYPOINT", 9) == 0) ? POLYPOINT :
 					(strncmp (buf_cfg, "POINT", 5) == 0) ? POINT :
@@ -706,35 +704,30 @@ lecture du fichier texte de configuration des éléments.
 				}
 				else if (next_state & (POINT | JOIN))
 				{
-//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+					//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 					next_state = (strncmp (buf_cfg, "POINT", 5) == 0) ? POINT :
 					(strncmp (buf_cfg, "JOIN", 4) == 0) ? JOIN : FIN;
 				}
-
 				else if (next_state & (POLYPOINT | SPHERE | PLAN))	// a ajouter : CUBE, PYRAMIDE, TUBE ETC ...
-
 				{
-//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+					//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 					next_state = (strncmp (buf_cfg, "POLYPOINT", 9) == 0) ? POLYPOINT :
 					(strncmp (buf_cfg, "PLAN", 4) == 0) ? PLAN :
 					(strncmp (buf_cfg, "SPHERE", 6) == 0) ? SPHERE : FIN;
 				}
 				else if (next_state & FIN)
 				{
-                                        if (strncmp (buf_cfg, "FIN", 3))
-				        	break;
+					if (strncmp (buf_cfg, "FIN", 3))
+					break;
 				}
-
-//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+				//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 				switch (next_state)
 				{
-
 				case ELEMENT:
 					//printf ("ELEMENT\n");
 					if (strncmp (buf_cfg, "ELEMENT", 7) == 0)
 					{
 						cur_elem = this->AddElem ();
-
 						assert (cur_elem);
 
 						if (!is_started)
@@ -757,7 +750,6 @@ lecture du fichier texte de configuration des éléments.
 					{
 						char buf_option[0x20], buf_rep[0x20];
 						char *pstr = strchr (buf_cfg + 9, ':');
-
 						cur_polypoint = cur_elem->AddPolyPoints ();
 
 						if (pstr)
@@ -766,9 +758,7 @@ lecture du fichier texte de configuration des éléments.
 							{
 								if (strncmp (buf_option, "COLOR", 5) == 0)
 								{
-
 									cur_polypoint->SetColor (buf_rep);
-
 								}
 							}
 						}
@@ -809,7 +799,6 @@ lecture du fichier texte de configuration des éléments.
 					{
 						char buf_option[0x20], buf_rep[0x20];
 						char *pstr = strchr (buf_cfg + 6, ':');
-
 						cur_polypoint = cur_elem->AddPolyPoints ();
 
 						if (pstr)
@@ -818,15 +807,13 @@ lecture du fichier texte de configuration des éléments.
 							{
 								if (strncmp (buf_option, "COLOR", 5) == 0)
 								{
-
 									cur_polypoint->SetColor (buf_rep);
-
 								}
 							}
 						}
 
 						next_state = POINT_SPHERE_1;
-//							printf ("---> %d  next_state POINT_SPHERE_1 :  %x \n", __LINE__, next_state);
+						//							printf ("---> %d  next_state POINT_SPHERE_1 :  %x \n", __LINE__, next_state);
 					}
 					break;
 
@@ -836,45 +823,37 @@ lecture du fichier texte de configuration des éléments.
 					{
 						char buf_option[0x20], buf_rep[0x20];
 						char *pstr = strchr (buf_cfg + 4, ':');
-
 						cur_polypoint = cur_elem->AddPolyPoints ();
 
 						while (pstr)
 						{
 							if (sscanf (pstr + 1, "%s %s", buf_option, buf_rep) == 2)
 							{
-std::cout << "scan options : " << *pstr << std::endl;
+								//						std::cout << "scan options : " << *pstr << std::endl;
 								if (strncmp (buf_option, "COLOR", 5) == 0)
 								{
-
 									cur_polypoint->SetColor (buf_rep);
-
 								}
 								if (strncmp (buf_option, "LGPLAN", 6) == 0)
 								{
-
 									lg_plan = atoi(buf_rep);
-
 								}
 								if (strncmp (buf_option, "LGTRAME", 7) == 0)
 								{
-
 									lg_trame = atoi(buf_rep);
-
 								}
 
-                                                                pstr = strstr (pstr + 1, buf_rep);
+								pstr = strstr (pstr + 1, buf_rep);
 
-                                                                if (pstr) {
-                                                                        pstr += strlen(buf_rep);
-                                                                } else {
-                                                                        break;
-                                                                }
+								if (pstr) {
+									pstr += strlen(buf_rep);
+								} else {
+									break;
+								}
 							} else {
-                                                                break;
-                                                        }
+								break;
+							}
 						}
-
 						next_state = POINT_PLAN_1;
 					}
 					break;
@@ -885,11 +864,11 @@ std::cout << "scan options : " << *pstr << std::endl;
 				case POINT_PLAN_1:
 				case POINT_PLAN_2:
 				case POINT_PLAN_3:
-//							printf ("---> %d  next_state POINT_SPHERE_1 :  %x \n", __LINE__, next_state);
-//					printf ("-> sphere 1 / 2 %s\n", buf_cfg);
+					//					printf ("---> %d  next_state POINT_SPHERE_1 :  %x \n", __LINE__, next_state);
+					//					printf ("-> sphere 1 / 2 %s\n", buf_cfg);
 					if (strncmp (buf_cfg, "POINT", 5) == 0)
 					{
-//						printf ("%d\n", __LINE__);
+						//						printf ("%d\n", __LINE__);
 						Point3D pt3d;
 						char *pstr = strchr (buf_cfg + 5, ':');
 						pt3d.IsCut () = 0;
@@ -897,32 +876,32 @@ std::cout << "scan options : " << *pstr << std::endl;
 						// prend la position d' un point dans le fichier
 						if (pstr)
 						{
-//							printf ("%d\n", __LINE__);
+							//							printf ("%d\n", __LINE__);
 							//attention  le format %Lf n'est pas portable
 							int nbi = sscanf (pstr + 1, "%lf %lf %lf %10s",
 							&(pt3d.Get3DX ()),
 							&(pt3d.Get3DY ()),
 							&(pt3d.Get3DZ ()), buf_cfg);
-// std::cout << "So : " <<pt3d.Get3DX () << " " << pt3d.Get3DY () << " " <<  pt3d.Get3DZ () << std::endl;
-// std::cout << "----------------------------- "  << std::endl;
-// std::cout << " cur pp >> " << *cur_polypoint << std::endl;
-// std::cout << "----------------------------- "  << std::endl;
-//cout << "So2 : " << (pstr + 1) << endl;
+
+							// std::cout << "So : " <<pt3d.Get3DX () << " " << pt3d.Get3DY () << " " <<  pt3d.Get3DZ () << std::endl;
+							// std::cout << "----------------------------- "  << std::endl;
+							// std::cout << " cur pp >> " << *cur_polypoint << std::endl;
+							// std::cout << "----------------------------- "  << std::endl;
+							//cout << "So2 : " << (pstr + 1) << endl;
 
 							if (nbi >= 3)
 							{
-//								printf ("%d\n", __LINE__);
-
+								//								printf ("%d\n", __LINE__);
 								// affecter les points de fuite et dimensions
 								pt3d.SetGXScreen();
 
 								if (nbi >= 4)
 								{
-//									printf ("%d\n", __LINE__);
+									//									printf ("%d\n", __LINE__);
 									// interdire la jointure
 									if (strncmp (buf_cfg, "CUT", 3) == 0)
 									{
-//										printf ("%d\n", __LINE__);
+										//										printf ("%d\n", __LINE__);
 										pt3d.IsCut () = 1;
 										printf ("CUT\n");
 									}
@@ -931,52 +910,51 @@ std::cout << "scan options : " << *pstr << std::endl;
 								// ajouter ce point au bloc polypoint
 
 								if (next_state != POINT_SPHERE_1 && next_state != POINT_SPHERE_2 &&
-									next_state != POINT_PLAN_1 && next_state != POINT_PLAN_2 &&
-									next_state != POINT_PLAN_3)
+										next_state != POINT_PLAN_1 && next_state != POINT_PLAN_2 &&
+										next_state != POINT_PLAN_3)
 								{
-// std::cout << "----------------------------- "  << std::endl;
-// std::cout << "pp before added : " << cur_polypoint << std::endl;
-// std::cout << "----------------------------- "  << std::endl;
+									// std::cout << "----------------------------- "  << std::endl;
+									// std::cout << "pp before added : " << cur_polypoint << std::endl;
+									// std::cout << "----------------------------- "  << std::endl;
 									cur_point = cur_polypoint->AddPoint (pt3d);
 									assert (cur_point);
-// std::cout << "----------------------------- "  << std::endl;
-// std::cout << "pp afte added : " << *cur_polypoint << std::endl;
-// std::cout << "----------------------------- "  << std::endl;
+									// std::cout << "----------------------------- "  << std::endl;
+									// std::cout << "pp afte added : " << *cur_polypoint << std::endl;
+									// std::cout << "----------------------------- "  << std::endl;
 								}
-                                                        next_state = next_state | POLYPOINT;
-//							printf ("next state ?  %d\n", next_state);
-//							printf ("---> %d  next_state POINT_SPHERE_1 :  %x \n", __LINE__, next_state);
+								next_state = next_state | POLYPOINT;
+								//							printf ("next state ?  %d\n", next_state);
+								//							printf ("---> %d  next_state POINT_SPHERE_1 :  %x \n", __LINE__, next_state);
 							}
 						}
 
-//							printf ("%d\n %0x\n", __LINE__, next_state);
-
+						//							printf ("%d\n %0x\n", __LINE__, next_state);
 						if (next_state & POINT_SPHERE_1)
 						{
-//							printf ("---> %d centre :  %x \n", __LINE__, next_state);
-//							printf ("centre %d\n", __LINE__);
-						        pt3dCent = pt3d;
+							//							printf ("---> %d centre :  %x \n", __LINE__, next_state);
+							//							printf ("centre %d\n", __LINE__);
+							pt3dCent = pt3d;
 							next_state = POINT_SPHERE_2;
-//              					printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+							//              			printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 						}
 						else if(next_state & POINT_PLAN_1)
 						{
-//							printf ("%d\n", __LINE__);
+							//							printf ("%d\n", __LINE__);
 							pt3ddx = pt3d;
 							next_state = POINT_PLAN_2;
 						}
 						else if(next_state & POINT_PLAN_2)
 						{
-//							printf ("%d\n", __LINE__);
+							//							printf ("%d\n", __LINE__);
 							pt3ddy = pt3d;
 							next_state = POINT_PLAN_3;
 						}
 						else
 						{
-//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+							//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 							if (next_state & POINT_SPHERE_2)
 							{
-//								printf ("rayon %d\n", __LINE__);
+								//								printf ("rayon %d\n", __LINE__);
 								pt3dCirc = pt3d;
 								Sphere c (pt3dCent, pt3dCirc, 20);
 								cur_polypoint = cur_elem->AddPolyPoints (&c);
@@ -984,22 +962,22 @@ std::cout << "scan options : " << *pstr << std::endl;
 							else if(next_state & POINT_PLAN_3)
 							{
 								pt3ddz = pt3d;
-// std::cout << "cur_polypoint : " <<pt3ddx.Get3DX () << " " << pt3ddy.Get3DY () << " " <<  pt3ddz.Get3DZ () <<  " lg_plan :" << lg_plan << " lg_trame :" << lg_trame << std::endl;
+								// std::cout << "cur_polypoint : " <<pt3ddx.Get3DX () << " " << pt3ddy.Get3DY () << " " <<  pt3ddz.Get3DZ () <<  " lg_plan :" << lg_plan << " lg_trame :" << lg_trame << std::endl;
 								Plan p (pt3ddx, pt3ddy, pt3ddz, lg_plan, lg_trame);
 								cur_polypoint = cur_elem->AddPolyPoints (&p);
 							}
 							next_state = ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN;
-//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
-                                                }
-//							printf ("%d\n %0x\n", __LINE__, next_state);
-//cout << "So2 : " <<pt3d.Get3DX () << " " << pt3d.Get3DY () << " " <<  pt3d.Get3DZ () << endl;
+							//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+						}
+						//							printf ("%d\n %0x\n", __LINE__, next_state);
+						//cout << "So2 : " <<pt3d.Get3DX () << " " << pt3d.Get3DY () << " " <<  pt3d.Get3DZ () << endl;
 					}
 					else
 					{
-//						printf ("%d\n", __LINE__);
+						//						printf ("%d\n", __LINE__);
 						next_state = FIN;
 					}
-//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+					//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 					break;
 
 				case DEBUT:
@@ -1017,13 +995,11 @@ std::cout << "scan options : " << *pstr << std::endl;
 				case FIN:
 					break;
 
-//							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+					//				printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
 				}
-//							printf ("%d\n", __LINE__);
+				//							printf ("%d\n", __LINE__);
 			}
-
-//							printf ("%d\n", __LINE__);
-
+			//							printf ("%d\n", __LINE__);
 			fclose (fconfig);
 		}
 		else
@@ -1035,22 +1011,22 @@ std::cout << "scan options : " << *pstr << std::endl;
 
 	double * getEffetFuite ()
 	{
-	return aEffetFuite;
+		return aEffetFuite;
 	}
 
 	double getPtFuiteY ()
 	{
-	return PtFuiteY;
+		return PtFuiteY;
 	}
 
 	double getPtFuiteX ()
 	{
-	return PtFuiteX;
+		return PtFuiteX;
 	}
 
 	double getMedianne ()
 	{
-	return medianne;
+		return medianne;
 	}
 
 	//==================
@@ -1068,7 +1044,7 @@ std::cout << "scan options : " << *pstr << std::endl;
 	//initialiser le tableau des points de fuite
 	double *aEffetFuite/*[LG_ARRAY_FLOAT]*/, PtFuiteY, PtFuiteX, medianne ;
 
-        protected:
+protected:
 	int MaxX, MaxY;
 	int dim_y, dim_x;
 	int MaxColors;

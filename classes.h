@@ -17,7 +17,7 @@
 #include "gxscreen.h"
 
 /* -----------------------------------------------------------
-   gxscreen -> element -> polypoint -> (segment ->) point
-                ^
-    assembly    |
-   ------------------------------------------------------------*/
+gxscreen -> element -> polypoint -> (segment ->) point
+				^
+	assembly    |
+------------------------------------------------------------*/

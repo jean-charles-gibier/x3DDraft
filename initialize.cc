@@ -2,10 +2,9 @@
 #define __INITIALIZE__
 #include "x3DDraft.h"
 
-
 /******************************************************************************
-   Pour plus tard stockage de l'information dans fichier config
-   ******************************************************************************/
+This object is planned for elements persistence
+******************************************************************************/
 
 void 
 LoadDataBase (void)
