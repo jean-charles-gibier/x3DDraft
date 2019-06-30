@@ -95,18 +95,18 @@ class Assembly {
 			for(unsigned nbe = 0; nbe < nbToRetrieve; nbe ++) {
 				unsigned cptRetrieved = min(nbToRetrieve-1, cptElement);
 				if (
-						arrayAssembly[cptRetrieved] == NULL ||
-						(navette->getBarycenter().get3DX() < arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == EAST_FACE) ||
-						(navette->getBarycenter().get3DX() > arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == WEST_FACE) ||
-						(navette->getBarycenter().get3DY() > arrayAssembly[cptRetrieved]->getBarycenter().get3DY() && orientation == UPPER_FACE) ||
-						(navette->getBarycenter().get3DY() < arrayAssembly[cptRetrieved]->getBarycenter().get3DY() && orientation == LOWER_FACE) ||
-						(navette->getBarycenter().get3DZ() < arrayAssembly[cptRetrieved]->getBarycenter().get3DZ() && orientation == FRONT_FACE) ||
-						(navette->getBarycenter().get3DZ() > arrayAssembly[cptRetrieved]->getBarycenter().get3DZ() && orientation == BACK_FACE)
-						) {
+					arrayAssembly[cptRetrieved] == NULL ||
+					(navette->getBarycenter().get3DX() < arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == EAST_FACE) ||
+					(navette->getBarycenter().get3DX() > arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == WEST_FACE) ||
+					(navette->getBarycenter().get3DY() > arrayAssembly[cptRetrieved]->getBarycenter().get3DY() && orientation == UPPER_FACE) ||
+					(navette->getBarycenter().get3DY() < arrayAssembly[cptRetrieved]->getBarycenter().get3DY() && orientation == LOWER_FACE) ||
+					(navette->getBarycenter().get3DZ() < arrayAssembly[cptRetrieved]->getBarycenter().get3DZ() && orientation == FRONT_FACE) ||
+					(navette->getBarycenter().get3DZ() > arrayAssembly[cptRetrieved]->getBarycenter().get3DZ() && orientation == BACK_FACE)
+					) {
 					// we shift all nearest "element" while content is not nul.
-					for(unsigned decale = nbToRetrieve - 1; decale > cptRetrieved; decale --) {
-						arrayAssembly[decale] = arrayAssembly[decale-1];
-					}
+						for(unsigned decale = nbToRetrieve - 1; decale > cptRetrieved; decale --) {
+							arrayAssembly[decale] = arrayAssembly[decale-1];
+							}
 					arrayAssembly[cptRetrieved] = navette;
 					break;
 				}
@@ -136,8 +136,19 @@ class Assembly {
 	/******************************************************************************
 	return new Element made up of several polypoints picked up from this Assembly
 		******************************************************************************/
-	Element getSnapElement( unsigned &nbToRetrieve, Element * e, unsigned orientation ) {
-		
+	Element getSnapElement( unsigned orientation ) {
+		Element snap;
+		for(unsigned nbe = 0; nbe < nbElementsFound; nbe ++){
+			PolyPoints *poly_point = arrayAssembly[nbe ]->getEPolyPoints ();
+			assert (poly_point);
+			// on a plusieurs polypoints pour cet element
+			unsigned int nbPolyPoints = arrayAssembly[nbe]->getNbPolyPoints();
+
+			for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++) {
+				snap.addPolyPoints(poly_point + cptp);
+			}
+		}
+		return snap;
 	}
 	/******************************************************************************
 	return barycenter of the assembly
