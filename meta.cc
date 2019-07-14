@@ -4,37 +4,43 @@
 // with informations passed by configuration file on the command line.
 // (see the example definition "rubick3.cfg")
 
-Meta::Meta (void) {
-	//cout << "constructor display void" << endl;
-	d = NULL;
-	single = NULL;
+Meta::Meta (void)
+{
+    //cout << "constructor display void" << endl;
+    d = NULL;
+    single = NULL;
 }
 
-Meta::Meta ( const Meta& m) {
-	//cout << "constructor display META" << endl;
-	d = NULL;
-	single = NULL;
+Meta::Meta ( const Meta& m)
+{
+    //cout << "constructor display META" << endl;
+    d = NULL;
+    single = NULL;
 }
 
 // getter
-Meta * &Meta::getInstance(char * configName = NULL) {
-	if (! single) {
+Meta * &Meta::getInstance(char * configName = NULL)
+{
+    if (! single)
+    {
 
-		single = new Meta;
+        single = new Meta;
 
-		if (single == NULL) {
-			throw (-1);
-		}
-		// on initialise l'ecran
-		single->initFuite();
-		// récupere les données
-		std::cout << "chargement du fichier :" << (configName == NULL  ? "Defaut"  : configName) << std::endl;
-		single->readFConfigElem(configName);
-	}
-	return single;
+        if (single == NULL)
+        {
+            throw (-1);
+        }
+        // on initialise l'ecran
+        single->initFuite();
+        // récupere les données
+        std::cout << "chargement du fichier :" << (configName == NULL  ? "Defaut"  : configName) << std::endl;
+        single->readFConfigElem(configName);
+    }
+    return single;
 }
 
 // get default display
-Display* Meta::getDisplay() {
-	return Meta::getInstance()->d;
+Display* Meta::getDisplay()
+{
+    return Meta::getInstance()->d;
 }

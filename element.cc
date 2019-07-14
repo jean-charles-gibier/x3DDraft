@@ -9,34 +9,37 @@ insert_celui_la_apres(celui_ci) et renvoie celui_la
 Element *Element::
 insertAfter (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char *) NULL*/)
 {
-	// si le point d'insertion n'est pas défini
-	if (!elem)
-	{				// attribution du pt suivant
-		elem = Suivant;
-	}
+    // si le point d'insertion n'est pas défini
+    if (!elem)
+    {
+        // attribution du pt suivant
+        elem = Suivant;
+    }
 
-	if (elem)
-	{				// rétablir les liens
+    if (elem)
+    {
+        // rétablir les liens
 
-		Suivant = elem->Suivant;
+        Suivant = elem->Suivant;
 
-		if (Suivant)
-		{
-			Suivant-> Precedant = this;
-		}
+        if (Suivant)
+        {
+            Suivant-> Precedant = this;
+        }
 
-		elem->Suivant = this;
-	}
-	Precedant = elem;
+        elem->Suivant = this;
+    }
+    Precedant = elem;
 
-	no = vno;
+    no = vno;
 
-	if (vName)
-	{				// copie éventuelle du nom
+    if (vName)
+    {
+        // copie éventuelle du nom
 
-		strncpy (Name, vName, sizeof (Name));
-	}
-	return this;
+        strncpy (Name, vName, sizeof (Name));
+    }
+    return this;
 }
 /******************************************************************************
 insert_celui_la_avant(celui_ci) et renvoie celui_la
@@ -44,39 +47,43 @@ insert_celui_la_avant(celui_ci) et renvoie celui_la
 Element *Element::
 insertBefore (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char *)NULL*/)
 {
-	// si le point d'insertion n'est pas défini
-	if (!elem)
-	{				// attribution du pt prec
+    // si le point d'insertion n'est pas défini
+    if (!elem)
+    {
+        // attribution du pt prec
 
-		elem = Precedant;
-	}
+        elem = Precedant;
+    }
 
-	if (elem)
-	{				// rétablir les liens
+    if (elem)
+    {
+        // rétablir les liens
 
-		Precedant = elem->Precedant;
+        Precedant = elem->Precedant;
 
-		if (Precedant)
-		{
-			Precedant->Suivant = this;
-		}
+        if (Precedant)
+        {
+            Precedant->Suivant = this;
+        }
 
-		elem->Precedant = this;
-	}
-	Suivant = elem;
+        elem->Precedant = this;
+    }
+    Suivant = elem;
 
-	if (vno > 0)
-	{				// copie éventuelle du no
+    if (vno > 0)
+    {
+        // copie éventuelle du no
 
-		no = vno;
-	}
+        no = vno;
+    }
 
-	if (vName)
-	{				// copie éventuelle du nom
+    if (vName)
+    {
+        // copie éventuelle du nom
 
-		strncpy (Name, vName, sizeof (Name));
-	}
-	return this;
+        strncpy (Name, vName, sizeof (Name));
+    }
+    return this;
 }
 
 /******************************************************************************
@@ -86,17 +93,17 @@ Cut supprimme un élément de la liste chainée.
 Element *Element::
 cut (void)
 {
-	if (Precedant)
-	{
-		Precedant->Suivant = Suivant;
-	}
+    if (Precedant)
+    {
+        Precedant->Suivant = Suivant;
+    }
 
-	if (Suivant)
-	{
-		Suivant->Precedant = Precedant;
-	}
+    if (Suivant)
+    {
+        Suivant->Precedant = Precedant;
+    }
 
-	return this;
+    return this;
 }
 
 /******************************************************************************
@@ -106,19 +113,29 @@ Parcours de la liste chainée en partant de navette.
 Element *Element::
 parcours (void)
 {
-	int cpt_elem = 0;
-	Element * navette = this;
-	std::cout << "Element de queue :" << std::endl;
-	do
-	{
-		//#ifdef NOTATALL
-		(navette -> getEPolyPoints())->print();
-		//#endif // NOTATALL
-		cpt_elem ++;
-		navette = navette->getPrev ();
-	}
-	while (navette);
-	return this;
+    int cpt_elem = 0;
+    Element * navette = this;
+//	std::cout << "Element de queue :" << std::endl;
+    do
+    {
+        std::cout << "detail Element n :" << cpt_elem << std::endl;
+
+        PolyPoints *poly_point = navette -> getEPolyPoints();
+        unsigned int nbPolyPoints = navette -> getNbPolyPoints();
+
+        assert (poly_point);
+        for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++)
+        {
+            std::cout << "debut PP n :" << cptp << std::endl;
+            (poly_point + cptp)->print ();
+            std::cout << "fin PP n :" << cptp << std::endl;
+        }
+        std::cout << "fin Element n : " << cpt_elem << std::endl;
+        cpt_elem ++;
+        navette = navette->getPrev ();
+    }
+    while (navette);
+    return this;
 
 }
 
@@ -129,28 +146,28 @@ Parcours de la liste chainée avec callback
 Element *Element::
 parcoursCallback ( Element * pickMethod( int &, Element *) /*= NULL*/ )
 {
-	int cpt_elem = 0;
-	Element * navette = this;
-	// TODO positioner le nb d'elements => nb elem de meta ?
-	do
-	{
-		cpt_elem ++;
-		navette = navette->getPrev ();
-	}
-	while (navette);
+    int cpt_elem = 0;
+    Element * navette = this;
+    // TODO positioner le nb d'elements => nb elem de meta ?
+    do
+    {
+        cpt_elem ++;
+        navette = navette->getPrev ();
+    }
+    while (navette);
 
-	if (cpt_elem > 0)
-	//      indexElt = (double *)new double [cpt_elem];
-	navette = this;
-	cpt_elem = 0;
-	do
-	{
-		cpt_elem ++;
-		navette = navette->getPrev ();
-	}
-	while (navette);
+    if (cpt_elem > 0)
+        //      indexElt = (double *)new double [cpt_elem];
+        navette = this;
+    cpt_elem = 0;
+    do
+    {
+        cpt_elem ++;
+        navette = navette->getPrev ();
+    }
+    while (navette);
 
-	return this;
+    return this;
 
 }
 
@@ -161,7 +178,7 @@ retourne le pointeur sur l'élément précédent
 Element *Element::
 getNext (void)
 {
-	return Suivant;
+    return Suivant;
 }
 
 /******************************************************************************
@@ -171,7 +188,7 @@ retourne le pointeur sur l'élément suivant
 Element *Element::
 getPrev (void)
 {
-	return Precedant;
+    return Precedant;
 }
 
 /******************************************************************************
@@ -181,7 +198,7 @@ retourne le numéro de l'élément
 int Element::
 getNo (void)
 {
-	return no;
+    return no;
 }
 
 /******************************************************************************
@@ -193,55 +210,68 @@ avec éventuellement une nouvelle couleur et un nouveau nom.
 // se calquer sur AddPoint
 PolyPoints *Element::
 addPolyPoints (const PolyPoints * pp/* = NULL*/,
-const unsigned long col/* = 0L*/,
-const char *name/* = NULL*/)
+               const unsigned long col/* = 0L*/,
+               const char *name/* = NULL*/)
 {
-	// variables de recalcul du centre
-	double l_midx = .0, l_midy = .0, l_midz = .0;
-	// pour tous les pp de la pplist do ...
-	PolyPoints * oldPPList = PPList;
-	PPList = (PolyPoints *)new PolyPoints [nbPolyPoints +1];
-	assert (PPList);
+    // variables de recalcul du centre
+    double l_midx = .0, l_midy = .0, l_midz = .0;
+    // pour tous les pp de la pplist do ...
+    PolyPoints * oldPPList = PPList;
+    PPList = (PolyPoints *)new PolyPoints [nbPolyPoints +1];
+    assert (PPList);
 
-	// std::cout << "nb :" << nbPolyPoints + 1 << "."<< std::endl;
+// std::cout << "ad pp nb :" << nbPolyPoints + 1 << "."<< std::endl;
 
-	for (int cpt = 0; cpt < nbPolyPoints; cpt++) {
-		(PPList + cpt)->Copy (*(oldPPList + cpt) );
-		(oldPPList +cpt)->freePolyPnt ();
-		Point3D pmid = (oldPPList +cpt)->getBarycenter();
-		l_midx += pmid.get3DX();
-		l_midy += pmid.get3DY();
-		l_midz += pmid.get3DZ();
-	}
+    for (int cpt = 0; cpt < nbPolyPoints; cpt++)
+    {
+        (PPList + cpt)->Copy (*(oldPPList + cpt) );
 
-	if( nbPolyPoints )
-	delete [] oldPPList;
+// std::cout << "DELETE :" << cpt << "."<< std::endl;
 
-	if (pp) {				// il y a un pp à copier
-		(PPList + nbPolyPoints)->Copy (*pp);
-		Point3D pmid = (PPList + nbPolyPoints)->getBarycenter();
-		l_midx += pmid.get3DX();
-		l_midy += pmid.get3DY();
-		l_midz += pmid.get3DZ();
-	}
-	(PPList + nbPolyPoints)->setPtEltParent(this);
-	(PPList + nbPolyPoints)->setOrder(nbPolyPoints);
+        (oldPPList +cpt)->freePolyPnt ();
+        Point3D pmid = (oldPPList +cpt)->getBarycenter();
+        l_midx += pmid.get3DX();
+        l_midy += pmid.get3DY();
+        l_midz += pmid.get3DZ();
+    }
 
-	if (col) {				//il y a une couleur à copier
-		std::cout << "set color "<< col << " " << std::endl;
-		(PPList + nbPolyPoints)->SetColor (col);
-	}
+    if( nbPolyPoints )
+    {
+// std::cout << "DELETE o avant:"  << "."<< std::endl;
+        delete [] oldPPList;
+// std::cout << "DELETE o apres:"  << "."<< std::endl;
+    }
+    if (pp)  				// il y a un pp à copier
+    {
+// std::cout << "Av copy pp :"  << "."<< std::endl;
+        (PPList + nbPolyPoints)->Copy (*pp);
+        Point3D pmid = (PPList + nbPolyPoints)->getBarycenter();
+        l_midx += pmid.get3DX();
+        l_midy += pmid.get3DY();
+        l_midz += pmid.get3DZ();
+// std::cout << "Apres copy pp :"  << "."<< std::endl;
+    }
+    (PPList + nbPolyPoints)->setPtEltParent(this);
+    (PPList + nbPolyPoints)->setOrder(nbPolyPoints);
 
-	nbPolyPoints ++;
-	midx = l_midx / (double)nbPolyPoints;
-	midy = l_midy / (double)nbPolyPoints;
-	midz = l_midz / (double)nbPolyPoints;
+    if (col)  				//il y a une couleur à copier
+    {
+// 		std::cout << "set color "<< col << " " << std::endl;
+        (PPList + nbPolyPoints)->SetColor (col);
+    }
 
-	if (name) {				// il y a un nom à copier
-		strncpy (Name, name, sizeof (Name));
-	}
+    nbPolyPoints ++;
+    midx = l_midx / (double)nbPolyPoints;
+    midy = l_midy / (double)nbPolyPoints;
+    midz = l_midz / (double)nbPolyPoints;
 
-	return (nbPolyPoints ? (PPList + (nbPolyPoints-1)) : NULL);
+    if (name)  				// il y a un nom à copier
+    {
+        strncpy (Name, name, sizeof (Name));
+    }
+// std::cout << "Fin add pp :"  << "."<< std::endl;
+
+    return (nbPolyPoints ? (PPList + (nbPolyPoints-1)) : NULL);
 }
 
 /******************************************************************************
@@ -250,19 +280,20 @@ calculeCentre => recalcule le barycentre
 void Element::
 calculeCentre (void)
 {
-	// variables de recalcul du centre
-	double l_midx = .0, l_midy = .0, l_midz = .0;
+    // variables de recalcul du centre
+    double l_midx = .0, l_midy = .0, l_midz = .0;
 
-	for (int cpt = 0; cpt < nbPolyPoints; cpt++) {
-		Point3D pmid = (PPList +cpt)->getBarycenter();
-		l_midx += pmid.get3DX();
-		l_midy += pmid.get3DY();
-		l_midz += pmid.get3DZ();
-	}
+    for (int cpt = 0; cpt < nbPolyPoints; cpt++)
+    {
+        Point3D pmid = (PPList +cpt)->getBarycenter();
+        l_midx += pmid.get3DX();
+        l_midy += pmid.get3DY();
+        l_midz += pmid.get3DZ();
+    }
 
-	midx = l_midx / (double)nbPolyPoints;
-	midy = l_midy / (double)nbPolyPoints;
-	midz = l_midz / (double)nbPolyPoints;
+    midx = l_midx / (double)nbPolyPoints;
+    midy = l_midy / (double)nbPolyPoints;
+    midz = l_midz / (double)nbPolyPoints;
 }
 
 /******************************************************************************
@@ -271,8 +302,8 @@ retourne un pp correspondant au barycentre de l'element
 Point3D Element::
 getBarycenter (void)
 {
-	//     calculeCentre();
-	return Point3D(midx, midy, midz);
+    //     calculeCentre();
+    return Point3D(midx, midy, midz);
 }
 
 /******************************************************************************
@@ -281,7 +312,7 @@ retourne les infos du pp
 PolyPoints *Element::
 getEPolyPoints (void)
 {
-	return PPList;
+    return PPList;
 }
 
 /******************************************************************************
@@ -291,5 +322,5 @@ retourne le nom de l'élément
 char *Element::
 getName (void)
 {
-	return Name;
+    return Name;
 }

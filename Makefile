@@ -1,9 +1,13 @@
 CC = g++
+
 CFLAGS = -O
-#CXXFLAGS = -nostdinc -I/usr/i486-linuxlibc5/include/g++
+CXXFLAGS = -Wall -lefence
+# CXXFLAGS = -nostdinc -I/usr/i486-linuxlibc5/include/g++
 INCLUDES = -I/usr/include
 LDFLAGS = -s -L/usr/local/lib -L/usr/X11R6/lib
-LIBS = -lm -lX11
+LIBS = -lm -lX11  
+# LIBS = -lm -lX11 -lefence
+
 TARGET = x3DDraft
 SRCS = x3DDraft.cc \
 	gxscreen.cc \

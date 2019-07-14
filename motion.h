@@ -6,25 +6,29 @@
 //
 // TODO : define a motion
 // as a commands suit to be performed
-// either only once 
-// either many times until reaching a defined position 
+// either only once
+// either many times until reaching a defined position
 // such as a concordant geometrical position
 //
-class Motion {
-	public :
+class Motion
+{
+public :
 
-	int *arrayCommand = NULL;
+    int *arrayCommand = NULL;
 
-	Motion( int nbCommand = 10) {
-		arrayCommand = new int [nbCommand];
-	}
+    Motion( int nbCommand = 10)
+    {
+        arrayCommand = new int [nbCommand];
+    }
 
-	~Motion(){
+    ~Motion()
+    {
 
-		if (arrayCommand != NULL) {
-			delete [] arrayCommand;
-		}
-	}
+        if (arrayCommand != NULL)
+        {
+            delete [] arrayCommand;
+        }
+    }
 };
 
 #endif //__MOTION_INCLUDE__

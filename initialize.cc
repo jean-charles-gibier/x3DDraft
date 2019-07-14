@@ -6,7 +6,7 @@
 This object is planned for elements persistence
 ******************************************************************************/
 
-void 
+void
 loadDataBase (void)
 {
 }

@@ -36,12 +36,16 @@ fichiers header généraux & prototypages ...
 #define 	ELT_COTE_HORA		-16
 #define 	ESPACE			150
 
-#define 	UPPER_FACE			1
-#define 	LOWER_FACE			2
-#define 	WEST_FACE			3
-#define 	EAST_FACE			4
-#define 	FRONT_FACE			5
-#define 	BACK_FACE			6
+enum faces
+{
+    LOWER_FACE = 1,
+    UPPER_FACE,
+    WEST_FACE,
+    EAST_FACE,
+    FRONT_FACE,
+    BACK_FACE,
+    NONE_FACE = 99
+};
 
 #define LG_ARRAY_FLOAT 32768
 #define BORNE_SUP  LG_ARRAY_FLOAT
@@ -81,12 +85,12 @@ fichiers header généraux & prototypages ...
 /**/
 template <class T> T min(T t1, T t2)
 {
-	return (t1 < t2 ? t1 : t2);
+    return (t1 < t2 ? t1 : t2);
 }
 
 template <class T> T max(T t1, T t2)
 {
-	return (t1 > t2 ? t1 : t2);
+    return (t1 > t2 ? t1 : t2);
 }
 /**/
 /*------------- declarations des objets -----------

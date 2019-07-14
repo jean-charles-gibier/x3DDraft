@@ -25,67 +25,70 @@ Window Meta::win = 0;
 int
 main (int argc, char *argv[])
 {
-	XEvent event;
-	Meta *meta = NULL;
-	sigset_t new_set;
+    XEvent event;
+    Meta *meta = NULL;
+    sigset_t new_set;
 
-	try {
-		char * configName = NULL;
+    try
+    {
+        char * configName = NULL;
 
-		if (argc > 1) {
-			configName = argv[1];
-			std::cout << "DBG  " << configName << " " <<__LINE__ << std::endl;
-		}
-		meta = Meta::getInstance( configName );
-	}
-	catch (int err) {
-		std::cout << "erreur init programme :" << err << std::endl;
-		exit (-1);
-	}
+        if (argc > 1)
+        {
+            configName = argv[1];
+            std::cout << "DBG  " << configName << " " <<__LINE__ << std::endl;
+        }
+        meta = Meta::getInstance( configName );
+    }
+    catch (int err)
+    {
+        std::cout << "erreur init programme :" << err << std::endl;
+        exit (-1);
+    }
 
-	/* Ouvrir la connexion avec le serveur local. */
-	meta->openDisplay("127.0.0.1:0.0");
+    /* Ouvrir la connexion avec le serveur local. */
+    meta->openDisplay("127.0.0.1:0.0");
 
-	meta->getDefaultScreen();
+    meta->getDefaultScreen();
 
-	// on initialise l'environnement X
-	meta->Xinitialize ();
+    // on initialise l'environnement X
+    meta->Xinitialize ();
 
-	sigemptyset( &new_set );
-	sigaddset( &new_set, SIGINT );
-	std::cout << "debut de programme" << std::endl;
+    sigemptyset( &new_set );
+    sigaddset( &new_set, SIGINT );
+    std::cout << "debut de programme" << std::endl;
 
-	for (;;)
-	{
-		if (XPending (meta->d))
-		{
-			XNextEvent (meta->d, &event);
-		}
-		if (event.type == Expose)
-		break;
-	}
+    for (;;)
+    {
+        if (XPending (meta->d))
+        {
+            XNextEvent (meta->d, &event);
+        }
+        if (event.type == Expose)
+            break;
+    }
 
-	mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);
+    mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);
 
-	meta->installWorld ();
+    meta->installWorld ();
 
-	// boucle principale du programme
-	try
-	{
-		for (;;)
-		{
-			meta->displayWorld ();
-		}
-		mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);
-	}
+    // boucle principale du programme
+    try
+    {
+        for (;;)
+        {
+            meta->displayWorld ();
+        }
+        mask = sigprocmask (SIG_BLOCK, &new_set,  NULL);
+    }
 
-	catch ( const char * Msg )
-	{
-		std::cout << "Exception :" << Msg;
-	}
+    catch ( const char * Msg )
+    {
+        std::cout << "Exception :" << Msg;
+    }
 
-	//A changer
-	XCloseDisplay(meta->d);
-	std::cout << std::endl << "fin de programme" << std::endl;
-	return 0;
+    //A changer
+    XCloseDisplay(meta->d);
+    std::cout << std::endl << "fin de programme" << std::endl;
+    return 0;
 }
