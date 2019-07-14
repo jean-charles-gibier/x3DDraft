@@ -13,7 +13,7 @@ To test it :
 ```
 ./x3DDraft x3DDraft.cfg
 ```
-Here is a  video illustrating an animation variant base on a Rubick's Cube model
+Here is a  video illustrating an animation variant based on a Rubick's Cube model
 
 https://studio.youtube.com/video/wyWxlmDuZ6I/edit
 
