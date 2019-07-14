@@ -15,7 +15,7 @@ To test it :
 ```
 Here is a  video illustrating an animation variant based on a Rubick's Cube model
 
-https://studio.youtube.com/video/wyWxlmDuZ6I/edit
+https://www.youtube.com/watch?v=wyWxlmDuZ6I
 
 To launch this model :
 ```
