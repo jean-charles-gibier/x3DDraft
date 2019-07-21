@@ -114,32 +114,32 @@ public:
             case UPPER_FACE :
                 (poly_point + cptp)->rotate(getBarycenter(), 0.0, 0.0, - M_PI/2);
                 (poly_point + cptp)->moveX ((double) 1200);
-                (poly_point + cptp)->moveY ((double) 220);
+                (poly_point + cptp)->moveY ((double) 120);
                 break;
             case LOWER_FACE :
                 (poly_point + cptp)->rotate(getBarycenter(), 0.0, 0.0,  M_PI/2);
                 (poly_point + cptp)->moveX ((double) 1200);
-                (poly_point + cptp)->moveY ((double) 40);
+                (poly_point + cptp)->moveY ((double) -60);
                 break;
             case EAST_FACE :
                 (poly_point + cptp)->rotate(getBarycenter(), 0.0, - M_PI/2, 0.0);
                 (poly_point + cptp)->moveX ((double) 340);
-                (poly_point + cptp)->moveY ((double) 340);
+                (poly_point + cptp)->moveY ((double) 240);
                 break;
             case WEST_FACE :
                 (poly_point + cptp)->rotate(getBarycenter(), 0.0, M_PI/2, 0.0);
                 (poly_point + cptp)->moveX ((double) 580);
-                (poly_point + cptp)->moveY ((double) -80);
+                (poly_point + cptp)->moveY ((double) -180);
                 break;
             case FRONT_FACE :
                 (poly_point + cptp)->moveX ((double) 830);
-                (poly_point + cptp)->moveY ((double) -75);
+                (poly_point + cptp)->moveY ((double) -175);
                 (poly_point + cptp)->moveZ ((double) 20);
                 break;
             case BACK_FACE :
-                (poly_point + cptp)->rotate(getBarycenter(), M_PI, M_PI, 0.0);
+                (poly_point + cptp)->rotate(getBarycenter(), M_PI, 0.0, M_PI);
                 (poly_point + cptp)->moveX ((double) 830);
-                (poly_point + cptp)->moveY ((double) 340);
+                (poly_point + cptp)->moveY ((double) 240);
                 (poly_point + cptp)->moveZ ((double) -70);
                 break;
             }

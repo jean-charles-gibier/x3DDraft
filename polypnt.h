@@ -33,6 +33,7 @@ Il y a 2 types d'unions possibles et combinables :
 	le tableau d'entier aSeg, qui logiquement doit contenir un nombre d'éléments pair.
 
 ***************************************************************/
+// #define SHOW_INFOS
 
 #ifdef SHOW_INFOS
 static Window windowText ;
@@ -539,7 +540,8 @@ public :
                     xpoints[offset_fin] = Point3D::pointToXpoint(anchor[index]);
 #ifdef SHOW_INFOS
                     if ( strlen(bigbuf) < 8000)
-                        sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
+//                        sprintf (bigbuf + strlen(bigbuf), "[x : %f y : %f z : %f]", midx, midy, midz);
+                        sprintf (bigbuf + strlen(bigbuf), "[S : UP TRIGO][D : DOWN TRIGO]");
 #endif // SHOW_INFOS
                     offset_fin ++;
                 }
@@ -575,7 +577,7 @@ public :
         {
             startText = 1;
             windowText =
-                XcreateSimpleWindow (d,
+                XCreateSimpleWindow (d,
                                      RootWindow  (d,  DefaultScreen (d)),
                                      100,
                                      100,
@@ -591,7 +593,6 @@ public :
             XSetForeground(d, myGC, 0xFFFFFF00);
             XMapWindow (d, windowText);
             XSelectInput (d, windowText, ExposureMask | KeyPressMask);
-
         }
         else
         {
