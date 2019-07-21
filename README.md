@@ -13,3 +13,11 @@ To test it :
 ```
 ./x3DDraft x3DDraft.cfg
 ```
+Here is a  video illustrating an animation variant based on a Rubick's Cube model
+
+https://www.youtube.com/watch?v=wyWxlmDuZ6I
+
+To launch this model :
+```
+./x3DDraft  rubick4.cfg 
+```
