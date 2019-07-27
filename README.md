@@ -19,5 +19,5 @@ https://www.youtube.com/watch?v=wyWxlmDuZ6I
 
 To launch this model :
 ```
-./x3DDraft  rubick4.cfg 
+./x3DDraft  rubick5.cfg 
 ```
