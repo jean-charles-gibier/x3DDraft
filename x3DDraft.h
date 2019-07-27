@@ -34,6 +34,12 @@ fichiers header généraux & prototypages ...
 #define 	ELT_ORDONNEE_HORA		-15
 #define 	ELT_COTE_TRIGO		16
 #define 	ELT_COTE_HORA		-16
+#define 	ALL_ABSCISSE_TRIGO		17
+#define 	ALL_ABSCISSE_HORA		-17
+#define 	ALL_ORDONNEE_TRIGO		18
+#define 	ALL_ORDONNEE_HORA		-18
+#define 	ALL_COTE_TRIGO		19
+#define 	ALL_COTE_HORA		-19
 #define 	ESPACE			150
 
 enum faces
@@ -44,8 +50,10 @@ enum faces
     EAST_FACE,
     FRONT_FACE,
     BACK_FACE,
-    NONE_FACE = 99
+    NONE_FACE = 99,
+    ALL_FACES = 100
 };
+
 
 #define LG_ARRAY_FLOAT 32768
 #define BORNE_SUP  LG_ARRAY_FLOAT

@@ -111,6 +111,7 @@ public :
             {
                 unsigned cptRetrieved = min(nbToRetrieve-1, cptElement);
                 if (
+					orientation == ALL_FACES ||
                     arrayAssembly[cptRetrieved] == NULL ||
                     (navette->getBarycenter().get3DX() < arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == WEST_FACE) ||
                     (navette->getBarycenter().get3DX() > arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == EAST_FACE) ||

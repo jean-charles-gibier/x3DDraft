@@ -225,8 +225,8 @@ public:
 
     void plotWorld ()
     {
-        // Nombre d'elements par face
-        unsigned nbPerAssembly = 9;
+        // Nombre d'elements par face => 1 face ou toutes les faces
+        unsigned nbPerAssembly = context > 99 ? ( 8 + 6 + 12 ) : 9;
         d = getDisplay();
 
         // const Point3D centre_world = (((double) viewWidth / 2), ((double) viewHeight / 2), (double) 2.0);
@@ -283,17 +283,7 @@ public:
         XDrawLine(d, buffer, gcView, (int)pt_ref.get2DX() - 16, (int)pt_ref.get2DY(), (int)pt_ref.get2DX() + 16, (int)pt_ref.get2DY() );
         XDrawLine(d, buffer, gcView, (int)pt_ref.get2DX(), (int)pt_ref.get2DY() -16, (int)pt_ref.get2DX(), (int)pt_ref.get2DY() + 16);
 #endif // SHOW_CENTER_ASSEMBLY
-
-        /*
-        Decommenter pour tester les faces seules
-
-        		swapBuffers ();
-        		XSync (d, False);
-        		while (1) {
-        				if (XCheckMaskEvent (d, ButtonPressMask | KeyPressMask | KeyReleaseMask, &event) == True)
-        		exit(0);
-        	}
-        */
+ 
         // tant que l'élément existe
         if (navette)
         {
@@ -467,6 +457,92 @@ public:
                         leave_context_in = 25;
                     }
                 }
+// ----------
+                else if (toupper (*ch) == 'W')
+                {
+                    if (context != ALL_FACES && !leave_context_in)
+					{
+                        context = ALL_FACES;
+                        if (assembly != NULL)
+                        {
+                            delete(assembly);
+                            assembly = NULL;
+                        }
+						ActionKey = ABSCISSE_TRIGO;
+                        leave_context_in = 25;
+                    }
+                }		
+                else if (toupper (*ch) == 'X')
+                {
+                    if (context != ALL_FACES && !leave_context_in)
+					{
+                        context = ALL_FACES;
+                        if (assembly != NULL)
+                        {
+                            delete(assembly);
+                            assembly = NULL;
+                        }
+						ActionKey = ABSCISSE_HORA;
+                        leave_context_in = 25;
+                    }
+                }
+                else if (toupper (*ch) == 'C')
+                {
+                    if (context != ALL_FACES && !leave_context_in)
+					{
+                        context = ALL_FACES;
+                        if (assembly != NULL)
+                        {
+                            delete(assembly);
+                            assembly = NULL;
+                        }
+						ActionKey = ORDONNEE_TRIGO;
+                        leave_context_in = 25;
+                    }
+                }
+                else if (toupper (*ch) == 'V')
+                {
+                    if (context != ALL_FACES && !leave_context_in)
+					{
+                        context = ALL_FACES;
+                        if (assembly != NULL)
+                        {
+                            delete(assembly);
+                            assembly = NULL;
+                        }
+						ActionKey = ORDONNEE_HORA;
+                        leave_context_in = 25;
+                    }
+                }
+                else if (toupper (*ch) == 'B')
+                {
+                    if (context != ALL_FACES && !leave_context_in)
+					{
+                        context = ALL_FACES;
+                        if (assembly != NULL)
+                        {
+                            delete(assembly);
+                            assembly = NULL;
+                        }
+						ActionKey = COTE_TRIGO;
+                        leave_context_in = 25;
+                    }
+                }
+                else if (toupper (*ch) == 'N')
+                {
+                    if (context != ALL_FACES && !leave_context_in)
+					{
+                        context = ALL_FACES;
+                        if (assembly != NULL)
+                        {
+                            delete(assembly);
+                            assembly = NULL;
+                        }
+						ActionKey = COTE_HORA;
+                        leave_context_in = 25;
+                    }
+                }
+// ----------								
                 else if (*ch == ' ')
                 {
                     ActionKey = ESPACE;
