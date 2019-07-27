@@ -5,7 +5,7 @@ or on the entire "universe" (that is described in config file).
 
 To test it :
 - install gcc X11 SDK librairies and set your environement.
-- Clone this repo
+- clone this repo
 - make clean
 - make
 - start your X server if needed
