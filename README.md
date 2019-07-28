@@ -24,4 +24,4 @@ To launch this model :
 
 Some tools I use :
 - Atristic Style [http://astyle.sourceforge.net/] As code beautifier.
-- Valgrind  [http://www.valgrind.org/docs/manual/faq.html#faq.installing] As memory checker.
+- Valgrind  [http://www.valgrind.org/] As memory checker.
