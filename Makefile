@@ -1,11 +1,10 @@
 CC = g++
-
-CFLAGS = -O
-CXXFLAGS = -Wall -lefence
+CFLAGS = -g -c
+CXXFLAGS = -g -Wall
 # CXXFLAGS = -nostdinc -I/usr/i486-linuxlibc5/include/g++
 INCLUDES = -I/usr/include
-LDFLAGS = -s -L/usr/local/lib -L/usr/X11R6/lib
-LIBS = -lm -lX11  
+LDFLAGS = -L/usr/local/lib -L/usr/X11R6/lib
+LIBS = -lm -lX11
 # LIBS = -lm -lX11 -lefence
 
 TARGET = x3DDraft
@@ -39,11 +38,11 @@ ALL = README Imakefile Makefile.std x3DDraft.man $(SRCS) x3DDraft.h
 
 all:	$(TARGET)
 
-$(TARGET):	$(OBJS) $(SRCS)
+$(TARGET):	$(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
-.cc  .o .h:
-	$(CC) $(CFLAGS) $(INCLUDES) -g $(SRCS)
+$(OBJS):	$(SRCS)
+	$(CC) $(CFLAGS) $? $(CXXFLAGS)
 
 clean:
 	rm -f $(OBJS) $(TARGET) core
