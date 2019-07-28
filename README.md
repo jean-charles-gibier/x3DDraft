@@ -21,3 +21,7 @@ To launch this model :
 ```
 ./x3DDraft  rubick5.cfg 
 ```
+
+Some tools I use :
+- Atristic Style [http://astyle.sourceforge.net/] As code beautifier.
+- Valgrind  [http://www.valgrind.org/docs/manual/faq.html#faq.installing] As memory checker.
