@@ -20,6 +20,14 @@ class Point3D
 {
 
 public :
+/*-------------------------------------------------------*/
+    /* constructeur :
+ copy */
+/*
+    Point3D (const Point3D pt) {
+	}
+*/
+
     /*-------------------------------------------------------*/
     /* constructeur :
     	une instance de gscreen est obligatoire pour calculer
@@ -197,6 +205,15 @@ public :
     };
     /*-------------------------------------------------------*/
 
+	/* ---------------------
+    destructeur
+    -------------------------------------------------- */
+/*
+     ~Point3D ()
+    {
+				std::cerr << "Arg ! " << std::endl;
+    }
+*/
 protected:
     unsigned int cut; // if true this point is not about to be linked with the next one
     int x2d, y2d; //screen coordinates

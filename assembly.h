@@ -97,7 +97,7 @@ public :
     {
         arrayAssembly = new ElementPtr [nbToRetrieve];
         assert(arrayAssembly);
-        std::cout << " --> pickMethod orientation :" << orientation << " ."<< std::endl;
+    //    std::cout << " --> pickMethod orientation :" << orientation << " ."<< std::endl;
         Element *navette = e;
         for(unsigned nbe = 0; nbe < nbToRetrieve; nbe ++)
         {

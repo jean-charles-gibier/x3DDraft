@@ -73,6 +73,7 @@ main (int argc, char *argv[])
     meta->installWorld ();
 
     // boucle principale du programme
+    std::cout << "Start loop" << std::endl;
     try
     {
         for (;;)
@@ -88,7 +89,9 @@ main (int argc, char *argv[])
     }
 
     //A changer
-    XCloseDisplay(meta->d);
+    // on libere l'environnement X
+    meta->Xrelease ();
+	Meta::releaseInstance( );
     std::cout << std::endl << "fin de programme" << std::endl;
     return 0;
 }

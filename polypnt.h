@@ -68,15 +68,15 @@ public :
     copie les instances de polypoints
     -------------------------------------------------- */
 
-    PolyPoints&  operator= ( const PolyPoints& pp)
+    PolyPoints & operator= (const PolyPoints& pp)
     {
-        return  Copy (pp);
+        return Copy (pp);
     }
 
     /*--------------------------------------------------
     sortie des infos sur stdout
     -------------------------------------------------- */
-    friend  std::ostream & operator << ( std::ostream &s, const PolyPoints &pp)
+    friend std::ostream & operator << ( std::ostream &s, const PolyPoints &pp)
     {
         s << "--print PolyPoint :" << std::endl;
         s << "nb points " << pp.nbPoints << std::endl;
@@ -101,19 +101,25 @@ public :
 
         return s;
     }
-
+	
     /*--------------------------------------------------
     copie les propriétés d'un pp sur un autre (équiv à =)
     -------------------------------------------------- */
-    PolyPoints& Copy ( const PolyPoints & pp)
+    PolyPoints & Copy (const PolyPoints & pp)
     {
-        if (nbSeg || nbPoints)
-        {
-            //            std::cout << "fin de programme : PolyPoints Copie suspecte" << std::endl;
-            //            exit (-1);
+	
+		if (aSeg != NULL) {
+			delete [] aSeg;
+			nbSeg = 0;
+			aSeg = NULL;
+		}
 
-            //freePolyPnt();
-        }
+		if (anchor != NULL) {
+
+			delete [] anchor;
+			nbPoints = 0;
+			anchor = NULL;
+		}
 
         if(pp.nbSeg)
         {
@@ -126,17 +132,15 @@ public :
                 aSeg[cpts] = pp.aSeg[cpts];
             }
         }
-
+		
         if(pp.nbPoints)
         {
-            nbPoints = pp.nbPoints;
+            nbPoints = pp.nbPoints;						
             anchor = (Point3D *)new Point3D [pp.nbPoints];
-
             assert (anchor);
-
             for (unsigned cptp = 0; cptp < pp.nbPoints; cptp ++)
             {
-                anchor[cptp] = pp.anchor[cptp];
+               anchor[cptp] = pp.anchor[cptp];
             }
         }
 
@@ -162,7 +166,6 @@ public :
         aSeg = (unsigned int *)NULL;
         nbPoints = 0;
         nbSeg = 0;
-        nbSeg = 0;
         order = 0;
         color = 0L;
         ptEltParent = (Element *)NULL;
@@ -177,6 +180,7 @@ public :
 // std::cout << "Create PolyPoint pt3D (p)..." << std::endl ;
         midx =  midy = midz = 0;
         aSeg = (unsigned int *)NULL;
+        anchor = (Point3D *)NULL;
         nbPoints = 0;
         nbSeg = 0;
         order = 0;
@@ -185,6 +189,41 @@ public :
         AddPoint(p);
     }
 
+	
+    /*--------------------------------------------------
+    contructeur avec autre polypoint
+    -------------------------------------------------- */
+    PolyPoints (const PolyPoints  &pp)
+    {
+// std::cout << "Create PolyPoint polypoints (p)..." << std::endl ;
+        midx = pp.midx;
+		midy = pp.midy;
+		midz = pp.midz;
+		if (pp.nbSeg > 0){
+			aSeg = (unsigned int *)new unsigned int [pp.nbSeg * 2];
+			assert (aSeg);
+			for (unsigned cpts = 0; cpts < pp.nbSeg * 2; cpts ++)
+			{
+				aSeg[cpts] = pp.aSeg[cpts];
+			}
+		}
+		if (pp.nbPoints > 0){
+			anchor = (Point3D *)new Point3D [pp.nbPoints];
+			assert (anchor);
+			for (unsigned cptp = 0; cptp < pp.nbPoints; cptp ++)
+			{
+			   anchor[cptp] = pp.anchor[cptp];
+			}
+		}
+        nbPoints = pp.nbPoints;
+        nbSeg = pp.nbSeg;
+        order = pp.order;
+        color = pp.color;
+        ptEltParent = pp.ptEltParent;
+
+    }
+	
+	
     /*--------------------------------------------------
     ajoute un point dans le pp
     -------------------------------------------------- */
@@ -202,11 +241,12 @@ public :
             }
         }
 
-        if ( anchor )
+        if ( anchor != NULL)
         {
             delete [] anchor;
+			anchor = NULL;
         }
-
+// TODO aseg 
         anchor = another;
         anchor[(nbPoints - 1)] = p;
 
@@ -648,9 +688,9 @@ public :
 
     void freePolyPnt (void)
     {
-        if (nbPoints)
+        if (nbPoints > 0)
             delete [] anchor;
-        if (nbSeg)
+        if (nbSeg > 0)
             delete [] aSeg;
 
         nbPoints = nbSeg = 0;
@@ -670,7 +710,7 @@ public :
     /*--------------------------------------------------
     destructeur
     -------------------------------------------------- */
-    ~ PolyPoints (void)
+    virtual ~ PolyPoints (void)
     {
 //		std::cout << " => Free polypoint :" << __LINE__ << std::endl;
         freePolyPnt ();
@@ -684,13 +724,13 @@ public :
 
 protected :
     // pointeur  de l'element parent à injecter :
-    Element* ptEltParent;
+    Element* ptEltParent = NULL;
     // tableau des points constituant le polypt
-    Point3D * anchor;
+    Point3D * anchor = NULL;
     // coordonées du milieu (ou du pt d'équilibre) du polypt
     double midx, midy, midz;
     // nombre de points, de segments et tableau des index a lier
-    unsigned int nbPoints, nbSeg, * aSeg;
+    unsigned int nbPoints, nbSeg, * aSeg = NULL;
     // couleur du polypt
     unsigned long color;
 };

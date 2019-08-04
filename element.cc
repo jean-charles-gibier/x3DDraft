@@ -10,16 +10,12 @@ Element *Element::
 insertAfter (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char *) NULL*/)
 {
     // si le point d'insertion n'est pas défini
-    if (!elem)
+    if (elem == NULL)
     {
         // attribution du pt suivant
         elem = Suivant;
-    }
-
-    if (elem)
-    {
+    } else {
         // rétablir les liens
-
         Suivant = elem->Suivant;
 
         if (Suivant)
@@ -48,15 +44,12 @@ Element *Element::
 insertBefore (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char *)NULL*/)
 {
     // si le point d'insertion n'est pas défini
-    if (!elem)
+    if (elem == NULL)
     {
         // attribution du pt prec
 
         elem = Precedant;
-    }
-
-    if (elem)
-    {
+    } else {
         // rétablir les liens
 
         Precedant = elem->Precedant;

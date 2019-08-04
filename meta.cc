@@ -9,22 +9,21 @@ Meta::Meta (void)
     //cout << "constructor display void" << endl;
     d = NULL;
     single = NULL;
+	
+	for (unsigned nbfaces = LOWER_FACE; nbfaces <= BACK_FACE; nbfaces++)
+	{
+		eFaces[nbfaces - 1] = NULL;
+	}
 }
 
-Meta::Meta ( const Meta& m)
-{
-    //cout << "constructor display META" << endl;
-    d = NULL;
-    single = NULL;
-}
-
-// getter
+// get single instance
 Meta * &Meta::getInstance(char * configName = NULL)
 {
     if (! single)
     {
 
         single = new Meta;
+		single->is_single = 1; // TO DELETE
 
         if (single == NULL)
         {
@@ -37,6 +36,18 @@ Meta * &Meta::getInstance(char * configName = NULL)
         single->readFConfigElem(configName);
     }
     return single;
+}
+
+// release single instance
+void Meta::releaseInstance(void)
+{
+    if (single)
+    {
+
+        delete single;
+        single = NULL;
+    }
+    return;
 }
 
 // get default display

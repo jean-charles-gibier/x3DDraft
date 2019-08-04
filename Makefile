@@ -1,6 +1,8 @@
 CC = g++
-CFLAGS = -g -c
-CXXFLAGS = -g -Wall
+CFLAGS = -c
+CXXFLAGS = -Wall
+# version dbg CFLAGS = -g -c
+# CXXFLAGS = -g -Wall
 # CXXFLAGS = -nostdinc -I/usr/i486-linuxlibc5/include/g++
 INCLUDES = -I/usr/include
 LDFLAGS = -L/usr/local/lib -L/usr/X11R6/lib

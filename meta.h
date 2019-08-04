@@ -21,16 +21,17 @@ class Meta
     friend class Point3D;
 
 public:
-    static Meta *single; //= NULL;
+    static Meta *single;
     static Display *d;
     static Window win;
+	unsigned is_single;
     XEvent event;
     XKeyboardState keyboard_state;
     sigset_t new_set;
     int s;
     XColor red, green, blue;
-    Colormap color_map;
-    Element * last; // entry point of linked list of elements
+    Colormap color_map = 0L;
+    Element * last = NULL; // entry point of linked list of elements
     ElementPtr eFaces[BACK_FACE]; // Elements representant les differentes vues du cube
 
     Assembly * assembly = NULL; // selection of some elements
@@ -42,10 +43,10 @@ public:
 
     // Meta constructor
     Meta (void);
-    Meta (const Meta& m);
 
-    //==== Methods =====
+    //==== Statics Methods =====
     static Meta * &getInstance(char * configName);
+	static void releaseInstance();
     static Display* getDisplay();
 
     // initialize Z progression perspective
@@ -69,24 +70,23 @@ public:
         {
             Element *tmp = navette;
             navette = navette->getPrev ();
-            delete (tmp);
+            delete tmp;
         }
 
-        if (single)
-        {
-            delete (single);
-        }
-
-        if(color_map)
-        {
-            XFreeColormap(d, color_map);
-        }
+		if (assembly != NULL)
+		{
+			delete assembly;
+//			std::cout << std::endl <<  std::endl << "DELETE assembly."<< std::endl;
+		}
 
         for (unsigned nbfaces = LOWER_FACE; nbfaces <= BACK_FACE; nbfaces++)
         {
-            eFaces[nbfaces - 1] = NULL;
+			if (eFaces[nbfaces - 1] != NULL ){
+//			std::cout << std::endl <<  std::endl << "DELETE face :" << nbfaces - 1 << "."<< std::endl;
+				delete eFaces[nbfaces - 1];
+				eFaces[nbfaces - 1] = NULL;
+			}
         }
-
     }
 
     // Affichage
@@ -113,7 +113,6 @@ public:
             Element *navette = (external == NULL) ? last : external;
             // tant que l'élément existe
             fini = 1;
-            // is_pp_sorted = 0;
 
             if (navette)
             {
@@ -144,11 +143,11 @@ public:
 
                             if (cppt1.get3DZ() < cppt2.get3DZ())
                             {
-                                PolyPoints pptmp = *(poly_point + cptp);
-                                *(poly_point + cptp) = *(poly_point + cptp + 1);
-                                *(poly_point + cptp + 1) = pptmp;
-
-                                pp_fini = 0;
+                                const PolyPoints *pptmp = new PolyPoints(*(poly_point + cptp));
+								*(poly_point + cptp) = *(poly_point + cptp + 1);
+								*(poly_point + cptp + 1) = *pptmp;
+								delete pptmp;
+								pp_fini = 0;
                             }
                         }
                     }
@@ -189,7 +188,9 @@ public:
                         unsigned pp_fini = 1;
                         // On va trier l'ordre Z de chaque polypoint
                         PolyPoints *poly_point = navette->getEPolyPoints ();
+						
                         assert (poly_point);
+						
                         do
                         {
                             pp_fini = 1;
@@ -201,10 +202,10 @@ public:
 
                                 if (cppt1.get3DZ() < cppt2.get3DZ())
                                 {
-                                    PolyPoints pptmp = *(poly_point + cptp);
-                                    *(poly_point + cptp) = *(poly_point + cptp + 1);
-                                    *(poly_point + cptp + 1) = pptmp;
-
+									const PolyPoints *pptmp = new PolyPoints(*(poly_point + cptp));
+									*(poly_point + cptp) = *(poly_point + cptp + 1);
+                                    *(poly_point + cptp + 1) = *pptmp;
+									delete pptmp;
                                     pp_fini = 0;
                                 }
                             }
@@ -213,7 +214,6 @@ public:
                     }
                 }
                 while (navette);
-                // is_pp_sorted = 1;
             }
         }
         while (!fini);
@@ -226,7 +226,7 @@ public:
     void plotWorld ()
     {
         // Nombre d'elements par face => 1 face ou toutes les faces
-        unsigned nbPerAssembly = context > 99 ? ( 8 + 6 + 12 ) : 9;
+        unsigned nbPerAssembly = context > 99 ? 26 : 9;
         d = getDisplay();
 
         // const Point3D centre_world = (((double) viewWidth / 2), ((double) viewHeight / 2), (double) 2.0);
@@ -252,6 +252,7 @@ public:
             for (unsigned cptAssemblies = LOWER_FACE; cptAssemblies <= BACK_FACE; cptAssemblies ++)
             {
 
+//                std::cout << "eFaces n° " << cptAssemblies - 1 << "  " << std::endl;
                 // clean si elements existants
                 if (eFaces[cptAssemblies - 1] != NULL)
                 {
@@ -262,6 +263,8 @@ public:
                 Assembly *locAssembly = new Assembly(last, cptAssemblies, nbPerAssembly);
                 assert(locAssembly);
                 eFaces [cptAssemblies -1] = locAssembly->getSnapElement( );
+				// on n'a plus besoin locAssembly
+				delete locAssembly;
                 assert (eFaces [cptAssemblies -1]);
                 eFaces [cptAssemblies -1] -> replaceFace(cptAssemblies);
                 sortZElem(eFaces[cptAssemblies - 1]);
@@ -535,7 +538,7 @@ public:
                         context = ALL_FACES;
                         if (assembly != NULL)
                         {
-                            delete(assembly);
+                            delete assembly;
                             assembly = NULL;
                         }
 						ActionKey = COTE_HORA;
@@ -612,7 +615,10 @@ public:
         d = getDisplay();
         updateKeys ();
         plotWorld ();
-        sortZElem ();
+		//  No motion => test of perspective doesn't matter 
+		if(ActionKey != ESPACE) {
+			sortZElem ();
+		}
         swapBuffers ();
         XSync (d, False);
         return 0;
@@ -620,7 +626,6 @@ public:
 
     // Ouverture display
     int openDisplay (const char * defaultDisplay = "0.0:127.0.0.1")
-    // int openDisplay (std::string defaultDisplay = "0.0:127.0.0.1")
     {
         std::cout << "Try to open display " << defaultDisplay << std::endl;
         d = XOpenDisplay(defaultDisplay);
@@ -661,7 +666,22 @@ public:
         XSetForeground (d, gcView, WhitePixel (d, DefaultScreen (d)));
     }
 
-    //   Initialisation du programme.
+	
+    //   release GC & display.
+
+    void
+    Xrelease (void)
+    {
+	    if(color_map)
+        {
+            XFreeColormap(d, color_map);
+        }
+
+		XFreeGC (d, gcView );
+		XCloseDisplay(d);
+   }
+
+    //   Initialisation GC & display.
 
     void
     Xinitialize (void)

@@ -175,13 +175,14 @@ public:
     -------------------------------------------------- */
     friend std::ostream & operator << (std::ostream &s, const Element &pp)
     {
-        s << " Nom :" << pp.Name << " numéro d'index :" << pp.no << std::endl;
+		s << " Nom :" << (pp.Name == NULL ? "<none>" : pp.Name) << " numéro d'index :" << pp.no << std::endl;
+   
         return s;
     }
 
 protected :
     // la liste de polypoints de l'element
-    PolyPoints *PPList ;
+    PolyPoints *PPList = NULL;
     // flag désignant le porteur du focus
     unsigned short focus;
 
