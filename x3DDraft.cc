@@ -21,6 +21,7 @@ int mask;
 Meta* Meta::single = NULL;
 Display* Meta::d = NULL;
 Window Meta::win = 0;
+	
 // main function, aucun argument pour l'instant
 int
 main (int argc, char *argv[])
@@ -46,8 +47,9 @@ main (int argc, char *argv[])
         exit (-1);
     }
 
-    /* Ouvrir la connexion avec le serveur local. */
-    meta->openDisplay("127.0.0.1:0.0");
+    /* Ouvrir la connexion avec le serveur X*/
+	/* "127.0.0.1:0.0" */
+    meta->openDisplay(NULL);
 
     meta->getDefaultScreen();
 
