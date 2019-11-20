@@ -141,7 +141,7 @@ publish/
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-# TODO: Comment the next line if you want to checkin your web deploy settings 
+# TODO: Comment the next line if you want to checkin your web deploy settings
 # but database connection strings (with potential passwords) will be unencrypted
 *.pubxml
 *.publishproj
@@ -238,3 +238,37 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# perso ignore
+assembly.h.orig
+classes.h.gch
+element.cc.orig
+element.h.orig
+gxscreen.h.gch
+gxscreen.h.orig
+initialize.cc.orig
+mem_leak.txt
+meta.cc.orig
+meta.h.gch
+meta.h.orig
+meta.h.svg
+modify_cfg.pl
+motion.h.orig
+out
+out2
+out_wall
+point3d.cc.orig
+point3d.h.orig
+polypnt.cc.orig
+polypnt.h.orig
+rubick2.cfg
+rubick3_svg.cfg
+simple2.cfg
+simple_line.cfg
+test.cc
+test.cfg
+tmp1.cfg
+x3DDraft
+x3DDraft.cc.orig
+x3DDraft.h.gch
+x3DDraft.h.orig
