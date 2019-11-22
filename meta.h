@@ -118,7 +118,7 @@ public:
             {
 
                 do // boucle sur les éléments de gscreen.
-                {
+                {	
                     double ppCoordz1, ppCoordz2;
                     Element *ptElement1 = navette;	// on sauve le pointeur
 
@@ -188,7 +188,7 @@ public:
                         }
 						// on compare ptElement1 et ptElement2
 
-
+						std::cout << "Test sort Z" << std::endl;
 
                         // on a plusieurs polypoints pour cet element
                         unsigned int nbPolyPoints2 = navette->getNbPolyPoints();
