@@ -113,12 +113,12 @@ public:
             Element *navette = (external == NULL) ? last : external;
             // tant que l'élément existe
             fini = 1;
-
+#ifdef WORK_IN_PROGRESS
             if (navette)
             {
 
                 do // boucle sur les éléments de gscreen.
-                {
+                {	
                     double ppCoordz1, ppCoordz2;
                     Element *ptElement1 = navette;	// on sauve le pointeur
 
@@ -188,7 +188,7 @@ public:
                         }
 						// on compare ptElement1 et ptElement2
 
-
+						std::cout << "Test sort Z" << std::endl;
 
                         // on a plusieurs polypoints pour cet element
                         unsigned int nbPolyPoints2 = navette->getNbPolyPoints();
@@ -222,7 +222,8 @@ public:
                 }
                 while (navette);
             }
-        }
+#endif // WORK_IN_PROGRESS
+		}
         while (!fini);
     }
 
@@ -801,6 +802,7 @@ public:
             exit (-1);
         }
         XMapRaised(d, DefaultRootWindow(d));
+		printf("XMapRaised\n");
         //       color_map = XCreateColormap(d, DefaultRootWindow(d), vinfo.visual, AllocAll);
         /*
         *  XStoreColors(dis,cmap,tmp,255);
@@ -810,15 +812,19 @@ public:
         Mapping de la fenêtre principale
         */
         XMapWindow (d, win);
-        XMapSubwindows (d, win);
-        setupBuffer ();
+		printf("XMapWindow\n");
+		XMapSubwindows (d, win);
+		printf("XMapSubwindows\n");
+		setupBuffer ();
+		printf("+setupBuffer\n");
 
         /*
         "Shut off keyboard autorepeat" pour la durée du jeu
         mais ça n'a pas l'air de fonctionner.
         */
-        XGetKeyboardControl (d, &keyboard_state);
-        //signal (SIGINT, CleanupAndExit);
+		XGetKeyboardControl (d, &keyboard_state);
+		printf("XGetKeyboardControl\n");
+		//signal (SIGINT, CleanupAndExit);
         std::cout << "End of Xinit " << d << " win =" << win << std::endl;
     }
 
