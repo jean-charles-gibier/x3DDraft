@@ -24,6 +24,7 @@ public :
         double mm = max (PtFuiteX, PtFuiteY);
         medianne =  sqrt(2.0 * (mm * mm));
         // double remain = 0.0;
+		single = NULL;
     };
 
     static GXScreen* getInstance(void)
@@ -39,6 +40,14 @@ public :
         }
         return single;
     };
+
+	
+	~GXScreen()
+	{
+		// TODO
+		if (single) delete single;
+	}
+
 };
 
 #endif // __GSCREEN_INCLUDE__
