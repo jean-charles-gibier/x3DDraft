@@ -162,8 +162,8 @@ public:
                     {
                         Element *ptElement2 = navette;	// on sauve le pointeur
 
-						PolyPoints* poly_point2 = navette->getEPolyPoints ();
-                        assert (poly_point2);
+						// PolyPoints* poly_point2 = navette->getEPolyPoints ();
+                        // assert (poly_point2);
 
                         // on récupère la cote de l'element précédant
 //						ldPetiteCote = (poly_point->getPoint()).get3DZ();
