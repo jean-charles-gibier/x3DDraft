@@ -119,98 +119,105 @@ public:
 
                 do // boucle sur les éléments de gscreen.
                 {
-                    double ldPetiteCote, ldGrandeCote;
-                    Element *eGrandeCote = navette;	// on sauve le pointeur
+                    double ppCoordz1, ppCoordz2;
+                    Element *ptElement1 = navette;	// on sauve le pointeur
 
-                    PolyPoints *poly_point = navette->getEPolyPoints ();
-                    assert (poly_point);
+                    PolyPoints *poly_point1 = navette->getEPolyPoints ();
+                    assert (poly_point1);
 
                     // le critère de tri par défaut : la cote du point central
-                    ldGrandeCote = (poly_point->getPoint ()).get3DZ ();
+					// ldGrandeCote = (poly_point->getPoint()).get3DZ();
+					// ppCoordz1 = (poly_point1->getBarycenter()).get3DZ();
+					ppCoordz1 = (ptElement1->getBarycenter()).get3DZ();
 
                     // on a plusieurs polypoints pour cet element
-                    unsigned int nbPolyPoints = navette->getNbPolyPoints();
-                    unsigned pp_fini = 1;
+                    unsigned int nbPolyPoints1 = navette->getNbPolyPoints();
+                    unsigned pp_fini1 = 1;
                     // On va trier l'ordre Z de chaque polypoint
                     do
                     {
-                        pp_fini = 1;
-                        for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints; cptp ++)
+                        pp_fini1 = 1;
+                        for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints1; cptp ++)
                         {
 
-                            Point3D cppt1 = (poly_point + cptp)->getBarycenter ();
-                            Point3D cppt2 = (poly_point + cptp + 1)->getBarycenter ();
+                            Point3D cppt1 = (poly_point1 + cptp)->getBarycenter ();
+                            Point3D cppt2 = (poly_point1 + cptp + 1)->getBarycenter ();
 
                             if (cppt1.get3DZ() < cppt2.get3DZ())
                             {
-                                const PolyPoints *pptmp = new PolyPoints(*(poly_point + cptp));
-								*(poly_point + cptp) = *(poly_point + cptp + 1);
-								*(poly_point + cptp + 1) = *pptmp;
+                                const PolyPoints *pptmp = new PolyPoints(*(poly_point1 + cptp));
+								*(poly_point1 + cptp) = *(poly_point1 + cptp + 1);
+								*(poly_point1 + cptp + 1) = *pptmp;
 								delete pptmp;
-								pp_fini = 0;
+								pp_fini1 = 0;
                             }
                         }
                     }
-                    while(!pp_fini);
+                    while(!pp_fini1);
 
                     // on prend l'élément précédent
                     navette = navette->getPrev ();
 
                     if (navette)
                     {
-                        Element *ePetiteCote = navette;	// on sauve le pointeur
+                        Element *ptElement2 = navette;	// on sauve le pointeur
 
-                        poly_point = navette->getEPolyPoints ();
-                        assert (poly_point);
+						PolyPoints* poly_point2 = navette->getEPolyPoints ();
+                        assert (poly_point2);
 
                         // on récupère la cote de l'element précédant
-                        ldPetiteCote = (poly_point->getPoint ()).get3DZ ();
+//						ldPetiteCote = (poly_point->getPoint()).get3DZ();
+						// ppCoordz2 = (poly_point2->getBarycenter()).get3DZ();
+						ppCoordz2 = (ptElement2->getBarycenter()).get3DZ();
 
                         // si la cote de l'élément precedant est plus grande que la cote en cours
                         // on les échange (l'affichage commence par les elements les + lointains)
-                        if (ldGrandeCote < ldPetiteCote)
+                        if (ppCoordz2 < ppCoordz1)
                         {
                             Element *Cote;	// on sauve le pointeur
 
                             //(Cote = eGrandeCote->Cut ())->insertBefore (ePetiteCote);
-                            Cote = eGrandeCote->cut ();
-                            Cote ->insertBefore (ePetiteCote);
-                            if (ePetiteCote->getNext () == NULL) // on swappe le 1er élément de la liste
+                            Cote = ptElement2->cut ();
+                            Cote ->insertBefore (ptElement1);
+                            if (ptElement2->getNext () == NULL) // on swappe le 1er élément de la liste
                             {
-                                last = ePetiteCote;	// nouvelle ancre de liste
+                                last = ptElement2;	// nouvelle ancre de liste
                             }
 
                             fini = 0;
                         }
+						// on compare ptElement1 et ptElement2
+
+
 
                         // on a plusieurs polypoints pour cet element
-                        unsigned int nbPolyPoints = navette->getNbPolyPoints();
-                        unsigned pp_fini = 1;
+                        unsigned int nbPolyPoints2 = navette->getNbPolyPoints();
+                        unsigned pp_fini2 = 1;
                         // On va trier l'ordre Z de chaque polypoint
-                        PolyPoints *poly_point = navette->getEPolyPoints ();
+                        PolyPoints *poly_point2 = navette->getEPolyPoints ();
 						
-                        assert (poly_point);
+                        assert (poly_point2);
 						
                         do
                         {
-                            pp_fini = 1;
-                            for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints; cptp ++)
+                            pp_fini2 = 1;
+                            for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints2; cptp ++)
                             {
 
-                                Point3D cppt1 = (poly_point + cptp)->getBarycenter ();
-                                Point3D cppt2 = (poly_point + cptp + 1)->getBarycenter ();
+                                Point3D cppt1 = (poly_point2 + cptp)->getBarycenter ();
+                                Point3D cppt2 = (poly_point2 + cptp + 1)->getBarycenter ();
 
                                 if (cppt1.get3DZ() < cppt2.get3DZ())
                                 {
-									const PolyPoints *pptmp = new PolyPoints(*(poly_point + cptp));
-									*(poly_point + cptp) = *(poly_point + cptp + 1);
-                                    *(poly_point + cptp + 1) = *pptmp;
+									const PolyPoints *pptmp = new PolyPoints(*(poly_point2 + cptp));
+									*(poly_point2 + cptp) = *(poly_point2 + cptp + 1);
+                                    *(poly_point2 + cptp + 1) = *pptmp;
 									delete pptmp;
-                                    pp_fini = 0;
+                                    pp_fini2 = 0;
                                 }
                             }
                         }
-                        while(!pp_fini);
+                        while(!pp_fini2);
                     }
                 }
                 while (navette);
@@ -327,7 +334,10 @@ public:
         char ch[2] = {'\0', '\0'};
 
         // scruter le clavier
-        if (XCheckMaskEvent (d, ButtonPressMask | KeyPressMask | KeyReleaseMask, &event) == True)
+        if (
+//		(*ch = getchar() && event.type = KeyPresss) ||
+			XCheckMaskEvent (d, ButtonPressMask | KeyPressMask | KeyReleaseMask, &event) == True
+			)
         {
             switch (event.type)
             {
