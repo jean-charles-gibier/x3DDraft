@@ -42,7 +42,6 @@ void Meta::releaseInstance(void)
 {
     if (mSingle)
     {
-
         delete mSingle;
         mSingle = NULL;
     }

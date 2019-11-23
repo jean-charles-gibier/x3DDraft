@@ -41,11 +41,14 @@ public :
         return gxSingle;
     };
 
-	
+	static void releaseInstance(void)
+	{
+		if (gxSingle) delete gxSingle;
+	}
+
 	~GXScreen()
 	{
-		// TODO
-		if (gxSingle) delete gxSingle;
+		releaseInstance();
 	}
 
 };
