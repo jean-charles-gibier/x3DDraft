@@ -87,6 +87,9 @@ public:
 				eFaces[nbfaces - 1] = NULL;
 			}
         }
+
+		// release the eventual screen allowed somewhere
+		GXScreen::releaseInstance();
     }
 
     // Affichage
