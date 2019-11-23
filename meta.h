@@ -89,6 +89,7 @@ public:
         }
 
 		// release the eventual screen allowed somewhere
+			std::cout << std::endl <<  std::endl << "DELETE GXScreen."<< std::endl;
 		GXScreen::releaseInstance();
     }
 
