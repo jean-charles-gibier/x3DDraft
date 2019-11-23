@@ -27,8 +27,8 @@ Point3D::Point3D ( double _x_, double _y_, double _z_, GXScreen* ptGxscr)
     }
 
     // aEffetFuite = ptGxscr->aEffetFuite;
-    PtFuiteY = ptGxscr->PtFuiteY;
-    PtFuiteX = ptGxscr->PtFuiteX;
+    PtFuiteY = ptGxscr->ptFuiteY;
+    PtFuiteX = ptGxscr->ptFuiteX;
     medianne = ptGxscr->medianne;
     if (x3d > 0 || y3d > 0 || z3d > 0)
     {
@@ -42,8 +42,8 @@ setGXScreen (GXScreen* ptGxscr /*= NULL*/)
     if (ptGxscr)
     {
         // aEffetFuite = ptGxscr->aEffetFuite;
-        PtFuiteY = ptGxscr->PtFuiteY;
-        PtFuiteX = ptGxscr->PtFuiteX;
+        PtFuiteY = ptGxscr->ptFuiteY;
+        PtFuiteX = ptGxscr->ptFuiteX;
         medianne = ptGxscr->medianne;
         return 1;
     }

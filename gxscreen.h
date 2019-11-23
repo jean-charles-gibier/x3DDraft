@@ -12,40 +12,40 @@ class GXScreen
 
 public :
     static double aEffetFuite [LG_ARRAY_FLOAT];
-    static double PtFuiteY;
-    static double PtFuiteX;
+    static double ptFuiteY;
+    static double ptFuiteX;
     static double medianne;
-    static GXScreen * single;
+    static GXScreen * gxSingle;
 
     GXScreen (void)
     {
-        PtFuiteY = viewHeight / 2.0;
-        PtFuiteX = viewWidth / 2.0;
-        double mm = max (PtFuiteX, PtFuiteY);
+        ptFuiteY = viewHeight / 2.0;
+        ptFuiteX = viewWidth / 2.0;
+        double mm = max (ptFuiteX, ptFuiteY);
         medianne =  sqrt(2.0 * (mm * mm));
         // double remain = 0.0;
-		single = NULL;
+		gxSingle = NULL;
     };
 
     static GXScreen* getInstance(void)
     {
-        if (! single)
+        if (! gxSingle)
         {
-            single = new GXScreen;
+            gxSingle = new GXScreen;
 
-            if (single == NULL)
+            if (gxSingle == NULL)
             {
                 throw (-1);
             }
         }
-        return single;
+        return gxSingle;
     };
 
 	
 	~GXScreen()
 	{
 		// TODO
-		if (single) delete single;
+		if (gxSingle) delete gxSingle;
 	}
 
 };

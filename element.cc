@@ -13,19 +13,19 @@ insertAfter (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char 
     if (elem == NULL)
     {
         // attribution du pt suivant
-        elem = Suivant;
+        elem = suivant;
     } else {
         // rétablir les liens
-        Suivant = elem->Suivant;
+        suivant = elem->suivant;
 
-        if (Suivant)
+        if (suivant)
         {
-            Suivant-> Precedant = this;
+            suivant-> precedant = this;
         }
 
-        elem->Suivant = this;
+        elem->suivant = this;
     }
-    Precedant = elem;
+    precedant = elem;
 
     no = vno;
 
@@ -48,20 +48,20 @@ insertBefore (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char
     {
         // attribution du pt prec
 
-        elem = Precedant;
+        elem = precedant;
     } else {
         // rétablir les liens
 
-        Precedant = elem->Precedant;
+        precedant = elem->precedant;
 
-        if (Precedant)
+        if (precedant)
         {
-            Precedant->Suivant = this;
+            precedant->suivant = this;
         }
 
-        elem->Precedant = this;
+        elem->precedant = this;
     }
-    Suivant = elem;
+    suivant = elem;
 
     if (vno > 0)
     {
@@ -86,14 +86,14 @@ Cut supprimme un élément de la liste chainée.
 Element *Element::
 cut (void)
 {
-    if (Precedant)
+    if (precedant)
     {
-        Precedant->Suivant = Suivant;
+        precedant->suivant = suivant;
     }
 
-    if (Suivant)
+    if (suivant)
     {
-        Suivant->Precedant = Precedant;
+        suivant->precedant = precedant;
     }
 
     return this;
@@ -171,7 +171,7 @@ retourne le pointeur sur l'élément précédent
 Element *Element::
 getNext (void)
 {
-    return Suivant;
+    return suivant;
 }
 
 /******************************************************************************
@@ -181,7 +181,7 @@ retourne le pointeur sur l'élément suivant
 Element *Element::
 getPrev (void)
 {
-    return Precedant;
+    return precedant;
 }
 
 /******************************************************************************

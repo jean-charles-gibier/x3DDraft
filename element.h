@@ -37,8 +37,8 @@ public:
     Element()
     {
         PPList = (PolyPoints *)NULL;
-        Suivant = (Element *) NULL;
-        Precedant = (Element *) NULL;
+        suivant = (Element *) NULL;
+        precedant = (Element *) NULL;
         focus = 0;
         nbPolyPoints = 0;
     }
@@ -187,7 +187,7 @@ protected :
     unsigned short focus;
 
 private :
-    Element *Suivant, *Precedant;
+    Element *suivant, *precedant;
     // membres habituels d'une liste chainée
     char Name [0xFF]; // identifaint chaine de car.
     int no, // numéro d'index
