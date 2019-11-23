@@ -11,11 +11,11 @@ class GXScreen
 {
 
 public :
-    static double aEffetFuite [LG_ARRAY_FLOAT];
-    static double ptFuiteY;
-    static double ptFuiteX;
-    static double medianne;
-    static GXScreen * gxSingle;
+	static double aEffetFuite[LG_ARRAY_FLOAT] = { 0 };
+    static double ptFuiteY = 0.0;
+    static double ptFuiteX = 0.0;
+    static double medianne = 0.0;
+    static GXScreen * gxSingle = NULL;
 
     GXScreen (void)
     {
