@@ -66,6 +66,7 @@ public:
     ~Meta (void)
     {
         Element *navette = last;
+		std::cout << "delete navettes ..." << std::endl;
         while (navette)
         {
             Element *tmp = navette;
@@ -75,10 +76,13 @@ public:
 
 		if (assembly != NULL)
 		{
+			std::cout << "delete assemblies ..." << std::endl;
+
 			delete assembly;
 //			std::cout << std::endl <<  std::endl << "DELETE assembly."<< std::endl;
 		}
 
+		std::cout << "delete eFaces ..." << std::endl;
         for (unsigned nbfaces = LOWER_FACE; nbfaces <= BACK_FACE; nbfaces++)
         {
 			if (eFaces[nbfaces - 1] != NULL ){
@@ -90,7 +94,7 @@ public:
 
 		// release the eventual screen allowed somewhere
 			std::cout << std::endl <<  std::endl << "DELETE GXScreen."<< std::endl;
-		GXScreen::releaseInstance();
+//		GXScreen::releaseInstance();
     }
 
     // Affichage
