@@ -41,8 +41,9 @@ Meta * &Meta::getInstance(char * configName = NULL)
 void Meta::releaseInstance(void)
 {
     if (mSingle)
-    {
-        delete mSingle;
+	{
+		std::cout << "delete mSingle ..." << std::endl;
+		delete mSingle;
         mSingle = NULL;
     }
     return;
