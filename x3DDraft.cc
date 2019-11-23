@@ -92,8 +92,10 @@ main (int argc, char *argv[])
 
     //A changer
     // on libere l'environnement X
+	std::cout << std::endl << "Xrelease" << std::endl;
     meta->Xrelease ();
-	Meta::releaseInstance( );
+	std::cout << std::endl << "releaseInstance" << std::endl;
+	Meta::releaseInstance();
 
     std::cout << std::endl << "fin de programme" << std::endl;
     return 0;
