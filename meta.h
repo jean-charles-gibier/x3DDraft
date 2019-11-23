@@ -263,7 +263,6 @@ public:
 
         if (faces_needs_refresh == 1)
         {
-
 //			Ajout des snap ici =< différentes vues du cube. On les affiche indépendament des motions
             for (unsigned cptAssemblies = LOWER_FACE; cptAssemblies <= BACK_FACE; cptAssemblies ++)
             {
@@ -573,7 +572,8 @@ public:
                     ActionKey = NONE;
                 else if (*ch == '@')
                 {
-                    throw  "Break detected, exit" ;
+				std::cout << " Break detected, exit" << std::endl;
+				throw "Break detected, exit";
                 }
                 else
                     std::cout << " touche non répertoriée : " << *ch << std::endl;
@@ -628,13 +628,13 @@ public:
     /******************************************************************************
     Afficheur de l'objet Meta
     ******************************************************************************/
-    int displayWorld ()
+    int displayWorld () const throw()
     {
         usleep(TIME_USLEEP);
         d = getDisplay();
         updateKeys ();
         plotWorld ();
-		//  No motion => test of perspective doesn't matter 
+		//  if 'ESPACE' no motion => the test of perspective doesn't matter 
 		if(ActionKey != ESPACE) {
 			sortZElem ();
 		}
