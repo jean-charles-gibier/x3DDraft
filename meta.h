@@ -21,7 +21,7 @@ class Meta
     friend class Point3D;
 
 public:
-    static Meta *single;
+    static Meta *mSingle;
     static Display *d;
     static Window win;
 	unsigned is_single;
@@ -53,8 +53,8 @@ public:
     void initFuite(void)
     {
         /* récupere les valeurs ecran */
-        PtFuiteY = GXScreen::PtFuiteY;
-        PtFuiteX = GXScreen::PtFuiteX;
+        PtFuiteY = GXScreen::ptFuiteY;
+        PtFuiteX = GXScreen::ptFuiteX;
         medianne =  GXScreen::medianne;
         aEffetFuite =  GXScreen::aEffetFuite;
     }

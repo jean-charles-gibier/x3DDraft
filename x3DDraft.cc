@@ -18,7 +18,7 @@ X3DDraft : La 3D Empirique mais pratique :-)
 #include "meta.h"
 /*******************************************************************************/
 int mask;
-Meta* Meta::single = NULL;
+Meta* Meta::mSingle = NULL;
 Display* Meta::d = NULL;
 Window Meta::win = 0;
 	
