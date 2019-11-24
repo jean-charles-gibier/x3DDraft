@@ -89,11 +89,15 @@ cut (void)
     if (precedant)
     {
         precedant->suivant = suivant;
+    } else if (suivant) {
+        suivant->precedant = NULL;
     }
 
     if (suivant)
     {
         suivant->precedant = precedant;
+    } else if (precedant) {
+        precedant->suivant = NULL;
     }
 
     return this;

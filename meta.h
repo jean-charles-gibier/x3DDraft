@@ -21,11 +21,8 @@ class Meta
     friend class Point3D;
 
 public:
-    static Meta *mSingle;
     static Display *d;
     static Window win;
-	unsigned is_single;
-    XEvent event;
     XKeyboardState keyboard_state;
     sigset_t new_set;
     int s;
@@ -42,11 +39,13 @@ public:
     unsigned faces_needs_refresh = 1;
 
     // Meta constructor
-    Meta (void);
+	Meta(char * configName);
 
     //==== Statics Methods =====
-    static Meta * &getInstance(char * configName);
-	static void releaseInstance();
+    // static
+   static Meta * &getInstance(char * configName, Meta *mSingle);
+	// static
+//	void releaseInstance();
     static Display* getDisplay();
 
     // initialize Z progression perspective
@@ -62,11 +61,18 @@ public:
     /******************************************************************************
     Destructeur de GXScreen
     ******************************************************************************/
+    /******************************************************************************
+    Destructeur de GXScreen
+    ******************************************************************************/
 
     ~Meta (void)
     {
+    }
+
+    void releaseInstance(void)
+    {
         Element *navette = last;
-		std::cout << "delete navettes ..." << std::endl;
+        printf(	"delete navettes ...\n");
         while (navette)
         {
             Element *tmp = navette;
@@ -94,7 +100,8 @@ public:
 
 		// release the eventual screen allowed somewhere
 			std::cout << std::endl <<  std::endl << "DELETE GXScreen."<< std::endl;
-//		GXScreen::releaseInstance();
+//		releaseInstance();
+		GXScreen::releaseInstance();
     }
 
     // Affichage
@@ -113,125 +120,145 @@ public:
     void sortZElem (Element * external = NULL)
     {
         // CALCUL A REVOIR -> on ne descend pas au polypnt
-        int fini /*, first, is_pp_sorted */;
+        int fini;
 
-        do 	// boucle d'itération tant qu'un swap est possible
+        do 	// while (!fini) boucle d'itération tant qu'un swap est possible
         {
             // Si un pointeur d'element est fourni
             Element *navette = (external == NULL) ? last : external;
-            // tant que l'élément existe
             fini = 1;
-#ifdef WORK_IN_PROGRESS
+            // on sauve le pointeur de l'element de place (x+0)
+            Element *ptElement1 = NULL;
+            Element *ptElement2 = NULL;
+            double ppCoordz1, ppCoordz2;
+
+            // tant que l'élément existe
             if (navette)
             {
+                do // while(navette) boucle sur les éléments de gscreen.
+                {
+                    // on sauve le pointeur de l'element de place (x+1)
+                    ptElement1 = navette;
 
-                do // boucle sur les éléments de gscreen.
-                {	
-                    double ppCoordz1, ppCoordz2;
-                    Element *ptElement1 = navette;	// on sauve le pointeur
-
-                    PolyPoints *poly_point1 = navette->getEPolyPoints ();
+                    // on prend les poly points qui le composent
+                    PolyPoints *poly_point1 = ptElement1->getEPolyPoints ();
                     assert (poly_point1);
 
-                    // le critère de tri par défaut : la cote du point central
-					// ldGrandeCote = (poly_point->getPoint()).get3DZ();
-					// ppCoordz1 = (poly_point1->getBarycenter()).get3DZ();
-					ppCoordz1 = (ptElement1->getBarycenter()).get3DZ();
+                    // le critère de tri par défaut : les coordonnes du point central
+		    ppCoordz1 = (ptElement1->getBarycenter()).get3DZ();
 
                     // on a plusieurs polypoints pour cet element
-                    unsigned int nbPolyPoints1 = navette->getNbPolyPoints();
+                    unsigned int nbPolyPoints1 = ptElement1->getNbPolyPoints();
+                    // affectation du flag à fini par defaut
                     unsigned pp_fini1 = 1;
-                    // On va trier l'ordre Z de chaque polypoint
+                    // On va trier l'ordre Z de chaque polypoint de l'element de
+                    // place (x+) 0
                     do
                     {
+                        // affectation du flag à fini par defaut
                         pp_fini1 = 1;
+                        // parcours des polypoints de l'element de place (x+) 0
+                        // on s'arrête à l'avant dernier car a chaque sequence on compare n et n+1
                         for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints1; cptp ++)
                         {
-
                             Point3D cppt1 = (poly_point1 + cptp)->getBarycenter ();
                             Point3D cppt2 = (poly_point1 + cptp + 1)->getBarycenter ();
 
-                            if (cppt1.get3DZ() < cppt2.get3DZ())
+                            if (cppt2.get3DZ() > cppt1.get3DZ())
                             {
+//                                printf ("swap ppt E1  %d vs %d  => %f > %f\n", cptp, cptp +1, cppt2.get3DZ(),cppt1.get3DZ() );
+                                // pptmp = pp temporaire pour un swap classique
                                 const PolyPoints *pptmp = new PolyPoints(*(poly_point1 + cptp));
-								*(poly_point1 + cptp) = *(poly_point1 + cptp + 1);
-								*(poly_point1 + cptp + 1) = *pptmp;
-								delete pptmp;
-								pp_fini1 = 0;
+				*(poly_point1 + cptp) = *(poly_point1 + cptp + 1);
+				*(poly_point1 + cptp + 1) = *pptmp;
+				delete pptmp;
+                                // remise du flag fini à 0 (Il y a peut être
+                                // encore du  boulot à faire)
+				pp_fini1 = 0;
                             }
+//                            else
+//                                printf ("no swap ppt E1  %d vs %d  => %f <= %f\n", cptp, cptp +1, cppt2.get3DZ(),cppt1.get3DZ() );
                         }
                     }
                     while(!pp_fini1);
-
-                    // on prend l'élément précédent
+                    // Element de place (x+0)  trié
+                    // on prend l'élément x+1 (en fait le précédent)
                     navette = navette->getPrev ();
-
+                    // s'il existe
                     if (navette)
                     {
-                        Element *ptElement2 = navette;	// on sauve le pointeur
+                        // on sauve le pointeur de l'element de place (x+1)
+                        ptElement2 = navette;
 
-						// PolyPoints* poly_point2 = navette->getEPolyPoints ();
-                        // assert (poly_point2);
+                        // on prend les poly points qui le composent
+                        PolyPoints *poly_point2 = ptElement2->getEPolyPoints ();
+                        assert (poly_point2);
 
-                        // on récupère la cote de l'element précédant
-//						ldPetiteCote = (poly_point->getPoint()).get3DZ();
-						// ppCoordz2 = (poly_point2->getBarycenter()).get3DZ();
-						ppCoordz2 = (ptElement2->getBarycenter()).get3DZ();
-
-                        // si la cote de l'élément precedant est plus grande que la cote en cours
-                        // on les échange (l'affichage commence par les elements les + lointains)
-                        if (ppCoordz2 < ppCoordz1)
-                        {
-                            Element *Cote;	// on sauve le pointeur
-
-                            //(Cote = eGrandeCote->Cut ())->insertBefore (ePetiteCote);
-                            Cote = ptElement2->cut ();
-                            Cote ->insertBefore (ptElement1);
-                            if (ptElement2->getNext () == NULL) // on swappe le 1er élément de la liste
-                            {
-                                last = ptElement2;	// nouvelle ancre de liste
-                            }
-
-                            fini = 0;
-                        }
-						// on compare ptElement1 et ptElement2
-
-						std::cout << "Test sort Z" << std::endl;
+                        // le critère de tri par défaut : les coordonnes du point central
+		        ppCoordz2 = (ptElement2->getBarycenter()).get3DZ();
 
                         // on a plusieurs polypoints pour cet element
-                        unsigned int nbPolyPoints2 = navette->getNbPolyPoints();
+                        unsigned int nbPolyPoints2 = ptElement2->getNbPolyPoints();
+                        // affectation du flag à fini par defaut
                         unsigned pp_fini2 = 1;
-                        // On va trier l'ordre Z de chaque polypoint
-                        PolyPoints *poly_point2 = navette->getEPolyPoints ();
-						
-                        assert (poly_point2);
-						
+                        // On va trier l'ordre Z de chaque polypoint de l'element de
+                        // place (x+) 1
+
                         do
-                        {
-                            pp_fini2 = 1;
-                            for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints2; cptp ++)
                             {
-
-                                Point3D cppt1 = (poly_point2 + cptp)->getBarycenter ();
-                                Point3D cppt2 = (poly_point2 + cptp + 1)->getBarycenter ();
-
-                                if (cppt1.get3DZ() < cppt2.get3DZ())
+                                // affectation du flag à "fini" par defaut
+                                pp_fini2 = 1;
+                                // parcours des polypoints de l'element de place (x+) 0
+                                // on s'arrête à l'avant dernier car a chaque sequence on compare n et n+1
+                                for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints2; cptp ++)
                                 {
-									const PolyPoints *pptmp = new PolyPoints(*(poly_point2 + cptp));
-									*(poly_point2 + cptp) = *(poly_point2 + cptp + 1);
-                                    *(poly_point2 + cptp + 1) = *pptmp;
-									delete pptmp;
-                                    pp_fini2 = 0;
+                                    Point3D cppt1 = (poly_point2 + cptp)->getBarycenter ();
+                                    Point3D cppt2 = (poly_point2 + cptp + 1)->getBarycenter ();
+
+                                    if (cppt2.get3DZ() > cppt1.get3DZ())
+                                    {
+//                                        printf ("swap ppt E2  %d vs %d  => %f > %f\n", cptp, cptp +1, cppt2.get3DZ(),cppt1.get3DZ() );
+                                        // pptmp = pp temporaire pour un swap classique
+                                        const PolyPoints *pptmp = new PolyPoints(*(poly_point2 + cptp));
+				        *(poly_point2 + cptp) = *(poly_point2 + cptp + 1);
+				        *(poly_point2 + cptp + 1) = *pptmp;
+				        delete pptmp;
+                                        // remise du flag fini à 0 (Il y a peut être
+                                        // encore du  boulot à faire)
+				        pp_fini2 = 0;
+                                    }
+//                                    else
+//                                        printf ("no swap ppt E2  %d vs %d  => %f <= %f\n", cptp, cptp +1, cppt2.get3DZ(),cppt1.get3DZ() );
                                 }
                             }
-                        }
-                        while(!pp_fini2);
-                    }
-                }
-                while (navette);
-            }
-#endif // WORK_IN_PROGRESS
-		}
+                         while(!pp_fini2);
+
+                        // on compare ptElement1 et ptElement2
+                        // si la cote de l'élément precedant est plus grande que la cote en cours
+                        // on les échange (l'affichage commence par les elements les + lointains)
+                         if ( ppCoordz2 > ppCoordz1)
+                            {
+//                                    printf ("--> swap elt E2 vs E1  => %f > %f\n",  ppCoordz2 , ppCoordz1 );
+                                    Element *Cote;	// on sauve le pointeur sur element 2
+                                        // et on le supsprime de la liste chainee
+                                    Cote = ptElement1->cut ();
+                                    // enfin on insere la sauvegarde avant le pointeur
+                                    // sur l'element 1
+                                    Cote ->insertBefore (ptElement2);
+                                    if (ptElement2->getNext () == NULL) // on swappe le 1er élément de la liste
+                                    {
+                                        last = ptElement2;	// nouvelle ancre de liste
+                                    }
+
+                                    fini = 0;
+                            }
+//                         else
+//                                    printf ("--> no swap elt E2 vs E1  => %f <= %f\n",  ppCoordz2 , ppCoordz1 );
+                        } // if(navette) #2
+
+                } while (navette); // boucle sur les elements de GXScreen
+            } // if (navette)
+	}
         while (!fini);
     }
 
@@ -301,7 +328,7 @@ public:
         XDrawLine(d, buffer, gcView, (int)pt_ref.get2DX() - 16, (int)pt_ref.get2DY(), (int)pt_ref.get2DX() + 16, (int)pt_ref.get2DY() );
         XDrawLine(d, buffer, gcView, (int)pt_ref.get2DX(), (int)pt_ref.get2DY() -16, (int)pt_ref.get2DX(), (int)pt_ref.get2DY() + 16);
 #endif // SHOW_CENTER_ASSEMBLY
- 
+
         // tant que l'élément existe
         if (navette)
         {
@@ -335,9 +362,14 @@ public:
     /*
     Traite les commandes reçues du clavier.
     */
-    short int updateKeys ( void )
+
+    /*
+    Traite les commandes reçues du clavier.
+    */
+    short int updateKeys ( void ) // throw(const char *)
     {
         XEvent event;
+//        XKeyEvent keyevent;
         KeySym keysym;
         char ch[2] = {'\0', '\0'};
 
@@ -350,7 +382,7 @@ public:
             switch (event.type)
             {
             case KeyPress:
-                XLookupString ((XKeyEvent *) & event, ch, 1, &keysym, (XComposeStatus *) NULL);
+                XLookupString ((XKeyEvent *) &event.xkey, ch, 1, &keysym, (XComposeStatus *) NULL);
 
                 if (keysym == XK_KP_Up || keysym == XK_Up || *ch == '8')
                     ActionKey = ORDONNEE_PLUS;
@@ -492,7 +524,7 @@ public:
 						ActionKey = ABSCISSE_TRIGO;
                         leave_context_in = 25;
                     }
-                }		
+                }
                 else if (toupper (*ch) == 'X')
                 {
                     if (context != ALL_FACES && !leave_context_in)
@@ -563,25 +595,35 @@ public:
                         leave_context_in = 25;
                     }
                 }
-// ----------								
+// ----------
                 else if (*ch == ' ')
                 {
                     ActionKey = ESPACE;
                 }
                 else if (*ch == '5')
-                    ActionKey = NONE;
-                else if (*ch == '@')
                 {
-				std::cout << " Break detected, exit" << std::endl;
-				throw "Break detected, exit";
+                    ActionKey = NONE;
+                }
+                else if (*ch == '@' )
+                {
+                    ActionKey = NONE;
                 }
                 else
-                    std::cout << " touche non répertoriée : " << *ch << std::endl;
-                printf (" key : %lX \n", keysym);
+                {
+                        if (keysym != 0xFFE1 and keysym != 0xFE03)
+                        {
+                        printf (" touche non répertoriée : %c ", *ch);
+                        printf (" key : %lX \n", keysym);
+                        }
+                }
                 break;
 
             case KeyRelease:
-                XLookupString ((XKeyEvent *) & event, ch, 1, &keysym, (XComposeStatus *) NULL);
+                XLookupString ((XKeyEvent *) &event.xkey, ch, 1, &keysym, (XComposeStatus *) NULL);
+                if (*ch == '@' )
+                {
+		        throw "Break detected, exit";
+                }
                 break;
 
             default:
@@ -628,13 +670,13 @@ public:
     /******************************************************************************
     Afficheur de l'objet Meta
     ******************************************************************************/
-    int displayWorld () const throw()
+    int displayWorld () // const throw()
     {
         usleep(TIME_USLEEP);
         d = getDisplay();
         updateKeys ();
         plotWorld ();
-		//  if 'ESPACE' no motion => the test of perspective doesn't matter 
+		//  if 'ESPACE' no motion => the test of perspective doesn't matter
 		if(ActionKey != ESPACE) {
 			sortZElem ();
 		}
@@ -685,7 +727,6 @@ public:
         XSetForeground (d, gcView, WhitePixel (d, DefaultScreen (d)));
     }
 
-	
     //   release GC & display.
 
     void
@@ -926,6 +967,7 @@ public:
         Point3D pt3ddx, pt3ddy, pt3ddz;
 
         // ouverture du fichier config
+		printf ("Try to open:  %s \n", configName);
         FILE *fconfig = fopen ( (configName == NULL ? "x3DDraft.cfg" : configName), "r+b");
 
         /******************************** éléments de base ***************************/

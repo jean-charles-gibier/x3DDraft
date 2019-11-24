@@ -59,9 +59,11 @@ public:
     int displayPolyPoints (Display *d, GC gcView, Pixmap buffer)
     {
         PolyPoints *poly_point = getEPolyPoints ();
-        assert (poly_point);
-        // on a plusieurs polypoints pour cet element
         unsigned int nbPolyPoints = getNbPolyPoints();
+		if (nbPolyPoints)
+		{
+			assert (poly_point);
+		}
 
         for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++)
         {
@@ -80,9 +82,11 @@ public:
     int action(short int ActionKey, bool isInAssembly, Point3D pt_ref)
     {
         PolyPoints *poly_point = getEPolyPoints ();
-        assert (poly_point);
-        // on a plusieurs polypoints pour cet element
         unsigned int nbPolyPoints = getNbPolyPoints();
+		if (nbPolyPoints)
+		{
+			assert (poly_point);
+		}
 
         for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++)
         {
@@ -97,9 +101,12 @@ public:
     int replaceFace (int face)
     {
         PolyPoints *poly_point = getEPolyPoints ();
-        assert (poly_point);
-        // on a plusieurs polypoints pour cet element
         unsigned int nbPolyPoints = getNbPolyPoints();
+		if (nbPolyPoints)
+		{
+			assert (poly_point);
+		}
+        // on a plusieurs polypoints pour cet element
 // std::cout << "----------------->>>>>>>>>>> " << nbPolyPoints << " " << __FILE__ << "." <<  __LINE__ << std::endl;
 
         for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++)

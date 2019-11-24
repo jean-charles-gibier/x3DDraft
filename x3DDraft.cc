@@ -18,7 +18,7 @@ X3DDraft : La 3D Empirique mais pratique :-)
 #include "meta.h"
 /*******************************************************************************/
 int mask;
-Meta* Meta::mSingle = NULL;
+// Meta* Single = NULL;
 Display* Meta::d = NULL;
 Window Meta::win = 0;
 	
@@ -39,7 +39,7 @@ main (int argc, char *argv[])
             configName = argv[1];
             std::cout << "DBG  " << configName << " " <<__LINE__ << std::endl;
         }
-        meta = Meta::getInstance( configName );
+        meta = new Meta(configName );
     }
     catch (int err)
     {
@@ -95,7 +95,7 @@ main (int argc, char *argv[])
 	std::cout << std::endl << "Xrelease" << std::endl;
     meta->Xrelease ();
 	std::cout << std::endl << "releaseInstance" << std::endl;
-	Meta::releaseInstance();
+	meta->releaseInstance();
 
     std::cout << std::endl << "fin de programme" << std::endl;
     return 0;
