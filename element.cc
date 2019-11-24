@@ -14,7 +14,9 @@ insertAfter (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char 
     {
         // attribution du pt suivant
         elem = suivant;
-    } else {
+    }
+    else
+    {
         // rétablir les liens
         suivant = elem->suivant;
 
@@ -49,7 +51,9 @@ insertBefore (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char
         // attribution du pt prec
 
         elem = precedant;
-    } else {
+    }
+    else
+    {
         // rétablir les liens
 
         precedant = elem->precedant;
@@ -89,14 +93,18 @@ cut (void)
     if (precedant)
     {
         precedant->suivant = suivant;
-    } else if (suivant) {
+    }
+    else if (suivant)
+    {
         suivant->precedant = NULL;
     }
 
     if (suivant)
     {
         suivant->precedant = precedant;
-    } else if (precedant) {
+    }
+    else if (precedant)
+    {
         precedant->suivant = NULL;
     }
 

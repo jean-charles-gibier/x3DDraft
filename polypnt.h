@@ -101,25 +101,27 @@ public :
 
         return s;
     }
-	
+
     /*--------------------------------------------------
     copie les propriétés d'un pp sur un autre (équiv à =)
     -------------------------------------------------- */
     PolyPoints & Copy (const PolyPoints & pp)
     {
-	
-		if (aSeg != NULL) {
-			delete [] aSeg;
-			nbSeg = 0;
-			aSeg = NULL;
-		}
 
-		if (anchor != NULL) {
+        if (aSeg != NULL)
+        {
+            delete [] aSeg;
+            nbSeg = 0;
+            aSeg = NULL;
+        }
 
-			delete [] anchor;
-			nbPoints = 0;
-			anchor = NULL;
-		}
+        if (anchor != NULL)
+        {
+
+            delete [] anchor;
+            nbPoints = 0;
+            anchor = NULL;
+        }
 
         if(pp.nbSeg)
         {
@@ -132,15 +134,15 @@ public :
                 aSeg[cpts] = pp.aSeg[cpts];
             }
         }
-		
+
         if(pp.nbPoints)
         {
-            nbPoints = pp.nbPoints;						
+            nbPoints = pp.nbPoints;
             anchor = (Point3D *)new Point3D [pp.nbPoints];
             assert (anchor);
             for (unsigned cptp = 0; cptp < pp.nbPoints; cptp ++)
             {
-               anchor[cptp] = pp.anchor[cptp];
+                anchor[cptp] = pp.anchor[cptp];
             }
         }
 
@@ -189,7 +191,7 @@ public :
         AddPoint(p);
     }
 
-	
+
     /*--------------------------------------------------
     contructeur avec autre polypoint
     -------------------------------------------------- */
@@ -197,24 +199,26 @@ public :
     {
 // std::cout << "Create PolyPoint polypoints (p)..." << std::endl ;
         midx = pp.midx;
-		midy = pp.midy;
-		midz = pp.midz;
-		if (pp.nbSeg > 0){
-			aSeg = (unsigned int *)new unsigned int [pp.nbSeg * 2];
-			assert (aSeg);
-			for (unsigned cpts = 0; cpts < pp.nbSeg * 2; cpts ++)
-			{
-				aSeg[cpts] = pp.aSeg[cpts];
-			}
-		}
-		if (pp.nbPoints > 0){
-			anchor = (Point3D *)new Point3D [pp.nbPoints];
-			assert (anchor);
-			for (unsigned cptp = 0; cptp < pp.nbPoints; cptp ++)
-			{
-			   anchor[cptp] = pp.anchor[cptp];
-			}
-		}
+        midy = pp.midy;
+        midz = pp.midz;
+        if (pp.nbSeg > 0)
+        {
+            aSeg = (unsigned int *)new unsigned int [pp.nbSeg * 2];
+            assert (aSeg);
+            for (unsigned cpts = 0; cpts < pp.nbSeg * 2; cpts ++)
+            {
+                aSeg[cpts] = pp.aSeg[cpts];
+            }
+        }
+        if (pp.nbPoints > 0)
+        {
+            anchor = (Point3D *)new Point3D [pp.nbPoints];
+            assert (anchor);
+            for (unsigned cptp = 0; cptp < pp.nbPoints; cptp ++)
+            {
+                anchor[cptp] = pp.anchor[cptp];
+            }
+        }
         nbPoints = pp.nbPoints;
         nbSeg = pp.nbSeg;
         order = pp.order;
@@ -222,8 +226,8 @@ public :
         ptEltParent = pp.ptEltParent;
 
     }
-	
-	
+
+
     /*--------------------------------------------------
     ajoute un point dans le pp
     -------------------------------------------------- */
@@ -244,9 +248,9 @@ public :
         if ( anchor != NULL)
         {
             delete [] anchor;
-			anchor = NULL;
+            anchor = NULL;
         }
-// TODO aseg 
+// TODO aseg
         anchor = another;
         anchor[(nbPoints - 1)] = p;
 

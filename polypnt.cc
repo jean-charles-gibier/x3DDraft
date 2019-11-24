@@ -43,7 +43,7 @@ action (short int &Action, int IsFocus = 0, const Point3D pt_ref = (const Point3
 
     case ABSCISSE_HORA:
         if (IsFocus)		// l'élément ayant le focus  bouge
-			rotate (pt_ref, ANGLE_HORA * M_PI, 0.0, 0.0);
+            rotate (pt_ref, ANGLE_HORA * M_PI, 0.0, 0.0);
         break;
 
     case COTE_PLUS:

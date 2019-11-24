@@ -60,10 +60,10 @@ public:
     {
         PolyPoints *poly_point = getEPolyPoints ();
         unsigned int nbPolyPoints = getNbPolyPoints();
-		if (nbPolyPoints)
-		{
-			assert (poly_point);
-		}
+        if (nbPolyPoints)
+        {
+            assert (poly_point);
+        }
 
         for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++)
         {
@@ -83,10 +83,10 @@ public:
     {
         PolyPoints *poly_point = getEPolyPoints ();
         unsigned int nbPolyPoints = getNbPolyPoints();
-		if (nbPolyPoints)
-		{
-			assert (poly_point);
-		}
+        if (nbPolyPoints)
+        {
+            assert (poly_point);
+        }
 
         for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++)
         {
@@ -102,10 +102,10 @@ public:
     {
         PolyPoints *poly_point = getEPolyPoints ();
         unsigned int nbPolyPoints = getNbPolyPoints();
-		if (nbPolyPoints)
-		{
-			assert (poly_point);
-		}
+        if (nbPolyPoints)
+        {
+            assert (poly_point);
+        }
         // on a plusieurs polypoints pour cet element
 // std::cout << "----------------->>>>>>>>>>> " << nbPolyPoints << " " << __FILE__ << "." <<  __LINE__ << std::endl;
 
@@ -182,8 +182,8 @@ public:
     -------------------------------------------------- */
     friend std::ostream & operator << (std::ostream &s, const Element &pp)
     {
-		s << " Nom :" << (pp.Name == NULL ? "<none>" : pp.Name) << " numéro d'index :" << pp.no << std::endl;
-   
+        s << " Nom :" << (pp.Name == NULL ? "<none>" : pp.Name) << " numéro d'index :" << pp.no << std::endl;
+
         return s;
     }
 

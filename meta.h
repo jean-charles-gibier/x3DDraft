@@ -39,12 +39,12 @@ public:
     unsigned faces_needs_refresh = 1;
 
     // Meta constructor
-	Meta(char * configName);
+    Meta(char * configName);
 
     //==== Statics Methods =====
     // static
-   static Meta * &getInstance(char * configName, Meta *mSingle);
-	// static
+    static Meta * &getInstance(char * configName, Meta *mSingle);
+    // static
 //	void releaseInstance();
     static Display* getDisplay();
 
@@ -61,10 +61,6 @@ public:
     /******************************************************************************
     Destructeur de GXScreen
     ******************************************************************************/
-    /******************************************************************************
-    Destructeur de GXScreen
-    ******************************************************************************/
-
     ~Meta (void)
     {
     }
@@ -80,28 +76,29 @@ public:
             delete tmp;
         }
 
-		if (assembly != NULL)
-		{
-			std::cout << "delete assemblies ..." << std::endl;
-
-			delete assembly;
-//			std::cout << std::endl <<  std::endl << "DELETE assembly."<< std::endl;
-		}
-
-		std::cout << "delete eFaces ..." << std::endl;
-        for (unsigned nbfaces = LOWER_FACE; nbfaces <= BACK_FACE; nbfaces++)
+        if (assembly != NULL)
         {
-			if (eFaces[nbfaces - 1] != NULL ){
-//			std::cout << std::endl <<  std::endl << "DELETE face :" << nbfaces - 1 << "."<< std::endl;
-				delete eFaces[nbfaces - 1];
-				eFaces[nbfaces - 1] = NULL;
-			}
+            std::cout << "delete assemblies ..." << std::endl;
+
+            delete assembly;
+//			std::cout << std::endl <<  std::endl << "DELETE assembly."<< std::endl;
         }
 
-		// release the eventual screen allowed somewhere
-			std::cout << std::endl <<  std::endl << "DELETE GXScreen."<< std::endl;
+        std::cout << "delete eFaces ..." << std::endl;
+        for (unsigned nbfaces = LOWER_FACE; nbfaces <= BACK_FACE; nbfaces++)
+        {
+            if (eFaces[nbfaces - 1] != NULL )
+            {
+//			std::cout << std::endl <<  std::endl << "DELETE face :" << nbfaces - 1 << "."<< std::endl;
+                delete eFaces[nbfaces - 1];
+                eFaces[nbfaces - 1] = NULL;
+            }
+        }
+
+        // release the eventual screen allowed somewhere
+        std::cout << std::endl <<  std::endl << "DELETE GXScreen."<< std::endl;
 //		releaseInstance();
-		GXScreen::releaseInstance();
+        GXScreen::releaseInstance();
     }
 
     // Affichage
@@ -145,7 +142,7 @@ public:
                     assert (poly_point1);
 
                     // le critère de tri par défaut : les coordonnes du point central
-		    ppCoordz1 = (ptElement1->getBarycenter()).get3DZ();
+                    ppCoordz1 = (ptElement1->getBarycenter()).get3DZ();
 
                     // on a plusieurs polypoints pour cet element
                     unsigned int nbPolyPoints1 = ptElement1->getNbPolyPoints();
@@ -169,12 +166,12 @@ public:
 //                                printf ("swap ppt E1  %d vs %d  => %f > %f\n", cptp, cptp +1, cppt2.get3DZ(),cppt1.get3DZ() );
                                 // pptmp = pp temporaire pour un swap classique
                                 const PolyPoints *pptmp = new PolyPoints(*(poly_point1 + cptp));
-				*(poly_point1 + cptp) = *(poly_point1 + cptp + 1);
-				*(poly_point1 + cptp + 1) = *pptmp;
-				delete pptmp;
+                                *(poly_point1 + cptp) = *(poly_point1 + cptp + 1);
+                                *(poly_point1 + cptp + 1) = *pptmp;
+                                delete pptmp;
                                 // remise du flag fini à 0 (Il y a peut être
                                 // encore du  boulot à faire)
-				pp_fini1 = 0;
+                                pp_fini1 = 0;
                             }
 //                            else
 //                                printf ("no swap ppt E1  %d vs %d  => %f <= %f\n", cptp, cptp +1, cppt2.get3DZ(),cppt1.get3DZ() );
@@ -195,7 +192,7 @@ public:
                         assert (poly_point2);
 
                         // le critère de tri par défaut : les coordonnes du point central
-		        ppCoordz2 = (ptElement2->getBarycenter()).get3DZ();
+                        ppCoordz2 = (ptElement2->getBarycenter()).get3DZ();
 
                         // on a plusieurs polypoints pour cet element
                         unsigned int nbPolyPoints2 = ptElement2->getNbPolyPoints();
@@ -205,60 +202,61 @@ public:
                         // place (x+) 1
 
                         do
+                        {
+                            // affectation du flag à "fini" par defaut
+                            pp_fini2 = 1;
+                            // parcours des polypoints de l'element de place (x+) 0
+                            // on s'arrête à l'avant dernier car a chaque sequence on compare n et n+1
+                            for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints2; cptp ++)
                             {
-                                // affectation du flag à "fini" par defaut
-                                pp_fini2 = 1;
-                                // parcours des polypoints de l'element de place (x+) 0
-                                // on s'arrête à l'avant dernier car a chaque sequence on compare n et n+1
-                                for (unsigned int cptp = 0; cptp + 1 < nbPolyPoints2; cptp ++)
-                                {
-                                    Point3D cppt1 = (poly_point2 + cptp)->getBarycenter ();
-                                    Point3D cppt2 = (poly_point2 + cptp + 1)->getBarycenter ();
+                                Point3D cppt1 = (poly_point2 + cptp)->getBarycenter ();
+                                Point3D cppt2 = (poly_point2 + cptp + 1)->getBarycenter ();
 
-                                    if (cppt2.get3DZ() > cppt1.get3DZ())
-                                    {
+                                if (cppt2.get3DZ() > cppt1.get3DZ())
+                                {
 //                                        printf ("swap ppt E2  %d vs %d  => %f > %f\n", cptp, cptp +1, cppt2.get3DZ(),cppt1.get3DZ() );
-                                        // pptmp = pp temporaire pour un swap classique
-                                        const PolyPoints *pptmp = new PolyPoints(*(poly_point2 + cptp));
-				        *(poly_point2 + cptp) = *(poly_point2 + cptp + 1);
-				        *(poly_point2 + cptp + 1) = *pptmp;
-				        delete pptmp;
-                                        // remise du flag fini à 0 (Il y a peut être
-                                        // encore du  boulot à faire)
-				        pp_fini2 = 0;
-                                    }
+                                    // pptmp = pp temporaire pour un swap classique
+                                    const PolyPoints *pptmp = new PolyPoints(*(poly_point2 + cptp));
+                                    *(poly_point2 + cptp) = *(poly_point2 + cptp + 1);
+                                    *(poly_point2 + cptp + 1) = *pptmp;
+                                    delete pptmp;
+                                    // remise du flag fini à 0 (Il y a peut être
+                                    // encore du  boulot à faire)
+                                    pp_fini2 = 0;
+                                }
 //                                    else
 //                                        printf ("no swap ppt E2  %d vs %d  => %f <= %f\n", cptp, cptp +1, cppt2.get3DZ(),cppt1.get3DZ() );
-                                }
                             }
-                         while(!pp_fini2);
+                        }
+                        while(!pp_fini2);
 
                         // on compare ptElement1 et ptElement2
                         // si la cote de l'élément precedant est plus grande que la cote en cours
                         // on les échange (l'affichage commence par les elements les + lointains)
-                         if ( ppCoordz2 > ppCoordz1)
-                            {
+                        if ( ppCoordz2 > ppCoordz1)
+                        {
 //                                    printf ("--> swap elt E2 vs E1  => %f > %f\n",  ppCoordz2 , ppCoordz1 );
-                                    Element *Cote;	// on sauve le pointeur sur element 2
-                                        // et on le supsprime de la liste chainee
-                                    Cote = ptElement1->cut ();
-                                    // enfin on insere la sauvegarde avant le pointeur
-                                    // sur l'element 1
-                                    Cote ->insertBefore (ptElement2);
-                                    if (ptElement2->getNext () == NULL) // on swappe le 1er élément de la liste
-                                    {
-                                        last = ptElement2;	// nouvelle ancre de liste
-                                    }
-
-                                    fini = 0;
+                            Element *Cote;	// on sauve le pointeur sur element 2
+                            // et on le supsprime de la liste chainee
+                            Cote = ptElement1->cut ();
+                            // enfin on insere la sauvegarde avant le pointeur
+                            // sur l'element 1
+                            Cote ->insertBefore (ptElement2);
+                            if (ptElement2->getNext () == NULL) // on swappe le 1er élément de la liste
+                            {
+                                last = ptElement2;	// nouvelle ancre de liste
                             }
+
+                            fini = 0;
+                        }
 //                         else
 //                                    printf ("--> no swap elt E2 vs E1  => %f <= %f\n",  ppCoordz2 , ppCoordz1 );
-                        } // if(navette) #2
+                    } // if(navette) #2
 
-                } while (navette); // boucle sur les elements de GXScreen
+                }
+                while (navette);   // boucle sur les elements de GXScreen
             } // if (navette)
-	}
+        }
         while (!fini);
     }
 
@@ -305,8 +303,8 @@ public:
                 Assembly *locAssembly = new Assembly(last, cptAssemblies, nbPerAssembly);
                 assert(locAssembly);
                 eFaces [cptAssemblies -1] = locAssembly->getSnapElement( );
-				// on n'a plus besoin locAssembly
-				delete locAssembly;
+                // on n'a plus besoin locAssembly
+                delete locAssembly;
                 assert (eFaces [cptAssemblies -1]);
                 eFaces [cptAssemblies -1] -> replaceFace(cptAssemblies);
                 sortZElem(eFaces[cptAssemblies - 1]);
@@ -363,9 +361,6 @@ public:
     Traite les commandes reçues du clavier.
     */
 
-    /*
-    Traite les commandes reçues du clavier.
-    */
     short int updateKeys ( void ) // throw(const char *)
     {
         XEvent event;
@@ -376,8 +371,8 @@ public:
         // scruter le clavier
         if (
 //		(*ch = getchar() && event.type = KeyPresss) ||
-			XCheckMaskEvent (d, ButtonPressMask | KeyPressMask | KeyReleaseMask, &event) == True
-			)
+            XCheckMaskEvent (d, ButtonPressMask | KeyPressMask | KeyReleaseMask, &event) == True
+        )
         {
             switch (event.type)
             {
@@ -514,84 +509,84 @@ public:
                 else if (toupper (*ch) == 'W')
                 {
                     if (context != ALL_FACES && !leave_context_in)
-					{
+                    {
                         context = ALL_FACES;
                         if (assembly != NULL)
                         {
                             delete(assembly);
                             assembly = NULL;
                         }
-						ActionKey = ABSCISSE_TRIGO;
+                        ActionKey = ABSCISSE_TRIGO;
                         leave_context_in = 25;
                     }
                 }
                 else if (toupper (*ch) == 'X')
                 {
                     if (context != ALL_FACES && !leave_context_in)
-					{
+                    {
                         context = ALL_FACES;
                         if (assembly != NULL)
                         {
                             delete(assembly);
                             assembly = NULL;
                         }
-						ActionKey = ABSCISSE_HORA;
+                        ActionKey = ABSCISSE_HORA;
                         leave_context_in = 25;
                     }
                 }
                 else if (toupper (*ch) == 'C')
                 {
                     if (context != ALL_FACES && !leave_context_in)
-					{
+                    {
                         context = ALL_FACES;
                         if (assembly != NULL)
                         {
                             delete(assembly);
                             assembly = NULL;
                         }
-						ActionKey = ORDONNEE_TRIGO;
+                        ActionKey = ORDONNEE_TRIGO;
                         leave_context_in = 25;
                     }
                 }
                 else if (toupper (*ch) == 'V')
                 {
                     if (context != ALL_FACES && !leave_context_in)
-					{
+                    {
                         context = ALL_FACES;
                         if (assembly != NULL)
                         {
                             delete(assembly);
                             assembly = NULL;
                         }
-						ActionKey = ORDONNEE_HORA;
+                        ActionKey = ORDONNEE_HORA;
                         leave_context_in = 25;
                     }
                 }
                 else if (toupper (*ch) == 'B')
                 {
                     if (context != ALL_FACES && !leave_context_in)
-					{
+                    {
                         context = ALL_FACES;
                         if (assembly != NULL)
                         {
                             delete(assembly);
                             assembly = NULL;
                         }
-						ActionKey = COTE_TRIGO;
+                        ActionKey = COTE_TRIGO;
                         leave_context_in = 25;
                     }
                 }
                 else if (toupper (*ch) == 'N')
                 {
                     if (context != ALL_FACES && !leave_context_in)
-					{
+                    {
                         context = ALL_FACES;
                         if (assembly != NULL)
                         {
                             delete assembly;
                             assembly = NULL;
                         }
-						ActionKey = COTE_HORA;
+                        ActionKey = COTE_HORA;
                         leave_context_in = 25;
                     }
                 }
@@ -610,11 +605,11 @@ public:
                 }
                 else
                 {
-                        if (keysym != 0xFFE1 and keysym != 0xFE03)
-                        {
+                    if (keysym != 0xFFE1 and keysym != 0xFE03)
+                    {
                         printf (" touche non répertoriée : %c ", *ch);
                         printf (" key : %lX \n", keysym);
-                        }
+                    }
                 }
                 break;
 
@@ -622,7 +617,7 @@ public:
                 XLookupString ((XKeyEvent *) &event.xkey, ch, 1, &keysym, (XComposeStatus *) NULL);
                 if (*ch == '@' )
                 {
-		        throw "Break detected, exit";
+                    throw "Break detected, exit";
                 }
                 break;
 
@@ -676,10 +671,11 @@ public:
         d = getDisplay();
         updateKeys ();
         plotWorld ();
-		//  if 'ESPACE' no motion => the test of perspective doesn't matter
-		if(ActionKey != ESPACE) {
-			sortZElem ();
-		}
+        //  if 'ESPACE' no motion => the test of perspective doesn't matter
+        if(ActionKey != ESPACE)
+        {
+            sortZElem ();
+        }
         swapBuffers ();
         XSync (d, False);
         return 0;
@@ -732,14 +728,14 @@ public:
     void
     Xrelease (void)
     {
-	    if(color_map)
+        if(color_map)
         {
             XFreeColormap(d, color_map);
         }
 
-		XFreeGC (d, gcView );
-		XCloseDisplay(d);
-   }
+        XFreeGC (d, gcView );
+        XCloseDisplay(d);
+    }
 
     //   Initialisation GC & display.
 
@@ -851,7 +847,7 @@ public:
             exit (-1);
         }
         XMapRaised(d, DefaultRootWindow(d));
-		printf("XMapRaised\n");
+        printf("XMapRaised\n");
         //       color_map = XCreateColormap(d, DefaultRootWindow(d), vinfo.visual, AllocAll);
         /*
         *  XStoreColors(dis,cmap,tmp,255);
@@ -861,19 +857,19 @@ public:
         Mapping de la fenêtre principale
         */
         XMapWindow (d, win);
-		printf("XMapWindow\n");
-		XMapSubwindows (d, win);
-		printf("XMapSubwindows\n");
-		setupBuffer ();
-		printf("+setupBuffer\n");
+        printf("XMapWindow\n");
+        XMapSubwindows (d, win);
+        printf("XMapSubwindows\n");
+        setupBuffer ();
+        printf("+setupBuffer\n");
 
         /*
         "Shut off keyboard autorepeat" pour la durée du jeu
         mais ça n'a pas l'air de fonctionner.
         */
-		XGetKeyboardControl (d, &keyboard_state);
-		printf("XGetKeyboardControl\n");
-		//signal (SIGINT, CleanupAndExit);
+        XGetKeyboardControl (d, &keyboard_state);
+        printf("XGetKeyboardControl\n");
+        //signal (SIGINT, CleanupAndExit);
         std::cout << "End of Xinit " << d << " win =" << win << std::endl;
     }
 
@@ -967,7 +963,7 @@ public:
         Point3D pt3ddx, pt3ddy, pt3ddz;
 
         // ouverture du fichier config
-		printf ("Try to open:  %s \n", configName);
+        printf ("Try to open:  %s \n", configName);
         FILE *fconfig = fopen ( (configName == NULL ? "x3DDraft.cfg" : configName), "r+b");
 
         /******************************** éléments de base ***************************/

@@ -21,7 +21,7 @@ int mask;
 // Meta* Single = NULL;
 Display* Meta::d = NULL;
 Window Meta::win = 0;
-	
+
 // main function, aucun argument pour l'instant
 int
 main (int argc, char *argv[])
@@ -48,7 +48,7 @@ main (int argc, char *argv[])
     }
 
     /* Ouvrir la connexion avec le serveur X*/
-	/* "127.0.0.1:0.0" */
+    /* "127.0.0.1:0.0" */
     meta->openDisplay(NULL);
 
     meta->getDefaultScreen();
@@ -92,10 +92,10 @@ main (int argc, char *argv[])
 
     //A changer
     // on libere l'environnement X
-	std::cout << std::endl << "Xrelease" << std::endl;
+    std::cout << std::endl << "Xrelease" << std::endl;
     meta->Xrelease ();
-	std::cout << std::endl << "releaseInstance" << std::endl;
-	meta->releaseInstance();
+    std::cout << std::endl << "releaseInstance" << std::endl;
+    meta->releaseInstance();
 
     std::cout << std::endl << "fin de programme" << std::endl;
     return 0;

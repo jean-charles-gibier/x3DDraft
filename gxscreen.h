@@ -11,7 +11,7 @@ class GXScreen
 {
 
 public :
-	static double aEffetFuite[LG_ARRAY_FLOAT];
+    static double aEffetFuite[LG_ARRAY_FLOAT];
     static double ptFuiteY;
     static double ptFuiteX;
     static double medianne;
@@ -24,7 +24,7 @@ public :
         double mm = max (ptFuiteX, ptFuiteY);
         medianne =  sqrt(2.0 * (mm * mm));
         // double remain = 0.0;
-		gxSingle = NULL;
+        gxSingle = NULL;
     };
 
     static GXScreen* getInstance(void)
@@ -41,15 +41,15 @@ public :
         return gxSingle;
     };
 
-	static void releaseInstance(void)
-	{
-		if (gxSingle) delete gxSingle;
-	}
+    static void releaseInstance(void)
+    {
+        if (gxSingle) delete gxSingle;
+    }
 
-	~GXScreen()
-	{
+    ~GXScreen()
+    {
 //		releaseInstance();
-	}
+    }
 
 };
 

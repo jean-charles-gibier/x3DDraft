@@ -97,7 +97,7 @@ public :
     {
         arrayAssembly = new ElementPtr [nbToRetrieve];
         assert(arrayAssembly);
-    //    std::cout << " --> pickMethod orientation :" << orientation << " ."<< std::endl;
+        //    std::cout << " --> pickMethod orientation :" << orientation << " ."<< std::endl;
         Element *navette = e;
         for(unsigned nbe = 0; nbe < nbToRetrieve; nbe ++)
         {
@@ -111,7 +111,7 @@ public :
             {
                 unsigned cptRetrieved = min(nbToRetrieve-1, cptElement);
                 if (
-					orientation == ALL_FACES ||
+                    orientation == ALL_FACES ||
                     arrayAssembly[cptRetrieved] == NULL ||
                     (navette->getBarycenter().get3DX() < arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == WEST_FACE) ||
                     (navette->getBarycenter().get3DX() > arrayAssembly[cptRetrieved]->getBarycenter().get3DX() && orientation == EAST_FACE) ||
