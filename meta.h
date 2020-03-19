@@ -377,7 +377,9 @@ public:
             switch (event.type)
             {
             case KeyPress:
+#ifndef TEST_WO_XLUS
                 XLookupString ((XKeyEvent *) &event.xkey, ch, 1, &keysym, (XComposeStatus *) NULL);
+#endif // TEST_WO_XLUS
 
                 if (keysym == XK_KP_Up || keysym == XK_Up || *ch == '8')
                     ActionKey = ORDONNEE_PLUS;
@@ -609,12 +611,18 @@ public:
                     {
                         printf (" touche non répertoriée : %c ", *ch);
                         printf (" key : %lX \n", keysym);
+// #define TEST_WO_XLUS
+#ifdef TEST_WO_XLUS
+                    throw "Debug force exit";
+#endif // TEST_WO_XLUS
                     }
                 }
                 break;
 
             case KeyRelease:
+#ifndef TEST_WO_XLUS
                 XLookupString ((XKeyEvent *) &event.xkey, ch, 1, &keysym, (XComposeStatus *) NULL);
+#endif // TEST_WO_XLUS
                 if (*ch == '@' )
                 {
                     throw "Break detected, exit";

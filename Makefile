@@ -1,5 +1,6 @@
 CC = g++
 CFLAGS = -c
+# Version std
 # CXXFLAGS = -Wall
 # version dbg CFLAGS = -g -c
 CXXFLAGS = -g -Wall
