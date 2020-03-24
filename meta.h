@@ -141,7 +141,7 @@ public:
                     PolyPoints *poly_point1 = ptElement1->getEPolyPoints ();
                     assert (poly_point1);
 
-                    // le critère de tri par défaut : les coordonnes du point central
+                    // le critère de tri par défaut : les coordonnes Z du point central
                     ppCoordz1 = (ptElement1->getBarycenter()).get3DZ();
 
                     // on a plusieurs polypoints pour cet element
@@ -233,7 +233,7 @@ public:
                         // on compare ptElement1 et ptElement2
                         // si la cote de l'élément precedant est plus grande que la cote en cours
                         // on les échange (l'affichage commence par les elements les + lointains)
-                        if ( ppCoordz2 > ppCoordz1)
+                        if (ppCoordz2 > ppCoordz1)
                         {
 //                                    printf ("--> swap elt E2 vs E1  => %f > %f\n",  ppCoordz2 , ppCoordz1 );
                             Element *Cote;	// on sauve le pointeur sur element 2
@@ -278,7 +278,7 @@ public:
         if ( assembly == NULL )
         {
             assembly = new Assembly( last, context, nbPerAssembly );
-//			faire toutes les faces pour les assembly
+//	faire toutes les faces pour les assembly
             assert(assembly);
         }
         else
@@ -288,7 +288,7 @@ public:
 
         if (faces_needs_refresh == 1)
         {
-//			Ajout des snap ici =< différentes vues du cube. On les affiche indépendament des motions
+//	Ajout des snaps ici = différentes vues du cube. On les affiche indépendament des motions
             for (unsigned cptAssemblies = LOWER_FACE; cptAssemblies <= BACK_FACE; cptAssemblies ++)
             {
 
@@ -299,7 +299,7 @@ public:
                     delete  eFaces[cptAssemblies - 1];
                 }
 
-                //	prendre un snap	le décaler / retourner / rapprocher
+                // prendre un snap	le décaler / retourner / rapprocher
                 Assembly *locAssembly = new Assembly(last, cptAssemblies, nbPerAssembly);
                 assert(locAssembly);
                 eFaces [cptAssemblies -1] = locAssembly->getSnapElement( );
@@ -342,7 +342,7 @@ public:
 
                 // l'element à le focus -> c'est celui sur lequel on agit
                 navette->action (ActionKey, isInAssembly, pt_ref);
-                // afficher l'element
+		//	printf("DBG : Affichage de l'element '%s'\n", navette->getName());
                 navette->displayPolyPoints (d, gcView, buffer);
 
 #ifdef SHOW_CENTER_POLYPNT
@@ -974,11 +974,11 @@ public:
             {
                 if (!strncmp (buf_cfg, "#", 1) || !buf_cfg[0])
                 {
-                    printf ("%d\n %0x\n", __LINE__, next_state);
+		printf ("Found comment --> continue. Next state : %0x\n", next_state);
+		continue;
                 }
                 else if (next_state & (ELEMENT | POINT | JOIN | POLYPOINT | SPHERE | PLAN))
                 {
-                    //							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
                     next_state = (strncmp (buf_cfg, "ELEMENT", 7) == 0) ? ELEMENT :
                                  (strncmp (buf_cfg, "POLYPOINT", 9) == 0) ? POLYPOINT :
                                  (strncmp (buf_cfg, "POINT", 5) == 0) ? POINT :
@@ -988,13 +988,11 @@ public:
                 }
                 else if (next_state & (POINT | JOIN))
                 {
-                    //							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
                     next_state = (strncmp (buf_cfg, "POINT", 5) == 0) ? POINT :
                                  (strncmp (buf_cfg, "JOIN", 4) == 0) ? JOIN : FIN;
                 }
                 else if (next_state & (POLYPOINT | SPHERE | PLAN))	// a ajouter : CUBE, PYRAMIDE, TUBE ETC ...
                 {
-                    //							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
                     next_state = (strncmp (buf_cfg, "POLYPOINT", 9) == 0) ? POLYPOINT :
                                  (strncmp (buf_cfg, "PLAN", 4) == 0) ? PLAN :
                                  (strncmp (buf_cfg, "SPHERE", 6) == 0) ? SPHERE : FIN;
@@ -1004,15 +1002,31 @@ public:
                     if (strncmp (buf_cfg, "FIN", 3))
                         break;
                 }
-                //							printf ("---> %d  next_state POINT_SPHERE_2 :  %x \n", __LINE__, next_state);
+                //							printf ("---> %d  next_state :  %x \n", __LINE__, next_state);
                 switch (next_state)
                 {
                 case ELEMENT:
-                    //printf ("ELEMENT\n");
+                    // printf ("ELEMENT\n");
                     if (strncmp (buf_cfg, "ELEMENT", 7) == 0)
                     {
+                        char buf_option[0x20], buf_rep[0x20] = {(char)0};
+                        char *pstr = strchr (buf_cfg + 7, ':');
                         cur_elem = this->addElement ();
                         assert (cur_elem);
+
+                        if (pstr)
+                        {
+                            if (sscanf (pstr + 1, "%s %s", buf_option, buf_rep) == 2)
+                            {
+                            printf("scanned buf_option & buf_rep \n" );
+                                if (strncmp (buf_option, "NAME", 4) == 0)
+                                {
+                                 /**/    printf("Nom : %s\n" , buf_rep);
+					cur_elem->setName (buf_rep);
+                                }
+                            }
+                        }
+
 
                         if (!is_started)
                         {
@@ -1029,12 +1043,13 @@ public:
                     break;
 
                 case POLYPOINT:
-                    //printf ("POLYPOINT\n");
+                    // printf ("POLYPOINT\n");
                     if (strncmp (buf_cfg, "POLYPOINT", 9) == 0)
                     {
                         char buf_option[0x20], buf_rep[0x20];
                         char *pstr = strchr (buf_cfg + 9, ':');
-                        cur_polypoint = cur_elem->addPolyPoints ();
+                        cur_polypoint = cur_elem->addPolyPoints();
+			assert (cur_polypoint);
 
                         if (pstr)
                         {
@@ -1056,7 +1071,7 @@ public:
                     break;
 
                 case JOIN:
-                    //printf ("JOIN\n");
+                    // printf ("JOIN\n");
                     if (strncmp (buf_cfg, "JOIN", 4) == 0)
                     {
                         unsigned int a, b;
@@ -1079,7 +1094,7 @@ public:
 
                 case SPHERE:
                     /**/
-                    printf ("SPHERE !\n");
+                    printf ("SPHERE\n");
                     if (strncmp (buf_cfg, "SPHERE", 6) == 0)
                     {
                         char buf_option[0x20], buf_rep[0x20];
@@ -1291,11 +1306,11 @@ public:
             }
             //							printf ("%d\n", __LINE__);
             fclose (fconfig);
+            printf ("End of configuration.\n");
         }
         else
             printf ("Erreur fichier CFG\n");
 
-        //printf ("FINI\n");
         return (Element *) NULL;
     }
 

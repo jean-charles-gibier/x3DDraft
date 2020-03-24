@@ -329,3 +329,14 @@ getName (void)
 {
     return Name;
 }
+
+/******************************************************************************
+set le nom de l'élément
+******************************************************************************/
+
+void Element::
+setName (char *name)
+{
+	strncpy(Name, name, sizeof(this->Name)-1);
+    return;
+}

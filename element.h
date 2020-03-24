@@ -24,6 +24,7 @@ public:
     Element * parcoursCallback ( Element * pickMethod( int &, Element *) = NULL );
     int  getNo (void);
     char *  getName (void);
+    void setName (char *name);
     // methodes d'affectation
     // TODO rendre multiple et itérable
     PolyPoints * addPolyPoints (const PolyPoints * pp = NULL,

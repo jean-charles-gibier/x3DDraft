@@ -6,8 +6,8 @@ CXXFLAGS = -g -Wall
 # CXXFLAGS = -nostdinc -I/usr/i486-linuxlibc5/include/g++
 INCLUDES = -I/usr/include
 LDFLAGS = -L/usr/local/lib -L/usr/X11R6/lib
-# LIBS = -lm -lX11
-LIBS = -lm -lX11 -lefence
+LIBS = -lm -lX11
+# LIBS = -lm -lX11 -lefence
 
 TARGET = x3DDraft
 SRCS = x3DDraft.cc \
@@ -36,7 +36,7 @@ OBJS = x3DDraft.o \
 	motion.o \
 	meta.o
 
-ALL = README Imakefile Makefile.std x3DDraft.man $(SRCS) x3DDraft.h
+ALL = README Imakefile Makefile.std x3DDraft.man $(SRCS)
 
 all:	$(TARGET)
 

@@ -36,7 +36,7 @@ public :
     // pickMethodPt (optional) : pointer on fonction that collects
     // "element"
     //
-    Assembly( Element * racine, int orientation = 0, unsigned nbRequested = 1, Element ** pickMethodPt( unsigned &, Element *) = NULL )
+    Assembly( Element * racine, int orientation = 0, unsigned nbRequested = 1, Element ** pickMethodPt( unsigned &, Element *) = NULL)
     {
 
         arrayAssembly = NULL;
@@ -80,7 +80,7 @@ public :
             PolyPoints *poly_point = arrayAssembly[nbe]->getEPolyPoints ();
             assert (poly_point);
             // on a plusieurs polypoints pour cet element
-            unsigned int nbPolyPoints = arrayAssembly[nbe]->getNbPolyPoints();
+            unsigned int nbPolyPoints = arrayAssembly[nbe]->getNbPolyPoints ();
             // le calcul du centre des polypoints appele le recalcul de l'element parent.
             for (unsigned int cptp = 0; cptp < nbPolyPoints; cptp ++)
             {
@@ -93,7 +93,7 @@ public :
     // Default fonction that grabs "element"s in this assembly
     // see Assembly constructor
     //
-    ElementPtr * pickMethod( unsigned &nbToRetrieve, Element * e, unsigned orientation )
+    ElementPtr * pickMethod( unsigned &nbToRetrieve, Element * e, unsigned orientation)
     {
         arrayAssembly = new ElementPtr [nbToRetrieve];
         assert(arrayAssembly);
@@ -134,7 +134,7 @@ public :
             navette = navette->getPrev ();
         }
         // we re-compute the average of all barycenters on selected "element"
-        for (unsigned nbSel = 0; nbSel < nbToRetrieve; nbSel ++ )
+        for (unsigned nbSel = 0; nbSel < nbToRetrieve; nbSel ++)
         {
             Element *el = arrayAssembly[nbSel] ;
             if (el != NULL )
@@ -161,9 +161,9 @@ public :
     {
         Element *snap = new Element();
 // std::cout << " polypnt get nbel " << nbElementsFound <<  std::endl;
-        for(unsigned nbe = 0; nbe < nbElementsFound; nbe ++)
+        for(unsigned nbe = 0; nbe < nbElementsFound && arrayAssembly[nbe] != NULL; nbe ++)
         {
-            PolyPoints *poly_point = arrayAssembly[nbe]->getEPolyPoints ();
+            PolyPoints *poly_point = arrayAssembly[nbe]->getEPolyPoints();
             assert (poly_point);
             // on a plusieurs polypoints pour cet element
 // std::cout << " -------------------------> polypnt debut get nb pp :" << nbe << "/9" << std::endl;
@@ -201,9 +201,9 @@ public :
     // isPresent cheks if "eleemnt" pointer is present in this
     // assembly selection list
     //
-    bool isPresent( Element * eToCheck )
+    bool isPresent( Element * eToCheck)
     {
-        for(unsigned nbe = 0; nbe < nbElementsFound; nbe ++)
+        for(unsigned nbe = 0; nbe < nbElementsFound && arrayAssembly[nbe] != NULL; nbe ++)
         {
             if (eToCheck == arrayAssembly[nbe])
             {
