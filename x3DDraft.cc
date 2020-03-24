@@ -96,7 +96,8 @@ main (int argc, char *argv[])
     meta->Xrelease ();
     std::cout << std::endl << "releaseInstance" << std::endl;
     meta->releaseInstance();
-
+    std::cout << std::endl << "release meta" << std::endl;
+    delete meta;
     std::cout << std::endl << "fin de programme" << std::endl;
     return 0;
 }

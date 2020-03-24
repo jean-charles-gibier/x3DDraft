@@ -4,7 +4,7 @@ With simple motion functions : translation, rotation focused on one object<br>
 or on the entire "universe" (that is described in config file).
 
 To test it :
-- install gcc X11 SDK librairies and set your environement.
+- install gcc X11 SDK libraries and set your environement.
 - clone this repo
 - make clean
 - make
@@ -19,9 +19,11 @@ https://www.youtube.com/watch?v=wyWxlmDuZ6I
 
 To launch this model :
 ```
-./x3DDraft  rubick5.cfg 
+./x3DDraft  rubick5.cfg
 ```
 
 Some tools I use :
 - Atristic Style [http://astyle.sourceforge.net/] As code beautifier.
 - Valgrind  [http://www.valgrind.org/] As memory checker.
+
+CC Licencing
