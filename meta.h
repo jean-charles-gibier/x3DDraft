@@ -959,6 +959,9 @@ public:
     Element *readFConfigElem (const char * configName = "x3DDraft.cfg")
     {
 
+	const char * default_path = "./cfg_files/";
+	const char * file_name = (configName == NULL ? "x3DDraft.cfg" : configName);
+        char path_cfg[0x200];
         char buf_cfg[0x100];
         int next_state = DEBUT;
         int is_started = 0;
@@ -970,9 +973,18 @@ public:
         Point3D pt3dCent, pt3dCirc;
         Point3D pt3ddx, pt3ddy, pt3ddz;
 
+	//constitution du path file
+	if (strlen(default_path) + strlen(file_name) < sizeof (path_cfg)) {
+		strncat(path_cfg, default_path, sizeof(path_cfg));
+		strncat(path_cfg, file_name, sizeof(path_cfg) - strlen(default_path));
+	} else {
+		printf("ERREUR : Nom de fichier trop long.\n");
+		return NULL;
+	}
+	
         // ouverture du fichier config
-        printf ("Try to open:  %s \n", configName);
-        FILE *fconfig = fopen ( (configName == NULL ? "x3DDraft.cfg" : configName), "r+b");
+        printf ("Try to open:  %s \n", path_cfg);
+        FILE *fconfig = fopen (path_cfg, "r+b");
 
         /******************************** éléments de base ***************************/
         // fichier à lire ligne à ligne
@@ -1319,7 +1331,7 @@ public:
         else
             printf ("Erreur fichier CFG\n");
 
-        return (Element *) NULL;
+        return (Element *) cur_elem;
     }
 
     double * getEffetFuite ()

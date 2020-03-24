@@ -37,13 +37,14 @@ main (int argc, char *argv[])
         if (argc > 1)
         {
             configName = argv[1];
-            std::cout << "DBG  " << configName << " " <<__LINE__ << std::endl;
+//            std::cout << "DBG  " << configName << " " <<__LINE__ << std::endl;
         }
-        meta = new Meta(configName );
+        meta = new Meta(configName);
     }
-    catch (int err)
+//    catch (int err)
+    catch (char const * err)
     {
-        std::cout << "erreur init programme :" << err << std::endl;
+        std::cout << "Erreur init programme : " << err << std::endl;
         exit (-1);
     }
 
