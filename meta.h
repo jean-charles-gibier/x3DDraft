@@ -869,7 +869,7 @@ public:
         XMapSubwindows (d, win);
         printf("XMapSubwindows\n");
         setupBuffer ();
-        printf("+setupBuffer\n");
+        printf("setupBuffer\n");
 
         /*
         "Shut off keyboard autorepeat" pour la durée du jeu
