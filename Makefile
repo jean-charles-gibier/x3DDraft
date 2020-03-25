@@ -52,3 +52,5 @@ clean:
 
 shar:	$(ALL)
 	shar -o $(TARGET).shar $(ALL)
+
+check:
