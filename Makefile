@@ -54,3 +54,5 @@ shar:	$(ALL)
 	shar -o $(TARGET).shar $(ALL)
 
 check:
+
+distcheck:
