@@ -57,4 +57,5 @@ distcheck:
 	file $(TARGET)
 
 check:
+	file $(TARGET)
 
