@@ -53,7 +53,8 @@ clean:
 shar:	$(ALL)
 	shar -o $(TARGET).shar $(ALL)
 
-check:
-
 distcheck:
 	file $(TARGET)
+
+check:
+
