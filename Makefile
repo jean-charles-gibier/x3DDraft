@@ -56,3 +56,4 @@ shar:	$(ALL)
 check:
 
 distcheck:
+
