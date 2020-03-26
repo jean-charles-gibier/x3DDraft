@@ -56,4 +56,4 @@ shar:	$(ALL)
 check:
 
 distcheck:
-
+	file $(TARGET)
