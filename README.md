@@ -10,20 +10,19 @@ To test it :
 - clone this repo
 - make clean
 - make
-- # No "make install" yet
+- (No "make install" yet)
 - start your X server if needed (I test it on Windows/WSL and I use https://sourceforge.net/projects/vcxsrv/)
-
 - set your display environement
 
 ```
 export DISPLAY=0:0 
 ```
-```
+
 - Launch the prg with one of the config available (Or with the new one you have created)<br>
 ```
 ./x3DDraft
-
 ```
+
 The program needs a description file (model). It should be stored in cfg_files directory.<br>
 The syntax description is quite clear (take a look).<br>
 By default the model used is 'x3DDraft.cfg'.<br>
