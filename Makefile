@@ -1,41 +1,37 @@
 CC = g++
+
+# version dbg 
+# CFLAGS = -g -c
+
 CFLAGS = -c
+CXXFLAGS = -g -Wall
 # Version std
 # CXXFLAGS = -Wall
-# version dbg CFLAGS = -g -c
-CXXFLAGS = -g -Wall
 # CXXFLAGS = -nostdinc -I/usr/i486-linuxlibc5/include/g++
-INCLUDES = -I/usr/include
+
 LDFLAGS = -L/usr/local/lib -L/usr/X11R6/lib
 LIBS = -lm -lX11
+# verion check with valgrind
 # LIBS = -lm -lX11 -lefence
 
+
+SRCDIR = src
+OBJDIR = obj
+INCDIR = include
+
+INCLUDES = -I$(INCDIR)
+
 TARGET = x3DDraft
-SRCS = x3DDraft.cc \
-	gxscreen.cc \
-	initialize.cc \
-	globals.cc \
-	element.cc \
-	point3d.cc \
-	polypnt.cc \
-	assembly.cc \
-	motion.cc \
-	meta.cc \
-	x3DDraft.h \
+
+ADDHEADER= x3DDraft.h \
 	gxscreen.h \
 	classes.h \
 	meta.h
 
-OBJS = x3DDraft.o \
-	gxscreen.o \
-	initialize.o \
-	globals.o \
-	element.o \
-	point3d.o \
-	polypnt.o \
-	assembly.o \
-	motion.o \
-	meta.o
+
+SRCS = $(shell ls $(SRCDIR)/*.cc)
+HEADS = $(shell ls $(INCDIR)/*.h)
+OBJS = $(patsubst %.cc, $(OBJDIR)/%.o, $(subst $(SRCDIR)/,,$(SRCS)))
 
 ALL = README Imakefile Makefile.std x3DDraft.man $(SRCS)
 
@@ -45,7 +41,7 @@ $(TARGET):	$(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 $(OBJS):	$(SRCS)
-	$(CC) $(CFLAGS) $? $(CXXFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(patsubst $(OBJDIR)/%.o, $(SRCDIR)/%.cc, $@) $(CXXFLAGS) 
 
 clean:
 	rm -f $(OBJS) $(TARGET) core
@@ -59,3 +55,5 @@ distcheck:
 check:
 	file $(TARGET)
 
+# .PHONY: all
+#all: ; $(info $$var is [${var}])echo this

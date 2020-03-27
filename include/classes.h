@@ -1,4 +1,4 @@
-/* Point3D (définit un point 3D associée à 1 polypoint) */
+/* Point3D (définit un point 3D associé à 1 polypoint) */
 
 #include "point3d.h"
 
@@ -8,7 +8,7 @@
 
 /* classes  définies pour x3DDraft : */
 
-/* Element (définit une figure à afficher dans GXScreen ) */
+/* Element (définit une figure é afficher dans GXScreen ) */
 
 #include "element.h"
 

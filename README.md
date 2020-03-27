@@ -10,18 +10,32 @@ To test it :
 - clone this repo
 - make clean
 - make
-- start your X server if needed
-- Launch the prg with one of the config avilable (Or with the new one you have created)<br>
+- # No "make install" yet
+- start your X server if needed (I test it on Windows/WSL and I use https://sourceforge.net/projects/vcxsrv/)
+
+- set your display environement
+
 ```
-./x3DDraft x3DDraft.cfg
+export DISPLAY=0:0 
 ```
-Here is a  video illustrating an animation variant based on a Rubick's Cube model
+```
+- Launch the prg with one of the config available (Or with the new one you have created)<br>
+```
+./x3DDraft
+
+```
+The program needs a description file (model). It should be stored in cfg_files directory.<br>
+The syntax description is quite clear (take a look).<br>
+By default the model used is 'x3DDraft.cfg'.<br>
+It is a copy of 'rubick5' that modelizes the standard Rubick's Cube®©.<br> 
+
+Here is a  video illustrating an animation variant based on this model :
 
 https://www.youtube.com/watch?v=wyWxlmDuZ6I
 
-To launch this model :
+To launch another model :
 ```
-./x3DDraft  rubick5.cfg
+./x3DDraft  another.cfg
 ```
 
 Some tools I use :
