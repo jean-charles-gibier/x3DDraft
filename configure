@@ -1,5 +1,5 @@
 # dummy configuration test
 
-echo "empty file / nothing to at the moment"
+echo "empty file / nothing to do at the moment"
 
 exit 0
