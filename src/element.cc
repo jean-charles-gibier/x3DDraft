@@ -35,7 +35,7 @@ insertAfter (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char 
     {
         // copie éventuelle du nom
 
-        strncpy (Name, vName, sizeof (Name));
+        strncpy (cName, vName, sizeof (cName));
     }
     return this;
 }
@@ -78,7 +78,7 @@ insertBefore (Element * elem /*= NULL*/, int vno /*= -1*/, char *vName /*= (char
     {
         // copie éventuelle du nom
 
-        strncpy (Name, vName, sizeof (Name));
+        strncpy (cName, vName, sizeof (cName));
     }
     return this;
 }
@@ -272,7 +272,7 @@ addPolyPoints (const PolyPoints * pp/* = NULL*/,
 
     if (name)  				// il y a un nom à copier
     {
-        strncpy (Name, name, sizeof (Name));
+        strncpy (cName, name, sizeof (cName));
     }
 // std::cout << "Fin add pp :"  << "."<< std::endl;
 
@@ -327,7 +327,7 @@ retourne le nom de l'élément
 char *Element::
 getName (void)
 {
-    return Name;
+    return cName;
 }
 
 /******************************************************************************
@@ -337,6 +337,6 @@ set le nom de l'élément
 void Element::
 setName (char *name)
 {
-	strncpy(Name, name, sizeof(this->Name)-1);
+	strncpy(cName, name, sizeof(this->cName)-1);
     return;
 }

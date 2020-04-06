@@ -97,7 +97,6 @@ public:
         return 0;
     }
 
-
     /*-------------------------------------------------- */
     int replaceFace (int face)
     {
@@ -183,7 +182,7 @@ public:
     -------------------------------------------------- */
     friend std::ostream & operator << (std::ostream &s, const Element &pp)
     {
-        s << " Nom :" << (pp.Name == NULL ? "<none>" : pp.Name) << " numéro d'index :" << pp.no << std::endl;
+        s << " Nom :" << (pp.cName == NULL ? "<none>" : pp.cName) << " numéro d'index :" << pp.no << std::endl;
 
         return s;
     }
@@ -197,7 +196,7 @@ protected :
 private :
     Element *suivant, *precedant;
     // membres habituels d'une liste chainée
-    char Name [0xFF]; // identifaint chaine de car.
+    char cName [0xFF]; // identifaint chaine de car.
     int no, // numéro d'index
         nbPolyPoints, // nombre de polypnt
         bDisplay; // Booléen : autoriser l'affichage ou non
