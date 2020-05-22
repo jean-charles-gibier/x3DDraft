@@ -32,7 +32,6 @@ It is a copy of 'rubick5' that modelizes the standard Rubik's Cube®©.<br>
 " target="_blank"><img src="https://github.com/jean-charles-gibier/x3DDraft/blob/master/doc/screenshot1.png" 
 alt="Here is a  video illustrating an animation variant based on this model" />
 </a>
-
 To launch another model :
 ```
 ./x3DDraft  another.cfg
