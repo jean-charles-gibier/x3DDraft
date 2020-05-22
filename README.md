@@ -26,11 +26,12 @@ export DISPLAY=0:0
 The program needs a description file (model). It should be stored in cfg_files directory.<br>
 The syntax description is quite clear (take a look).<br>
 By default the model used is 'x3DDraft.cfg'.<br>
-It is a copy of 'rubick5' that modelizes the standard Rubick's Cube®©.<br> 
+It is a copy of 'rubick5' that modelizes the standard Rubik's Cube®©.<br> 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=wyWxlmDuZ6I
-" target="_blank"><img src="http://img.youtube.com/vi/wyWxlmDuZ6I/50.jpg" 
-alt="Here is a  video illustrating an animation variant based on this model" width="240" height="180" border="10" /></a>
+" target="_blank"><img src="https://github.com/jean-charles-gibier/x3DDraft/blob/master/doc/screenshot1.png" 
+alt="Here is a  video illustrating an animation variant based on this model" border="10" />
+</a>
 
 To launch another model :
 ```
