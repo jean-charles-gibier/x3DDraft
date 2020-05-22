@@ -40,7 +40,7 @@ To launch another model :
 ```
 
 Some tools I use :
-- Atristic Style [http://astyle.sourceforge.net/] As code beautifier.
+- Artistic Style [http://astyle.sourceforge.net/] As code beautifier.
 - Valgrind  [http://www.valgrind.org/] As memory checker.
 
 CC Licencing
