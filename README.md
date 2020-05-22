@@ -30,7 +30,7 @@ It is a copy of 'rubick5' that modelizes the standard Rubik's Cube®©.<br>
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=wyWxlmDuZ6I
 " target="_blank"><img src="https://github.com/jean-charles-gibier/x3DDraft/blob/master/doc/screenshot1.png" 
-alt="Here is a  video illustrating an animation variant based on this model" border="10" />
+alt="Here is a  video illustrating an animation variant based on this model" />
 </a>
 
 To launch another model :
