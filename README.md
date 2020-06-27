@@ -1,7 +1,7 @@
 # x3DDraft
 ![C/C++ CI](https://github.com/jean-charles-gibier/x3DDraft/workflows/C/C++%20CI/badge.svg)
 
-An old fashioned, simple (and yes, quite dirty)  3D wired modeler based on X11 lib.<br>
+An old fashioned (means no STL yet :grimacing:), simple (and yes, quite dirty)  3D wired modeler based on X11 lib.<br>
 With simple motion functions : translation, rotation focused on one object<br>
 or on the entire "universe" (that is described in config file).
 
